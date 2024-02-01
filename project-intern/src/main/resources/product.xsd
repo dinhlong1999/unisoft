@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://interfaces.soap.springboot.vkakarla.com"
+           xmlns:tns="http://interfaces.soap.springboot.vkakarla.com"
+           elementFormDefault="qualified">
+
+    <xs:complexType name="roleInfo">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="flag" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="serviceStatus">
+        <xs:sequence>
+            <xs:element name="status" type="xs:string"/>
+            <xs:element name="message" type="xs:string"/>
+            <xs:element name="error" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="accountInfo">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="username" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element name="role" type="tns:roleInfo"/>
+            <xs:element name="flag" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="productInfo">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="codeProduct" type="xs:string"/>
+            <xs:element name="nameProduct" type="xs:string"/>
+            <xs:element name="priceSell" type="xs:double"/>
+            <xs:element name="priceBuy" type="xs:double"/>
+            <xs:element name="flag" type="xs:boolean"/>
+            <xs:element name="version" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="customerInfo">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="phoneNumber" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="flag" type="xs:boolean"/>
+            <xs:element name="version" type="xs:int"/>
+            <xs:element name="employee" type="tns:employeeInfo"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="employeeInfo">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="phoneNumber" type="xs:string"/>
+            <xs:element name="flag" type="xs:boolean"/>
+            <xs:element name="account" type="tns:accountInfo"/>
+            <xs:element name="version" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="employeeDT0">
+        <xs:sequence>
+            <xs:element name="usernameEmployee" type="xs:string"/>
+            <xs:element name="employeeName" type="xs:string"/>
+            <xs:element name="employeePhoneNumber" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="statusInfo">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="validateInfo">
+        <xs:sequence>
+            <xs:element name="validate" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="orderDetailInfo">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="employee" type="tns:employeeInfo"/>
+            <xs:element name="product" type="tns:productInfo"/>
+            <xs:element name="customer" type="tns:customerInfo"/>
+            <xs:element name="status" type="tns:statusInfo"/>
+            <xs:element name="quantityBook" type="xs:int"/>
+            <xs:element name="dateStart" type="xs:dateTime"/>
+            <xs:element name="dateAllocation" type="xs:dateTime"/>
+            <xs:element name="price" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="getValidateInfoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="validateInfo" type="tns:validateInfo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAllEmployeeRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="username" type="xs:string"/>
+                <xs:element name="employeeName" type="xs:string"/>
+                <xs:element name="employeePhoneNumber" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="getAllEmployeeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeDTO" type="tns:employeeDT0" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateEmployeeRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeInfo" type="tns:employeeInfo"/>
+                <xs:element name="confirmPassword" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateEmployeeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getEmployeeByIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeId" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getEmployeeByIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeInfo" type="tns:employeeInfo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveEmployeeRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeInfo" type="tns:employeeInfo"/>
+                <xs:element name="confirmPassword" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveEmployeeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAllProductRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nameProduct" type="xs:string"/>
+                <xs:element name="codeProduct" type="xs:string"/>
+                <xs:element name="limit" type="xs:int"/>
+                <xs:element name="page" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAllProductResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="products" type="tns:productInfo" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveProductRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="product" type="tns:productInfo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveProductResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateProductResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateProductRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="product" type="tns:productInfo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="loginRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="username" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="loginResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="jwt" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAllCustomerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nameCustomer" type="xs:string"/>
+                <xs:element name="phoneNumber" type="xs:string"/>
+                <xs:element name="limit" type="xs:int"/>
+                <xs:element name="page" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAllCustomerResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="customers" type="tns:customerInfo" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveCustomerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="customerInfo" type="tns:customerInfo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveCustomerResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateCustomerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="customerInfo" type="tns:customerInfo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateCustomerResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveOrderDetailRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="orderDetail" type="tns:orderDetailInfo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="saveOrderDetailResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getOrderDetailByAdminRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="accountName" type="xs:string"/>
+                <xs:element name="employeeName" type="xs:string"/>
+                <xs:element name="codeProduct" type="xs:string"/>
+                <xs:element name="customerName" type="xs:string"/>
+                <xs:element name="customerPhoneNumber" type="xs:string"/>
+                <xs:element name="dateStart" type="xs:dateTime"/>
+                <xs:element name="dateEnd" type="xs:dateTime"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="iOrderDetailDTO">
+        <xs:sequence>
+            <xs:element name="dateStart" type="xs:dateTime"/>
+            <xs:element name="codeProduct" type="xs:string"/>
+            <xs:element name="priceBuy" type="xs:double"/>
+            <xs:element name="quantityBook" type="xs:int"/>
+            <xs:element name="customerName" type="xs:string"/>
+            <xs:element name="customerPhoneNumber" type="xs:string"/>
+            <xs:element name="customerAddress" type="xs:string"/>
+            <xs:element name="statusName" type="xs:string"/>
+            <xs:element name="accountName" type="xs:string"/>
+            <xs:element name="employeeName" type="xs:string"/>
+            <xs:element name="dateAllocation" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="getOrderDetailResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="orderDetailDTOs" type="tns:iOrderDetailDTO" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="allocationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="codeProduct" type="xs:string"/>
+                <xs:element name="nameProduct" type="xs:string"/>
+                <xs:element name="quantity" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="allocationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+</xs:schema>

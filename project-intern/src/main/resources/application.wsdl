@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             targetNamespace="http://interfaces.soap.springboot.vkakarla.com"
+             name="MyWebService"
+             xmlns:tns="http://interfaces.soap.springboot.vkakarla.com"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:types>
+        <xs:schema targetNamespace="http://interfaces.soap.springboot.vkakarla.com">
+            <xs:import namespace="http://interfaces.soap.springboot.vkakarla.com" schemaLocation="product.xsd"/>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="getAllEmployeeRequest">
+        <wsdl:part element="tns:getAllEmployeeRequest" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="getAllEmployeeResponse">
+        <wsdl:part name="parameters" element="tns:getAllEmployeeResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="getAllEmployeeService">
+        <wsdl:operation name="GetAllEmployee">
+            <wsdl:input message="tns:getAllEmployeeRequest"/>
+            <wsdl:output message="tns:getAllEmployeeResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="getAllEmployeeServiceSOAPBinding" type="tns:getAllEmployeeService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="GetAllEmployee">
+            <soap:operation soapAction="http://interfaces.soap.springboot.vkakarla.com/GetAllEmployee"/>
+            <wsdl:input name="literal">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="literal">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="MyWebService">
+        <wsdl:port name="getAllEmployeeServiceSOAPBinding" binding="tns:getAllEmployeeServiceSOAPBinding">
+            <soap:address location="http://localhost:8080/services/soap/MyWebService" />
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>
+
+
