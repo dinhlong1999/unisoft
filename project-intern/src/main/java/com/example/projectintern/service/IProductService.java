@@ -23,4 +23,5 @@ public interface IProductService {
     int getTotalRecordProduct(String codeProduct, String nameProduct);
     List<IProductDetail>  getAllProductByNameProductAndCodeProduct(String codeProduct, String nameProduct,
                                                                    int limitNumber, int page);
+    int updateProduct(Product product);
 }

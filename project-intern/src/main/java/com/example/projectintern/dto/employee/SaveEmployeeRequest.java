@@ -1,6 +1,8 @@
 package com.example.projectintern.dto.employee;
 
 import com.example.projectintern.dto.employee.EmployeeInfo;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import javax.xml.bind.annotation.*;
 
@@ -34,4 +36,6 @@ public class SaveEmployeeRequest {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
+
+
 }

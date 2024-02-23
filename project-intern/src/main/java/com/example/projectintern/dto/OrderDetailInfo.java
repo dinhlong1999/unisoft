@@ -1,57 +1,36 @@
 package com.example.projectintern.dto;
 
-import com.example.projectintern.dto.customer.CustomerInfo;
-import com.example.projectintern.dto.employee.EmployeeInfo;
-import com.example.projectintern.dto.product.ProductInfo;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "orderDetailInfo",propOrder = {
         "id",
-        "employee",
-        "product",
-        "customer",
-        "status",
+        "codeProduct",
+        "customerPhoneNumber",
         "quantityBook",
         "dateStart",
-        "dateAllocation",
         "price"
 })
 public class OrderDetailInfo {
+   @XmlElement(required = true)
     private int id;
-    private EmployeeInfo employee;
-    private ProductInfo product;
-    private CustomerInfo customer;
-    private StatusInfo status;
+   @XmlElement(required = true)
+    private String codeProduct;
+   @XmlElement(required = true)
+    private String customerPhoneNumber;
+
+   @XmlElement(required = true)
     private int quantityBook;
+   @XmlElement(required = true)
     private String dateStart;
-    private String dateAllocation;
+   @XmlElement(required = true)
     private double price;
 
     public OrderDetailInfo() {
-    }
-
-    public OrderDetailInfo(int id,
-                           EmployeeInfo employee,
-                           ProductInfo product,
-                           CustomerInfo customer,
-                           StatusInfo status,
-                           int quantityBook,
-                           String dateStart,
-                           String dateAllocation,
-                           double price) {
-        this.id = id;
-        this.employee = employee;
-        this.product = product;
-        this.customer = customer;
-        this.status = status;
-        this.quantityBook = quantityBook;
-        this.dateStart = dateStart;
-        this.dateAllocation = dateAllocation;
-        this.price = price;
     }
 
     public int getId() {
@@ -62,36 +41,20 @@ public class OrderDetailInfo {
         this.id = id;
     }
 
-    public EmployeeInfo getEmployee() {
-        return employee;
+    public String getCodeProduct() {
+        return codeProduct;
     }
 
-    public void setEmployee(EmployeeInfo employee) {
-        this.employee = employee;
+    public void setCodeProduct(String codeProduct) {
+        this.codeProduct = codeProduct;
     }
 
-    public ProductInfo getProduct() {
-        return product;
+    public String getCustomerPhoneNumber() {
+        return customerPhoneNumber;
     }
 
-    public void setProduct(ProductInfo product) {
-        this.product = product;
-    }
-
-    public CustomerInfo getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CustomerInfo customer) {
-        this.customer = customer;
-    }
-
-    public StatusInfo getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusInfo status) {
-        this.status = status;
+    public void setCustomerPhoneNumber(String customerPhoneNumber) {
+        this.customerPhoneNumber = customerPhoneNumber;
     }
 
     public int getQuantityBook() {
@@ -110,19 +73,23 @@ public class OrderDetailInfo {
         this.dateStart = dateStart;
     }
 
-    public String getDateAllocation() {
-        return dateAllocation;
-    }
-
-    public void setDateAllocation(String dateAllocation) {
-        this.dateAllocation = dateAllocation;
-    }
-
     public double getPrice() {
         return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderDetailInfo{" +
+                "id=" + id +
+                ", codeProduct='" + codeProduct + '\'' +
+                ", customerPhoneNumber='" + customerPhoneNumber + '\'' +
+                ", quantityBook=" + quantityBook +
+                ", dateStart=" + dateStart +
+                ", price=" + price +
+                '}';
     }
 }

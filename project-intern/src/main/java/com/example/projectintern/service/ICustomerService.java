@@ -14,8 +14,11 @@ public interface ICustomerService {
     int totalRowCustomer(String nameCustomer, String phoneNumber);
     List<ICustomerDetailDTO> getCustomerByNameAndPhoneNumber(String nameCustomer, String phoneNumberCustomer, int limitNumber,int page);
 
-    Customer saveCustomer(Customer customer);
+    int saveCustomer(Customer customer);
     Customer findCustomerByPhoneNumber(String phoneNumber);
 
     Customer findCustomerById(int id);
+
+    int updateCustomer(Customer customer);
+
 }

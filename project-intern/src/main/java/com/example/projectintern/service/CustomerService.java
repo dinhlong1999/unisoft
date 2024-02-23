@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -31,8 +32,10 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public Customer saveCustomer(Customer customer) {
-        return customerRepository.save(customer);
+    @Transactional
+    public int saveCustomer(Customer customer) {
+      return customerRepository.saveCustomer(customer.getAddress(), customer.getName(),
+                 customer.getPhoneNumber(), customer.getEmployee().getId());
     }
 
     @Override
@@ -43,5 +46,12 @@ public class CustomerService implements ICustomerService {
     @Override
     public Customer findCustomerById(int id) {
         return customerRepository.findById(id).get();
+    }
+
+    @Override
+    @Transactional
+    public int updateCustomer(Customer customer) {
+        return customerRepository.updateCustomer(customer.getAddress(), customer.getName(),
+                customer.getPhoneNumber(),customer.getVersion(),customer.getEmployee().getId(), customer.getId());
     }
 }

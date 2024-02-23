@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +25,14 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    @Transactional
     public void saveAccount(Account account) {
-        accountRepository.save(account);
+        accountRepository.saveAccount(account.getPassword(), account.getUsername(),account.getRole().getId());
+    }
+
+    @Override
+    public int getAccountByUsername(String username) {
+        return accountRepository.getAccountByUsername(username);
     }
 
 

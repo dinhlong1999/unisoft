@@ -14,7 +14,11 @@ import java.time.LocalDateTime;
         "customerName",
         "customerPhoneNumber",
         "dateStart",
-        "dateEnd"
+        "dateEnd",
+        "isAdmin",
+        "employeeId",
+        "limit",
+        "page"
 })
 @XmlRootElement(name = "getOrderDetailByAdminRequest")
 public class GetOrderDetailByAdminRequest {
@@ -33,6 +37,13 @@ public class GetOrderDetailByAdminRequest {
     private String dateStart;
     @XmlElement(required = true)
     private String dateEnd;
+    private boolean isAdmin;
+    private int employeeId;
+
+    @XmlElement(required = true)
+    private int limit;
+    @XmlElement(required = true)
+    private int page;
 
 
     public GetOrderDetailByAdminRequest() {
@@ -40,6 +51,22 @@ public class GetOrderDetailByAdminRequest {
 
     public String getAccountName() {
         return accountName;
+    }
+
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 
     public void setAccountName(String accountName) {
@@ -98,4 +125,19 @@ public class GetOrderDetailByAdminRequest {
         this.dateStart = dateStart;
     }
 
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
 }

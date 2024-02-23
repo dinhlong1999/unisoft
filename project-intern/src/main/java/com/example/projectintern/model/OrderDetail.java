@@ -26,7 +26,7 @@ public class OrderDetail {
     @Column(name = "quantity_book",nullable = false)
     private int quantityBook;
     @Column(name = "date_start" ,nullable = false)
-    private LocalDate dateStart;
+    private LocalDateTime dateStart;
     @Column(name = "date_allocation")
     private LocalDate dateAllocation;
     private double price;
@@ -43,7 +43,7 @@ public class OrderDetail {
                        Customer customer,
                        Status status,
                        int quantityBook,
-                       LocalDate dateStart,
+                       LocalDateTime dateStart,
                        boolean flag,
                        LocalDate dateAllocation,
                        double price) {
@@ -107,11 +107,11 @@ public class OrderDetail {
         this.quantityBook = quantityBook;
     }
 
-    public LocalDate getDateStart() {
+    public LocalDateTime getDateStart() {
         return dateStart;
     }
 
-    public void setDateStart(LocalDate dateStart) {
+    public void setDateStart(LocalDateTime dateStart) {
         this.dateStart = dateStart;
     }
 

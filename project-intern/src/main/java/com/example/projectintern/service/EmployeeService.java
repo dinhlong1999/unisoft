@@ -7,6 +7,7 @@ import com.example.projectintern.repository.IEmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -26,8 +27,15 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    @Transactional
     public void updateEmployee(Employee employee) {
-        employeeRepository.save(employee);
+        employeeRepository.saveEmployee(employee.getName(), employee.getPhoneNumber(), employee.getAccount().getId());
+//        employeeRepository.save(employee);
+    }
+
+    @Override
+    public int updateEmployeeVersion(Employee employee) {
+       return employeeRepository.updateEmployee(employee.getName(), employee.getPhoneNumber(),employee.getAccount().getId(),employee.getVersion(),employee.getId(),employee.getVersion());
     }
 
     @Override

@@ -11,6 +11,7 @@ public interface IEmployeeService {
 
     Employee getEmployeeById(int id);
     void updateEmployee(Employee employee);
+    int updateEmployeeVersion(Employee employee);
     Employee getEmployeeByAccountUsername(String username);
     List<IEmployeeDTO> getAll(String username, String employeeName, String employeePhoneNumber);
 };

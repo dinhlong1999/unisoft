@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -22,8 +23,9 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Transactional
     public void saveProduct(Product product) {
-        productRepository.save(product);
+        productRepository.saveProduct(product.getCodeProduct(), product.getNameProduct(), product.getPriceBuy(),product.getPriceSell());
     }
 
     @Override
@@ -54,5 +56,12 @@ public class ProductService implements IProductService {
     @Override
     public List<IProductDetail> getAllProductByNameProductAndCodeProduct(String codeProduct, String nameProduct, int limitNumber, int page) {
         return productRepository.getAllProductByNameProductAndCodeProduct("%"+ codeProduct + "%","%"+ nameProduct + "%",limitNumber,page);
+    }
+
+    @Override
+    @Transactional
+    public int updateProduct(Product product) {
+        return productRepository.updateProduct(product.getCodeProduct(), product.getNameProduct(), product.getPriceBuy(),
+                product.getPriceSell(),product.getId(),product.getVersion());
     }
 }

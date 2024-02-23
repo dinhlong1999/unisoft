@@ -39,6 +39,7 @@
             <xs:element name="priceBuy" type="xs:double"/>
             <xs:element name="flag" type="xs:boolean"/>
             <xs:element name="version" type="xs:int"/>
+            <xs:element name="inventory" type="xs:int"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -88,13 +89,10 @@
     <xs:complexType name="orderDetailInfo">
         <xs:sequence>
             <xs:element name="id" type="xs:int"/>
-            <xs:element name="employee" type="tns:employeeInfo"/>
-            <xs:element name="product" type="tns:productInfo"/>
-            <xs:element name="customer" type="tns:customerInfo"/>
-            <xs:element name="status" type="tns:statusInfo"/>
+            <xs:element name="codeProduct" type="xs:string"/>
+            <xs:element name="customerPhoneNumber" type="xs:string"/>
             <xs:element name="quantityBook" type="xs:int"/>
-            <xs:element name="dateStart" type="xs:dateTime"/>
-            <xs:element name="dateAllocation" type="xs:dateTime"/>
+            <xs:element name="dateStart" type="xs:string"/>
             <xs:element name="price" type="xs:double"/>
         </xs:sequence>
     </xs:complexType>
@@ -298,7 +296,7 @@
     <xs:element name="saveOrderDetailRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="orderDetail" type="tns:orderDetailInfo"/>
+                <xs:element name="orderDetail" type="tns:orderDetailInfo" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -321,6 +319,8 @@
                 <xs:element name="customerPhoneNumber" type="xs:string"/>
                 <xs:element name="dateStart" type="xs:dateTime"/>
                 <xs:element name="dateEnd" type="xs:dateTime"/>
+                <xs:element name="limit" type="xs:int"/>
+                <xs:element name="page" type="xs:int"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -348,12 +348,33 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    
+
+    <xs:element name="updateOrderRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="dateStart" type="xs:string"/>
+                <xs:element name="quantityBook" type="xs:int"/>
+                <xs:element name="phoneNumberCustomer" type="xs:string"/>
+                <xs:element name="employeeId" type="xs:int"/>
+                <xs:element name="productCode" type="xs:string"/>
+                <xs:element name="price" type="xs:int"/>
+                <xs:element name="orderId" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateOrderResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="serviceStatus" type="tns:serviceStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="allocationRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="codeProduct" type="xs:string"/>
-                <xs:element name="nameProduct" type="xs:string"/>
+                <xs:element name="productCode" type="xs:string"/>
                 <xs:element name="quantity" type="xs:int"/>
             </xs:sequence>
         </xs:complexType>
@@ -366,6 +387,51 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:complexType name="analystRequest">
+        <xs:sequence>
+            <xs:element name="dateStart" type="xs:string"/>
+            <xs:element name="dateEnd" type="xs:string"/>
+            <xs:element name="limit" type="xs:int"/>
+            <xs:element name="page" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="customerNotBuyRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="analystRequest" type="tns:analystRequest"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="customerNotBuyResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="customersNoOrder" type="tns:customerNoOrderDTO" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="productAnalystResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="productId" type="xs:int"/>
+                <xs:element name="productCode" type="xs:string"/>
+                <xs:element name="productName" type="xs:string"/>
+                <xs:element name="quantity" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="customerNoOrderDTO">
+        <xs:sequence>
+            <xs:element name="customerId" type="xs:int"/>
+            <xs:element name="customerName" type="xs:string"/>
+            <xs:element name="customerPhoneNumber" type="xs:string"/>
+            <xs:element name="customerAddress" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
 
 
 </xs:schema>

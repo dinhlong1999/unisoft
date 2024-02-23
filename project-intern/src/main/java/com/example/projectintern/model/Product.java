@@ -17,10 +17,12 @@ public class Product {
     private Double priceBuy;
     @Column(columnDefinition = "bit(1) default 0",nullable = false)
     private boolean flag;
+    @Column(columnDefinition = "int default 0",nullable = false)
+    private int inventory;
 
     @Column(columnDefinition = "int default 1",nullable = false)
     private int version;
-    public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,int version) {
+    public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,int version,int inventory) {
         this.id = id;
         this.codeProduct = codeProduct;
         this.nameProduct = nameProduct;
@@ -28,6 +30,7 @@ public class Product {
         this.priceBuy = priceBuy;
         this.flag = flag;
         this.version = version;
+        this.inventory = inventory;
     }
 
     public Product() {
@@ -87,5 +90,17 @@ public class Product {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public int getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(int inventory) {
+        this.inventory = inventory;
     }
 }

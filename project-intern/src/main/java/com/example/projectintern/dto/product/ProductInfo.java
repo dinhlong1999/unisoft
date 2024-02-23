@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "productInfo", propOrder = {
-        "id","codeProduct","nameProduct","priceSell","priceBuy","flag","version"
+        "id","codeProduct","nameProduct","priceSell","priceBuy","flag","version","inventory"
 })
 public class ProductInfo  {
     private int id;
@@ -25,6 +25,7 @@ public class ProductInfo  {
     private double priceBuy;
     private boolean flag;
     private int version;
+    private int inventory;
 
     public ProductInfo() {
     }
@@ -35,7 +36,8 @@ public class ProductInfo  {
                        double priceSell,
                        double priceBuy,
                        boolean flag,
-                       int version ) {
+                       int version,
+                       int inventory) {
         this.id = id;
         this.codeProduct = codeProduct;
         this.nameProduct = nameProduct;
@@ -43,6 +45,7 @@ public class ProductInfo  {
         this.priceBuy = priceBuy;
         this.flag = flag;
         this.version = version;
+        this.inventory = inventory;
     }
 
     public int getId() {
@@ -99,5 +102,13 @@ public class ProductInfo  {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public int getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(int inventory) {
+        this.inventory = inventory;
     }
 }

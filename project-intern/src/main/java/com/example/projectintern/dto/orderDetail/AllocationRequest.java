@@ -4,42 +4,31 @@ import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "",propOrder = {
-        "codeProduct","nameProduct","quantity"
+        "productCode","quantity"
 })
 @XmlRootElement(name = "allocationRequest")
 public class AllocationRequest {
-
     @XmlElement(required = true)
-    private String codeProduct;
+    private String productCode;
     @XmlElement(required = true)
-    private String nameProduct;
-    @XmlElement(required = true)
-    private String quantity;
+    private int quantity;
 
     public AllocationRequest() {
     }
 
-    public String getCodeProduct() {
-        return codeProduct;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setCodeProduct(String codeProduct) {
-        this.codeProduct = codeProduct;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
-    public String getNameProduct() {
-        return nameProduct;
-    }
-
-    public void setNameProduct(String nameProduct) {
-        this.nameProduct = nameProduct;
-    }
-
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 }
