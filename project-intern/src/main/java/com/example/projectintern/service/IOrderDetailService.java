@@ -1,8 +1,6 @@
 package com.example.projectintern.service;
 
-import com.example.projectintern.dto.orderDetail.CustomerNoOrder;
-import com.example.projectintern.dto.orderDetail.ICustomerNoOrderDTO;
-import com.example.projectintern.dto.orderDetail.IOrderDetailDTO;
+import com.example.projectintern.dto.orderDetail.*;
 import com.example.projectintern.model.OrderDetail;
 
 import java.sql.Timestamp;
@@ -39,4 +37,6 @@ public interface IOrderDetailService {
 
     int saveOrder(String dateStart,int quantityBook,int customerId,
                   int employeeId,int productId, int statusId, double price);
+    List<IProductAnalystDTO> getListProductBestSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page);
+    List<IProductAnalystDTO> getListProductNoSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page);
 }

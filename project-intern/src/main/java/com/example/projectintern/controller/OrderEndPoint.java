@@ -11,12 +11,14 @@ import com.example.projectintern.service.ICustomerService;
 import com.example.projectintern.service.IEmployeeService;
 import com.example.projectintern.service.IOrderDetailService;
 import com.example.projectintern.service.IProductService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+import sun.security.pkcs11.P11Util;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -28,6 +30,8 @@ import java.util.function.Supplier;
 @Endpoint
 public class OrderEndPoint {
 
+    private static final String ADMIN = "ROLE_ADMIN";
+    private static final String USER = "ROLE_USER";
     private static final String NAMESPACE_URI = "http://interfaces.soap.springboot.vkakarla.com";
     @Autowired
     private IOrderDetailService orderDetailService;
@@ -40,9 +44,10 @@ public class OrderEndPoint {
     @Autowired
     private ICustomerService customerService;
 
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getOrderDetailByAdminRequest")
     @ResponsePayload
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({ADMIN, USER})
     public GetOrderDetailResponse getOrderDetailByAdmin(@RequestPayload GetOrderDetailByAdminRequest request) {
         if (request.getDateEnd().isEmpty()) {
             request.setDateEnd("9999-12-31");
@@ -56,14 +61,14 @@ public class OrderEndPoint {
         Employee employee = employeeService.getEmployeeByAccountUsername(requestFilter.getUserNameToken());
         int countRecordOrderRequest = orderDetailService.countRecordByOrderRequest(request.getAccountName(),
                 request.getEmployeeName(), request.getCodeProduct(), request.getCustomerName(), request.getCustomerPhoneNumber(),
-                request.getDateStart(),request.getDateEnd(),employee.getAccount().getRole().getName().equals("ROLE_ADMIN"),employee.getId());
+                request.getDateStart(), request.getDateEnd(), employee.getAccount().getRole().getName().equals("ROLE_ADMIN"), employee.getId());
 
         Supplier<OrderDTO> orderDTOSupplier = OrderDTO::new;
         List<OrderDTO> orderDTOList = new ArrayList<>();
         List<IOrderDetailDTO> orderDetailDTOList = orderDetailService.getOrderDetailByAdmin(request.getAccountName(),
                 request.getEmployeeName(), request.getCodeProduct(), request.getCustomerName(), request.getCustomerPhoneNumber(),
-                request.getDateStart(), request.getDateEnd(),employee.getAccount().getRole().getName().equals("ROLE_ADMIN"),
-                employee.getId(),request.getLimit(),(request.getPage() -1 ) * request.getLimit());
+                request.getDateStart(), request.getDateEnd(), employee.getAccount().getRole().getName().equals("ROLE_ADMIN"),
+                employee.getId(), request.getLimit(), (request.getPage() - 1) * request.getLimit());
         for (IOrderDetailDTO orderDetailDTO : orderDetailDTOList) {
             OrderDTO orderDTO = orderDTOSupplier.get();
             orderDTO.setDateStart(orderDetailDTO.getDateStart());
@@ -83,6 +88,7 @@ public class OrderEndPoint {
         response.setOrderDetailDTOs(orderDTOList);
         return response;
     }
+
     public List<String> validateSaveOrder(OrderDetailInfo orderDetailInfo) {
         List<String> errorList = new ArrayList<>();
         Product productByCodeProduct = productService.findProductByCodeProduct(orderDetailInfo.getCodeProduct());
@@ -95,53 +101,53 @@ public class OrderEndPoint {
         if (orderDetailInfo.getQuantityBook() <= 0) {
             errorList.add("Số lượng đặt hàng không hợp lệ, vui lòng đặt lại");
         }
-        if (customerPhoneNumber == null){
+        if (customerPhoneNumber == null) {
             errorList.add("Không tồn tại khách hàng trong hệ thống");
         }
         return errorList;
 
     }
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "saveOrderDetailRequest")
     @ResponsePayload
-    @Secured({"ROLE_ADMIN","ROLE_USER"})
+    @Secured({ADMIN,USER})
     @Transactional
     public SaveOrderDetailResponse saveOrderDetail(@RequestPayload SaveOrderDetailRequest request) throws Exception {
         SaveOrderDetailResponse response = new SaveOrderDetailResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         List<OrderDetailInfo> orderDetailInfoList = request.getOrderDetail();
-        for (OrderDetailInfo orderDetailInfo: orderDetailInfoList) {
-            if (orderDetailInfo.getId() == 0){
+        for (OrderDetailInfo orderDetailInfo : orderDetailInfoList) {
+            if (orderDetailInfo.getId() == 0) {
                 List<String> errorList = validateSaveOrder(orderDetailInfo);
-                if (errorList.size() == 0){
+                if (errorList.size() == 0) {
                     Customer customer = customerService.findCustomerByPhoneNumber(orderDetailInfo.getCustomerPhoneNumber());
                     Product product = productService.findProductByCodeProduct(orderDetailInfo.getCodeProduct());
                     Employee employee = employeeService.getEmployeeByAccountUsername(requestFilter.getUserNameToken());
-                    int orderSaved = orderDetailService.saveOrder(String.valueOf(LocalDate.now()),orderDetailInfo.getQuantityBook(),
-                            customer.getId(),employee.getId(),product.getId(),1, orderDetailInfo.getPrice());
-                    if (orderSaved != 1){
+                    int orderSaved = orderDetailService.saveOrder(String.valueOf(LocalDate.now()), orderDetailInfo.getQuantityBook(),
+                            customer.getId(), employee.getId(), product.getId(), 1, orderDetailInfo.getPrice());
+                    if (orderSaved != 1) {
                         throw new RuntimeException("Không lưu được đối tượng" + orderDetailInfo.toString());
-                    }else {
+                    } else {
                         serviceStatus.setStatus("TRUE");
                     }
-                }else {
+                } else {
                     throw new RuntimeException("Dữ liệu nhâp vào không hợp lệ," + errorList.toString() + orderDetailInfo.toString());
                 }
-            }else {
+            } else {
                 List<String> errorList = validateUpdateOrder(orderDetailInfo);
-                if (errorList.size() == 0){
+                if (errorList.size() == 0) {
                     Customer customer = customerService.findCustomerByPhoneNumber(orderDetailInfo.getCustomerPhoneNumber());
                     Product product = productService.findProductByCodeProduct(orderDetailInfo.getCodeProduct());
                     Employee employee = employeeService.getEmployeeByAccountUsername(requestFilter.getUserNameToken());
-                    int orderUpdated = orderDetailService.updateOrder(orderDetailInfo.getDateStart(),orderDetailInfo.getQuantityBook(),
-                            customer.getId(),employee.getId(),product.getId(),orderDetailInfo.getPrice(),orderDetailInfo.getId());
-                    if (orderUpdated != 1){
+                    int orderUpdated = orderDetailService.updateOrder(orderDetailInfo.getDateStart(), orderDetailInfo.getQuantityBook(),
+                            customer.getId(), employee.getId(), product.getId(), orderDetailInfo.getPrice(), orderDetailInfo.getId());
+                    if (orderUpdated != 1) {
                         throw new RuntimeException("Không cập nhật được đối tượng" + orderDetailInfo.toString());
-                    }
-                    else {
+                    } else {
                         serviceStatus.setStatus("TRUE");
                     }
-                }else {
-                    throw new RuntimeException("Dữ liệu nhập vào không hợp lệ,"+ errorList.toString() + orderDetailInfo.toString());
+                } else {
+                    throw new RuntimeException("Dữ liệu nhập vào không hợp lệ," + errorList.toString() + orderDetailInfo.toString());
                 }
             }
         }
@@ -167,49 +173,53 @@ public class OrderEndPoint {
         return errorList;
     }
 
-    public List<String> validateImportProduct(AllocationRequest request){
+    public List<String> validateImportProduct(AllocationRequest request) {
         List<String> errorList = new ArrayList<>();
-        if (!request.getProductCode().matches("^PR-\\d{4}$")){
+        if (!request.getProductCode().matches("^PR-\\d{4}$")) {
             errorList.add("Mã sản phẩm không đúng định dạng");
         }
-        if (request.getQuantity() <= 0){
+        if (request.getQuantity() <= 0) {
             errorList.add("Số lượng hàng không hợp lệ, vui lòng nhập lại");
         }
         return errorList;
     }
-    @Secured("ROLE_ADMIN")
+
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "allocationRequest")
     @ResponsePayload
+    @Secured({ADMIN})
     public AllocationResponse allocationProduct(@RequestPayload AllocationRequest request) {
         ServiceStatus status = new ServiceStatus();
         AllocationResponse response = new AllocationResponse();
         List<String> errorList = new ArrayList<>();
-        if (errorList.size() > 0){
+        if (errorList.size() > 0) {
             status.setError(errorList);
             status.setStatus("FLASE");
-        }else {
+        } else {
             Product product = productService.findProductByCodeProduct(request.getProductCode());
-            orderDetailService.importProduct(product.getId(),request.getQuantity());
+            orderDetailService.importProduct(product.getId(), request.getQuantity());
             status.setStatus("TRUE");
         }
         response.setServiceStatus(status);
         return response;
     }
-    @PayloadRoot(namespace = NAMESPACE_URI,localPart = "customerNotBuyRequest")
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "customerNotBuyRequest")
     @ResponsePayload
-    @Secured({"ROLE_ADMIN"})
-    public CustomerNotBuyResponse getCustomerNotBuy(@RequestPayload CustomerNotBuyRequest request){
-        if (request.getAnalystRequest().getDateStart().isEmpty()){
+    @Secured({ADMIN})
+    public CustomerNotBuyResponse getCustomerNotBuy(@RequestPayload CustomerNotBuyRequest request) {
+        if (request.getAnalystRequest().getDateStart().isEmpty()) {
             request.getAnalystRequest().setDateStart("2024-01-01");
         }
-        if (request.getAnalystRequest().getDateEnd().isEmpty()){
+        if (request.getAnalystRequest().getDateEnd().isEmpty()) {
             request.getAnalystRequest().setDateEnd("2024-10-10");
         }
         List<ICustomerNoOrderDTO> customerNoOrderList = orderDetailService.getListCustomerNoOrder(LocalDate.parse(request.getAnalystRequest().getDateStart()),
-                LocalDate.parse(request.getAnalystRequest().getDateEnd()),request.getAnalystRequest().getLimit(), request.getAnalystRequest().getPage());
+                LocalDate.parse(request.getAnalystRequest().getDateEnd()), request.getAnalystRequest().getLimit(),
+                ((request.getAnalystRequest().getPage() - 1) * request.getAnalystRequest().getLimit()));
         List<CustomerNoOrder> customerNoOrders = new ArrayList<>();
         Supplier<CustomerNoOrder> customerNoOrderSupplier = CustomerNoOrder::new;
-        for (ICustomerNoOrderDTO customerNoOrderDTO:customerNoOrderList) {
+        for (ICustomerNoOrderDTO customerNoOrderDTO : customerNoOrderList) {
             CustomerNoOrder customerNoOrder = customerNoOrderSupplier.get();
             customerNoOrder.setCustomerId(customerNoOrderDTO.getCustomerId());
             customerNoOrder.setCustomerName(customerNoOrderDTO.getCustomerName());
@@ -219,6 +229,56 @@ public class OrderEndPoint {
         }
         CustomerNotBuyResponse response = new CustomerNotBuyResponse();
         response.setCustomersNoOrder(customerNoOrders);
-        return  response;
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "productAnalystBestSellerRequest")
+    @ResponsePayload
+    @Secured({ADMIN})
+    public ProductAnalystResponse getListProductBestSeller(@RequestPayload ProductAnalystBestSellerRequest request) {
+        if (request.getAnalyst().getDateStart().equals("")) {
+            request.getAnalyst().setDateStart("2020-01-01");
+        }
+        if (request.getAnalyst().getDateEnd().equals("")) {
+            request.getAnalyst().setDateEnd("2025-01-01");
+        }
+        List<IProductAnalystDTO> productAnalystDTOList = orderDetailService.getListProductBestSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
+                LocalDate.parse(request.getAnalyst().getDateEnd()), request.getAnalyst().getLimit(), ((request.getAnalyst().getPage() - 1) * request.getAnalyst().getLimit()));
+        List<ProductAnalyst> productAnalystList = new ArrayList<>();
+        Supplier<ProductAnalyst> productAnalystSupplier = ProductAnalyst::new;
+        for (IProductAnalystDTO productAnalystTemp : productAnalystDTOList) {
+            ProductAnalyst productAnalyst = productAnalystSupplier.get();
+            BeanUtils.copyProperties(productAnalystTemp, productAnalyst);
+            productAnalystList.add(productAnalyst);
+        }
+        ProductAnalystResponse response = new ProductAnalystResponse();
+        response.setProductAnalyst(productAnalystList);
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "productAnalystNoSellRequest")
+    @ResponsePayload
+    @Secured({ADMIN})
+    public ProductAnalystResponse getListProductNoSell(@RequestPayload ProductAnalystNoSellRequest request){
+        if (request.getAnalyst().getDateStart().equals("")) {
+            request.getAnalyst().setDateStart("2020-01-01");
+        }
+        if (request.getAnalyst().getDateEnd().equals("")) {
+            request.getAnalyst().setDateEnd("2025-01-01");
+        }
+        List<IProductAnalystDTO> productAnalystDTOList = orderDetailService.getListProductNoSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
+                LocalDate.parse(request.getAnalyst().getDateEnd()), request.getAnalyst().getLimit(), ((request.getAnalyst().getPage() - 1) * request.getAnalyst().getLimit()));
+        List<ProductAnalyst> productAnalystList = new ArrayList<>();
+        Supplier<ProductAnalyst> productAnalystSupplier = ProductAnalyst::new;
+        for (IProductAnalystDTO productAnalystTemp : productAnalystDTOList) {
+            ProductAnalyst productAnalyst = productAnalystSupplier.get();
+            productAnalyst.setNameProduct(productAnalystTemp.getNameProduct());
+            productAnalyst.setCodeProduct(productAnalystTemp.getCodeProduct());
+            productAnalyst.setProductId(productAnalystTemp.getProductId());
+            productAnalystList.add(productAnalyst);
+        }
+        ProductAnalystResponse response = new ProductAnalystResponse();
+        response.setProductAnalyst(productAnalystList);
+        return response;
     }
 }

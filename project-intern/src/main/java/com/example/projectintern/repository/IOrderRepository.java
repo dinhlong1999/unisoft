@@ -142,7 +142,7 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
     @Procedure(name = "import_product")
     @Modifying
     void import_product(@Param("id_product") int productId,
-                       @Param("quantity") int quantity);
+                        @Param("quantity")   int quantity);
 
     @Query(value = "SELECT " +
             "            c.id           AS customerId, " +
@@ -165,9 +165,9 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "       LIMIT" +
             "            :limit OFFSET :page",nativeQuery = true)
     List<ICustomerNoOrderDTO> getListCustomerNoOrder(@Param("dateStart") LocalDate dateStart,
-                                                     @Param("dateEnd") LocalDate dateEnd,
+                                                     @Param("dateEnd")   LocalDate dateEnd,
                                                      @Param("limit") int limit,
-                                                     @Param("page") int page);
+                                                     @Param("page")  int page);
 
 
     @Query(value = "SELECT " +
@@ -184,9 +184,14 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "        GROUP BY " +
             "             p.code_product, p.id\n" +
             "        ORDER BY " +
-            "             quantity DESC",nativeQuery = true)
-    List<IProductAnalystDTO> getListProductBestSeller(@Param("dateStart") LocalDateTime dateStart,
-                                                      @Param("dateEnd") LocalDateTime dateEnd);
+            "             quantity DESC" +
+            "        LIMIT" +
+            "             :limit OFFSET :page",nativeQuery = true)
+
+    List<IProductAnalystDTO> getListProductBestSeller(@Param("dateStart") LocalDate dateStart,
+                                                      @Param("dateEnd") LocalDate dateEnd,
+                                                      @Param("limit") int limit,
+                                                      @Param("page") int page);
 
     @Query(value = "SELECT " +
             "            p.id            AS productId, " +
@@ -203,9 +208,13 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "                        JOIN " +
             "                            order_detail o ON o.product_id = p.id\n" +
             "                        where " +
-            "                            o.date_start BETWEEN :dateStart AND :dateEnd",nativeQuery = true)
+            "                            o.date_start BETWEEN :dateStart AND :dateEnd)" +
+            "       LIMIT" +
+            "           :limit OFFSET :page",nativeQuery = true)
     List<IProductAnalystDTO> getListProductNoBought(@Param("dateStart") LocalDate dateStart,
-                                                    @Param("dateEnd") LocalDate dateEnd);
+                                                    @Param("dateEnd") LocalDate dateEnd,
+                                                    @Param("limit") int limit,
+                                                    @Param("page") int page);
 
     @Query(value = "SELECT " +
             "count(*) as record " +
@@ -233,15 +242,15 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             " AND " +
             "     c.`name` LIKE :customerName " +
             " AND " +
-            " CASE " +
-            " WHEN :customerPhoneNumber IS NULL OR :customerPhoneNumber = '' THEN c.phone_number LIKE '0%' " +
-            "         ELSE c.phone_number LIKE CONCAT('%', :customerPhoneNumber, '%') " +
-            "     END " +
-            "     AND" +
+            "   CASE " +
+            "       WHEN :customerPhoneNumber IS NULL OR :customerPhoneNumber = '' THEN c.phone_number LIKE '0%' " +
+            "       ELSE c.phone_number LIKE CONCAT('%', :customerPhoneNumber, '%') " +
+            "   END " +
+            "  AND" +
             "         date_start BETWEEN :dateStart AND :dateEnd  " +
-            "     AND " +
+            "  AND " +
             "          (:isAdmin = true OR o.employee_id = :employeeId) \n" +
-            "ORDER BY " +
+            "  ORDER BY " +
             "    o.date_start desc",nativeQuery = true)
     int countRecordByOrderRequest(@Param("accountName") String accountName,
                                   @Param("employeeName") String employeeName,

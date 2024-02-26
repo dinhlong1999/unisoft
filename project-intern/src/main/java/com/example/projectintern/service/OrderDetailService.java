@@ -1,7 +1,9 @@
 package com.example.projectintern.service;
 
+import com.example.projectintern.dto.orderDetail.AnalystRequest;
 import com.example.projectintern.dto.orderDetail.ICustomerNoOrderDTO;
 import com.example.projectintern.dto.orderDetail.IOrderDetailDTO;
+import com.example.projectintern.dto.orderDetail.IProductAnalystDTO;
 import com.example.projectintern.model.OrderDetail;
 import com.example.projectintern.repository.IOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,4 +80,17 @@ public class OrderDetailService implements IOrderDetailService {
     public int saveOrder(String dateStart, int quantityBook, int customerId, int employeeId, int productId, int statusId, double price) {
         return orderRepository.saveOrder(LocalDate.parse(dateStart), quantityBook, customerId, employeeId, productId, statusId, price);
     }
+
+    @Override
+    public List<IProductAnalystDTO> getListProductBestSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page) {
+        return orderRepository.getListProductBestSeller(dateStart,dateEnd,limit,page);
+    }
+
+
+    @Override
+    public List<IProductAnalystDTO> getListProductNoSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page) {
+        return orderRepository.getListProductNoBought(dateStart,dateEnd,limit,page);
+    }
+
+
 }

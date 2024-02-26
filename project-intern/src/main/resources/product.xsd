@@ -413,13 +413,35 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="productAnalystBestSellerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="analyst" type="tns:analystRequest"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="productAnalyst">
+        <xs:sequence>
+            <xs:element name="productId" type="xs:int"/>
+            <xs:element name="codeProduct" type="xs:string"/>
+            <xs:element name="nameProduct" type="xs:string"/>
+            <xs:element name="quantity" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:element name="productAnalystResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="productId" type="xs:int"/>
-                <xs:element name="productCode" type="xs:string"/>
-                <xs:element name="productName" type="xs:string"/>
-                <xs:element name="quantity" type="xs:int"/>
+                <xs:element name="productAnalyst" type="tns:productAnalyst" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="productAnalystNoSellRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="analyst" type="tns:analystRequest"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
