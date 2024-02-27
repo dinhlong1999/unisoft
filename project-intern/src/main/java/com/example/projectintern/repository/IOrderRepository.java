@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -169,7 +167,6 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
                                                      @Param("limit") int limit,
                                                      @Param("page")  int page);
 
-
     @Query(value = "SELECT " +
             "             p.id                 AS productId, " +
             "             p.name_product       AS nameProduct, " +
@@ -208,7 +205,8 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "                        JOIN " +
             "                            order_detail o ON o.product_id = p.id\n" +
             "                        where " +
-            "                            o.date_start BETWEEN :dateStart AND :dateEnd)" +
+            "                            o.date_start BETWEEN :dateStart AND :dateEnd" +
+            ")" +
             "       LIMIT" +
             "           :limit OFFSET :page",nativeQuery = true)
     List<IProductAnalystDTO> getListProductNoBought(@Param("dateStart") LocalDate dateStart,

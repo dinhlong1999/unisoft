@@ -6,9 +6,26 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Map;
+
 
 public interface  IAccountRepository extends JpaRepository<Account,Integer> {
     Account findAccountByUsername(String username);
+
+    @Query(value = "select \n" +
+            "           username, \n" +
+            "           password,\n" +
+            "           `role`.`name` as roleName\n" +
+            "       from \n" +
+            "\t         `account`\n" +
+            "       join \n" +
+            "\t         `role` on `role`.id = `account`.role_id\n" +
+            "       where \n" +
+            "\t          username = :username " +
+            "       and\t\n" +
+            "\t           password = :password",nativeQuery = true)
+    Map<String,Object> getAccountByUsernameAndPassword(@Param("username") String username,
+                                                       @Param("password") String password);
 
     @Modifying
     @Query(value = "INSERT INTO `account`(" +

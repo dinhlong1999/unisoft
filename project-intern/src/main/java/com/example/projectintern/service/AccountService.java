@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AccountService implements IAccountService {
@@ -35,12 +36,18 @@ public class AccountService implements IAccountService {
         return accountRepository.getAccountByUsername(username);
     }
 
+    @Override
+    public Map<String, Object> getAccountByUsernameAndPassword(String username, String password) {
+        Map<String,Object> account = accountRepository.getAccountByUsernameAndPassword(username,password);
+        return account ;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findAccountByUsername(username);
         if (account == null){
-            throw new UsernameNotFoundException("Username or password is wrong");
+            throw new UsernameNotFoundException("Sai tên đăng nhập");
         }
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(account.getRole().getName()));

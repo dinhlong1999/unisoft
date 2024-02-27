@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'javax.jws:javax.jws-api:1.1'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'junit:junit:4.13.1'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
@@ -45,7 +46,8 @@ dependencies {
 //    implementation 'org.springframework.boot:spring-boot-starter-ws'
 //    // https://mvnrepository.com/artifact/org.springframework.ws/spring-ws-security
     implementation group: 'org.springframework.ws', name: 'spring-ws-security', version: '3.0.8.RELEASE'
-//
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation group: 'org.springframework.ws', name: 'spring-ws-test', version: '2.2.4.RELEASE'
 //        implementation('com.sun.xml.wss:xws-security:3.0') {
 //            exclude group: 'javax.xml.crypto', module: 'xmldsig'
 //        }
