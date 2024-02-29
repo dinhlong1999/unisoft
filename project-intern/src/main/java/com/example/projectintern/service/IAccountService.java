@@ -12,4 +12,6 @@ public interface IAccountService extends UserDetailsService{
     int getAccountByUsername( String username);
 
     Map<String,Object> getAccountByUsernameAndPassword(String username,String password);
+
+    int updateAccount(String username, String password, int roleId, int accountId);
 }

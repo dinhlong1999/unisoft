@@ -92,5 +92,15 @@ public class OrderDetailService implements IOrderDetailService {
         return orderRepository.getListProductNoBought(dateStart,dateEnd,limit,page);
     }
 
+    @Override
+    public double getTotalRecordByProductBestSeller(LocalDate dateStart, LocalDate dateEnd) {
+        return orderRepository.getTotalRecordByProductBestSeller(dateStart,dateEnd);
+    }
+
+    @Override
+    public double getTotalRecordByProductNoSeller(LocalDate dateStart, LocalDate dateEnd) {
+        return orderRepository.getTotalRecordByProductNoSeller(dateStart,dateEnd);
+    }
+
 
 }

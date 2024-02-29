@@ -240,6 +240,13 @@ public class OrderEndPoint {
         if (request.getAnalyst().getDateEnd().equals("")) {
             request.getAnalyst().setDateEnd("2025-01-01");
         }
+        double totalRecord = orderDetailService.getTotalRecordByProductBestSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
+                                                                               LocalDate.parse( request.getAnalyst().getDateEnd()));
+        double temp = totalRecord / request.getAnalyst().getLimit();
+        int totalPages = (int) Math.ceil(temp);
+        if ((request.getAnalyst().getPage() -1 ) >= totalPages ){
+            request.getAnalyst().setPage(totalPages);
+        }
         List<IProductAnalystDTO> productAnalystDTOList = orderDetailService.getListProductBestSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
                 LocalDate.parse(request.getAnalyst().getDateEnd()), request.getAnalyst().getLimit(), ((request.getAnalyst().getPage() - 1) * request.getAnalyst().getLimit()));
         List<ProductAnalyst> productAnalystList = new ArrayList<>();
@@ -264,6 +271,13 @@ public class OrderEndPoint {
         if (request.getAnalyst().getDateEnd().equals("")) {
             request.getAnalyst().setDateEnd("2025-01-01");
         }
+        double totalRecord = orderDetailService.getTotalRecordByProductNoSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
+                                                                             LocalDate.parse(request.getAnalyst().getDateEnd()));
+        double temp = totalRecord / request.getAnalyst().getLimit();
+        int totalPage = (int) Math.ceil(temp);
+        if ((request.getAnalyst().getPage()-1) >= totalPage){
+            request.getAnalyst().setPage(totalPage);
+        }
         List<IProductAnalystDTO> productAnalystDTOList = orderDetailService.getListProductNoSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
                 LocalDate.parse(request.getAnalyst().getDateEnd()), request.getAnalyst().getLimit(), ((request.getAnalyst().getPage() - 1) * request.getAnalyst().getLimit()));
         List<ProductAnalyst> productAnalystList = new ArrayList<>();
@@ -279,5 +293,7 @@ public class OrderEndPoint {
         response.setProductAnalyst(productAnalystList);
         return response;
     }
+
+
 
 }

@@ -42,6 +42,11 @@ public class AccountService implements IAccountService {
         return account ;
     }
 
+    @Override
+    public int updateAccount(String username, String password, int roleId, int accountId) {
+        return accountRepository.updateAccount(username, password, roleId,accountId);
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -56,6 +56,7 @@ public class EmployeeEndPoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "updateEmployeeRequest")
     @ResponsePayload
+    @Transactional
     @Secured("ROLE_ADMIN")
     public UpdateEmployeeResponse updateEmployee(@RequestPayload @Valid UpdateEmployeeRequest request) throws SOAPException {
         Account accountCheck = accountService.getAccountByUserName(request.getEmployeeInfo().getAccount().getUsername());
@@ -70,11 +71,13 @@ public class EmployeeEndPoint {
         }
         // kiểm tra validate
         if (errorList.size() > 0) {
-            serviceStatus.setStatus("Thất bại");
-            serviceStatus.setMessage("Vui lòng nhập lại");
-            serviceStatus.setError(errorList);
-            response.setServiceStatus(serviceStatus);
-            return response;
+//            serviceStatus.setStatus("Thất bại");
+//            serviceStatus.setMessage("Vui lòng nhập lại");
+//            serviceStatus.setError(errorList);
+//            response.setServiceStatus(serviceStatus);
+//            return response;
+
+            throw new SOAPException(errorList.toString());
         } else {
             Employee employee1 = new Employee();
             BeanUtils.copyProperties(request.getEmployeeInfo(), employee1);
@@ -86,6 +89,7 @@ public class EmployeeEndPoint {
             role.setId(request.getEmployeeInfo().getAccount().getRole().getId());
             role.setName(request.getEmployeeInfo().getAccount().getRole().getName());
             account.setRole(role);
+            int accountCheckUpdate = accountService.updateAccount(account.getUsername(), account.getPassword(),account.getRole().getId(),account.getId());
             employee1.setAccount(account);
             int employeeUpdate = employeeService.updateEmployeeVersion(employee1);
             if (employeeUpdate != 0) {
@@ -93,10 +97,11 @@ public class EmployeeEndPoint {
                 response.setServiceStatus(serviceStatus);
                 return response;
             } else {
-                serviceStatus.setStatus("FALSE");
-                serviceStatus.setMessage("Vui lòng cập nhật lại.");
-                response.setServiceStatus(serviceStatus);
-                return response;
+//                serviceStatus.setStatus("FALSE");
+//                serviceStatus.setMessage("Vui lòng cập nhật lại.");
+//                response.setServiceStatus(serviceStatus);
+//                return response;
+                throw new RuntimeException("Please update again");
             }
         }
     }

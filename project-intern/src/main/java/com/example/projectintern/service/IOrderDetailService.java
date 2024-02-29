@@ -39,4 +39,6 @@ public interface IOrderDetailService {
                   int employeeId,int productId, int statusId, double price);
     List<IProductAnalystDTO> getListProductBestSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page);
     List<IProductAnalystDTO> getListProductNoSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page);
+    double getTotalRecordByProductBestSeller(LocalDate dateStart, LocalDate dateEnd);
+    double getTotalRecordByProductNoSeller(LocalDate dateStart, LocalDate dateEnd);
 }

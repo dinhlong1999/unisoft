@@ -27,7 +27,6 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    @Transactional
     public void updateEmployee(Employee employee) {
         employeeRepository.saveEmployee(employee.getName(), employee.getPhoneNumber(), employee.getAccount().getId());
 //        employeeRepository.save(employee);

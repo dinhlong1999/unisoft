@@ -190,6 +190,25 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
                                                       @Param("limit") int limit,
                                                       @Param("page") int page);
 
+    @Query(value = "SELECT COUNT(*) AS totalRecord FROM \n" +
+            "                                       (SELECT " +
+            "                                             p.id                 AS productId, " +
+            "                                             p.name_product       AS nameProduct, " +
+            "                                             p.code_product       AS codeProduct, \n" +
+            "                                             SUM(o.quantity_book) AS quantity\n" +
+            "                                        FROM " +
+            "                                             product p " +
+            "                                        JOIN " +
+            "                                             order_detail o ON o.product_id = p.id\n" +
+            "                                        WHERE " +
+            "                                             o.date_start BETWEEN :dateStart AND :dateEnd " +
+            "                                        GROUP BY \n" +
+            "                                             p.code_product, p.id\n" +
+            "                                        ) AS product_best_seller",nativeQuery = true)
+    double getTotalRecordByProductBestSeller(@Param("dateStart") LocalDate dateStart,
+                                          @Param("dateEnd") LocalDate dateEnd);
+
+
     @Query(value = "SELECT " +
             "            p.id            AS productId, " +
             "            p.name_product  AS nameProduct, " +
@@ -204,7 +223,7 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "                            product p\n" +
             "                        JOIN " +
             "                            order_detail o ON o.product_id = p.id\n" +
-            "                        where " +
+            "                        WHERE " +
             "                            o.date_start BETWEEN :dateStart AND :dateEnd" +
             ")" +
             "       LIMIT" +
@@ -213,6 +232,30 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
                                                     @Param("dateEnd") LocalDate dateEnd,
                                                     @Param("limit") int limit,
                                                     @Param("page") int page);
+
+    @Query(value = "SELECT " +
+            "           COUNT(*) AS total_record" +
+            "       FROM " +
+            "            (SELECT " +
+            "                   p.id           AS productId, " +
+            "                   p.name_product AS nameProduct, " +
+            "                   p.code_product AS codeProduct " +
+            "             FROM " +
+            "                   product p " +
+            "             WHERE " +
+            "                   p.id NOT IN" +
+            "                           (SELECT " +
+            "                                  p.id" +
+            "                            FROM " +
+            "                                  product p" +
+            "                            JOIN " +
+            "                                  order_detail o ON o.product_id = p.id " +
+            "                            WHERE " +
+            "                                  o.date_start BETWEEN :dateStart AND :dateEnd " +
+            "                             ) " +
+            "             ) AS product_no_seller_view",nativeQuery = true)
+    double getTotalRecordByProductNoSeller(@Param("dateStart") LocalDate dateStart,
+                                        @Param("dateEnd") LocalDate dateEnd);
 
     @Query(value = "SELECT " +
             "count(*) as record " +
