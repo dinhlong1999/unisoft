@@ -15,7 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-public class EmployeeEndPoint {
+public class EmployeeEndPointTests {
 
     private final String URL ="http://localhost:8080/applicationService/application.wsdl";
 
