@@ -28,10 +28,10 @@ public class OrderDetailService implements IOrderDetailService {
     @Override
     public List<IOrderDetailDTO> getOrderDetailByAdmin(String accountName, String employeeName, String codeProduct,
                                                        String customerName, String customerPhoneNumber, String dateStart,
-                                                       String dateEnd,boolean isAdmin, int employeeId,int limit,int page) {
+                                                       String dateEnd,boolean isAdmin, int employeeId,int limit,int page, List<Integer> statusList) {
         return orderRepository.getOrderDetailByAdmin("%" + accountName + "%", "%" + employeeName + "%",
                  codeProduct, "%" + customerName + "%", customerPhoneNumber,
-                LocalDate.parse(dateStart), LocalDate.parse(dateEnd),isAdmin,employeeId,limit,page);
+                LocalDate.parse(dateStart), LocalDate.parse(dateEnd),isAdmin,employeeId,limit,page,statusList);
     }
 
     @Override

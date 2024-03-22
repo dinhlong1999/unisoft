@@ -1,6 +1,5 @@
 package com.example.projectintern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -26,8 +24,6 @@ public class AccountEndPointTests {
     @Autowired
     private WebTestClient webTestClient;
 
-    @Autowired
-    private ObjectMapper objectMapper;
 
     /**
      * Check case username and password is valid

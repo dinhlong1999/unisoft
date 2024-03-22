@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "",propOrder = {
@@ -18,7 +19,8 @@ import java.time.LocalDateTime;
         "isAdmin",
         "employeeId",
         "limit",
-        "page"
+        "page",
+        "orderStatus"
 })
 @XmlRootElement(name = "getOrderDetailByAdminRequest")
 public class GetOrderDetailByAdminRequest {
@@ -39,6 +41,9 @@ public class GetOrderDetailByAdminRequest {
     private String dateEnd;
     private boolean isAdmin;
     private int employeeId;
+
+    @XmlElement(required = true)
+    private List<Integer> orderStatus;
 
     @XmlElement(required = true)
     private int limit;
@@ -139,5 +144,13 @@ public class GetOrderDetailByAdminRequest {
 
     public void setPage(int page) {
         this.page = page;
+    }
+
+    public List<Integer> getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(List<Integer> orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }

@@ -5,14 +5,25 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "",propOrder = {
-        "productAnalyst"
+        "productAnalyst","errorList"
 })
 @XmlRootElement(name = "productAnalystResponse")
 public class ProductAnalystResponse {
     @XmlElement(required = true)
     private List<ProductAnalyst> productAnalyst;
 
+    @XmlElement(required = true)
+    private List<String> errorList;
+
     public ProductAnalystResponse() {
+    }
+
+    public List<String> getErrorList() {
+        return errorList;
+    }
+
+    public void setErrorList(List<String> errorList) {
+        this.errorList = errorList;
     }
 
     public List<ProductAnalyst> getProductAnalyst() {

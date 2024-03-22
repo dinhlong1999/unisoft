@@ -321,6 +321,7 @@
                 <xs:element name="dateEnd" type="xs:dateTime"/>
                 <xs:element name="limit" type="xs:int"/>
                 <xs:element name="page" type="xs:int"/>
+                <xs:element name="orderStatus" type="xs:int" minOccurs="1" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -401,6 +402,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="analystRequest" type="tns:analystRequest"/>
+
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -409,6 +411,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="customersNoOrder" type="tns:customerNoOrderDTO" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name = "errorList" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

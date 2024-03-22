@@ -20,7 +20,8 @@ public interface IOrderDetailService {
                                                 boolean isAdmin,
                                                 int employeeId,
                                                 int limit,
-                                                int page);
+                                                int page,
+                                                List<Integer> statusList);
     LocalDate getMaxDateStart();
     LocalDate getMinDateEnd();
     List<OrderDetail> getOrderDetailByProduct_IdOrderByDateStart(int id);

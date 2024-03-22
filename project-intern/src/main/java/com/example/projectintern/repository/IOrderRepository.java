@@ -59,6 +59,8 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "           date_start between :dateStart AND :dateEnd " +
             "        AND " +
             "           (:isAdmin = true or o.employee_id = :employeeId) " +
+            "        AND" +
+            "           o.status_id IN  (:statusId)" +
             "        ORDER BY " +
             "                o.date_start desc " +
             "        LIMIT " +
@@ -73,7 +75,8 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
                                                 @Param("isAdmin") boolean isAdmin,
                                                 @Param("employeeId") int employeeId,
                                                 @Param("limit") int limit,
-                                                @Param("page") int page);
+                                                @Param("page") int page,
+                                                @Param("statusId") List<Integer> statusList);
 
 
 
@@ -143,25 +146,28 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
                         @Param("quantity")   int quantity);
 
     @Query(value = "SELECT " +
-            "            c.id           AS customerId, " +
-            "            c.name         AS customerName, " +
-            "            c.phone_number AS customerPhoneNumber," +
-            "            c.address      AS customerAddress " +
-            "       FROM " +
-            "            customer c " +
+            "           c.id           as customerId," +
+            "           c.name         as customerName," +
+            "           c.phone_number as customerPhoneNumber," +
+            "           c.address      as customerAddress " +
+            "       FROM" +
+            "           customer c " +
+            "       LEFT JOIN " +
+            "           (SELECT \n" +
+            "                c.id AS customer_id," +
+            "                c.`name`, " +
+            "                o.id\n" +
+            "            FROM   \n" +
+            "                customer c \n" +
+            "            LEFT JOIN \n" +
+            "                order_detail o ON o.customer_id = c.id " +
+            "            WHERE \n" +
+            "                o.date_start BETWEEN :dateStart AND :dateEnd " +
+            "           ) AS temp ON temp.customer_id = c.id " +
             "       WHERE " +
-            "            c.id NOT IN " +
-            "                       (SELECT " +
-            "                               c.id " +
-            "                        FROM   " +
-            "                               customer c " +
-            "                        JOIN" +
-            "                               order_detail o ON o.customer_id = c.id " +
-            "                        WHERE " +
-            "                            o.date_start BETWEEN :dateStart AND :dateEnd" +
-            "                        )" +
-            "       LIMIT" +
-            "            :limit OFFSET :page",nativeQuery = true)
+            "               customer_id IS NULL" +
+            "       LIMIT " +
+            "           :limit OFFSET :page ",nativeQuery = true)
     List<ICustomerNoOrderDTO> getListCustomerNoOrder(@Param("dateStart") LocalDate dateStart,
                                                      @Param("dateEnd")   LocalDate dateEnd,
                                                      @Param("limit") int limit,
@@ -215,17 +221,18 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "            p.code_product  AS codeProduct " +
             "       FROM " +
             "            product p\n" +
-            "       WHERE " +
-            "            p.id NOT IN " +
-            "                       (SELECT  " +
-            "                            p.id   " +
-            "                        FROM " +
-            "                            product p\n" +
-            "                        JOIN " +
-            "                            order_detail o ON o.product_id = p.id\n" +
-            "                        WHERE " +
-            "                            o.date_start BETWEEN :dateStart AND :dateEnd" +
-            ")" +
+            "       LEFT JOIN" +
+            "            (SELECT  " +
+            "                  p.id AS product_id  " +
+            "             FROM " +
+            "                  product p\n" +
+            "             JOIN " +
+            "                  order_detail o ON o.product_id = p.id\n" +
+            "             WHERE " +
+            "                  o.date_start BETWEEN :dateStart AND :dateEnd" +
+            ") AS tableTemp ON tableTemp.product_id =p.id " +
+            "       WHERE" +
+            "            product_id IS NULL" +
             "       LIMIT" +
             "           :limit OFFSET :page",nativeQuery = true)
     List<IProductAnalystDTO> getListProductNoBought(@Param("dateStart") LocalDate dateStart,

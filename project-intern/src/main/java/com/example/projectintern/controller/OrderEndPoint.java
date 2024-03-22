@@ -11,6 +11,7 @@ import com.example.projectintern.service.ICustomerService;
 import com.example.projectintern.service.IEmployeeService;
 import com.example.projectintern.service.IOrderDetailService;
 import com.example.projectintern.service.IProductService;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -47,6 +48,7 @@ public class OrderEndPoint {
     @ResponsePayload
     @Secured({ADMIN, USER})
     public GetOrderDetailResponse getOrderDetailByAdmin(@RequestPayload GetOrderDetailByAdminRequest request) {
+        GetOrderDetailResponse response = new GetOrderDetailResponse();
         if (request.getDateEnd().isEmpty()) {
             request.setDateEnd("9999-12-31");
         }
@@ -54,7 +56,11 @@ public class OrderEndPoint {
             LocalDate dateMin = orderDetailService.getMinDateEnd();
             request.setDateStart("2000-12-31");
         }
-
+        List<String> error = validateAnalyst(request.getDateStart(),request.getDateEnd());
+        if (error.size() > 0){
+            response.setErrorList(error);
+            return response;
+        }
 
         Employee employee = employeeService.getEmployeeByAccountUsername(requestFilter.getUserNameToken());
         int countRecordOrderRequest = orderDetailService.countRecordByOrderRequest(request.getAccountName(),
@@ -66,7 +72,7 @@ public class OrderEndPoint {
         List<IOrderDetailDTO> orderDetailDTOList = orderDetailService.getOrderDetailByAdmin(request.getAccountName(),
                 request.getEmployeeName(), request.getCodeProduct(), request.getCustomerName(), request.getCustomerPhoneNumber(),
                 request.getDateStart(), request.getDateEnd(), employee.getAccount().getRole().getName().equals("ROLE_ADMIN"),
-                employee.getId(), request.getLimit(), (request.getPage() - 1) * request.getLimit());
+                employee.getId(), request.getLimit(), (request.getPage() - 1) * request.getLimit(),request.getOrderStatus());
         for (IOrderDetailDTO orderDetailDTO : orderDetailDTOList) {
             OrderDTO orderDTO = orderDTOSupplier.get();
             orderDTO.setDateStart(orderDetailDTO.getDateStart());
@@ -82,7 +88,7 @@ public class OrderEndPoint {
             orderDTO.setDateAllocation(orderDetailDTO.getDateAllocation());
             orderDTOList.add(orderDTO);
         }
-        GetOrderDetailResponse response = new GetOrderDetailResponse();
+
         response.setOrderDetailDTOs(orderDTOList);
         return response;
     }
@@ -173,11 +179,15 @@ public class OrderEndPoint {
 
     public List<String> validateImportProduct(AllocationRequest request) {
         List<String> errorList = new ArrayList<>();
+        Product product = productService.findProductByCodeProduct(request.getProductCode());
         if (!request.getProductCode().matches("^PR-\\d{4}$")) {
             errorList.add("Mã sản phẩm không đúng định dạng");
         }
         if (request.getQuantity() <= 0) {
             errorList.add("Số lượng hàng không hợp lệ, vui lòng nhập lại");
+        }
+        if (product == null){
+            errorList.add("Sản phẩm không tồn tại");
         }
         return errorList;
     }
@@ -202,6 +212,19 @@ public class OrderEndPoint {
         return response;
     }
 
+    public List<String> validateAnalyst(String dateStart, String dateEnd){
+        List<String> errorList = new ArrayList<>();
+        try {
+            int result = LocalDate.parse(dateStart).compareTo(LocalDate.parse(dateEnd));
+            if (result > 0){
+                errorList.add("Ngày bắt đầu không được lớn hơn ngày kết thúc");
+            }
+        }catch (Exception e){
+            errorList.add("Nhập dữ liệu không đúng định dạng");
+        }
+        return errorList;
+    }
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "customerNotBuyRequest")
     @ResponsePayload
     @Secured({ADMIN})
@@ -212,6 +235,13 @@ public class OrderEndPoint {
         if (request.getAnalystRequest().getDateEnd().isEmpty()) {
             request.getAnalystRequest().setDateEnd("2024-10-10");
         }
+        List<String> errorList = validateAnalyst(request.getAnalystRequest().getDateStart(),request.getAnalystRequest().getDateEnd());
+        CustomerNotBuyResponse response = new CustomerNotBuyResponse();
+        if (errorList.size() > 0){
+            response.setErrorList(errorList);
+            return response;
+        }
+
         List<ICustomerNoOrderDTO> customerNoOrderList = orderDetailService.getListCustomerNoOrder(LocalDate.parse(request.getAnalystRequest().getDateStart()),
                 LocalDate.parse(request.getAnalystRequest().getDateEnd()), request.getAnalystRequest().getLimit(),
                 ((request.getAnalystRequest().getPage() - 1) * request.getAnalystRequest().getLimit()));
@@ -225,7 +255,7 @@ public class OrderEndPoint {
             customerNoOrder.setCustomerAddress(customerNoOrderDTO.getCustomerAddress());
             customerNoOrders.add(customerNoOrder);
         }
-        CustomerNotBuyResponse response = new CustomerNotBuyResponse();
+
         response.setCustomersNoOrder(customerNoOrders);
         return response;
     }
@@ -240,6 +270,13 @@ public class OrderEndPoint {
         if (request.getAnalyst().getDateEnd().equals("")) {
             request.getAnalyst().setDateEnd("2025-01-01");
         }
+        List<String> errorList = validateAnalyst(request.getAnalyst().getDateStart(),request.getAnalyst().getDateEnd());
+        ProductAnalystResponse response = new ProductAnalystResponse();
+        if (errorList.size() > 0){
+            response.setErrorList(errorList);
+            return response;
+        }
+
         double totalRecord = orderDetailService.getTotalRecordByProductBestSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
                                                                                LocalDate.parse( request.getAnalyst().getDateEnd()));
         double temp = totalRecord / request.getAnalyst().getLimit();
@@ -256,7 +293,6 @@ public class OrderEndPoint {
             BeanUtils.copyProperties(productAnalystTemp, productAnalyst);
             productAnalystList.add(productAnalyst);
         }
-        ProductAnalystResponse response = new ProductAnalystResponse();
         response.setProductAnalyst(productAnalystList);
         return response;
     }
@@ -271,6 +307,13 @@ public class OrderEndPoint {
         if (request.getAnalyst().getDateEnd().equals("")) {
             request.getAnalyst().setDateEnd("2025-01-01");
         }
+        List<String> errorList = validateAnalyst(request.getAnalyst().getDateStart(),request.getAnalyst().getDateEnd());
+        ProductAnalystResponse response = new ProductAnalystResponse();
+        if (errorList.size() > 0){
+            response.setErrorList(errorList);
+            return response;
+        }
+
         double totalRecord = orderDetailService.getTotalRecordByProductNoSeller(LocalDate.parse(request.getAnalyst().getDateStart()),
                                                                              LocalDate.parse(request.getAnalyst().getDateEnd()));
         double temp = totalRecord / request.getAnalyst().getLimit();
@@ -289,7 +332,7 @@ public class OrderEndPoint {
             productAnalyst.setProductId(productAnalystTemp.getProductId());
             productAnalystList.add(productAnalyst);
         }
-        ProductAnalystResponse response = new ProductAnalystResponse();
+
         response.setProductAnalyst(productAnalystList);
         return response;
     }
