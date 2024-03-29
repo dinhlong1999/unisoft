@@ -1,7 +1,6 @@
-package com.example.projectintern.model;
+package com.example.springmvc.model;
 
-import javax.persistence.*;
-import java.util.Objects;
+import jakarta.persistence.*;
 
 @Entity
 public class Product {
@@ -21,9 +20,13 @@ public class Product {
     @Column(columnDefinition = "int default 0",nullable = false)
     private int inventory;
 
+    @Column(nullable = false)
+    private String images;
+
     @Column(columnDefinition = "int default 1",nullable = false)
     private int version;
-    public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,int version,int inventory) {
+    public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,
+                   int version,int inventory, String images) {
         this.id = id;
         this.codeProduct = codeProduct;
         this.nameProduct = nameProduct;
@@ -32,6 +35,7 @@ public class Product {
         this.flag = flag;
         this.version = version;
         this.inventory = inventory;
+        this.images = images;
     }
 
     public Product() {
@@ -105,40 +109,11 @@ public class Product {
         this.inventory = inventory;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return id == product.id && flag == product.flag && inventory == product.inventory && version == product.version
-                && Objects.equals(codeProduct, product.codeProduct) && Objects.equals(nameProduct, product.nameProduct)
-                && Objects.equals(priceSell, product.priceSell) && Objects.equals(priceBuy, product.priceBuy);
+    public String getImages() {
+        return images;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, codeProduct, nameProduct, priceSell, priceBuy, flag, inventory, version);
+    public void setImages(String images) {
+        this.images = images;
     }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", codeProduct='" + codeProduct + '\'' +
-                ", nameProduct='" + nameProduct + '\'' +
-                ", priceSell=" + priceSell +
-                ", priceBuy=" + priceBuy +
-                ", flag=" + flag +
-                ", inventory=" + inventory +
-                ", version=" + version +
-                '}';
-    }
-
-//    @Override
-//    public int compareTo(Product product) {
-//        if (this.getPriceBuy().compareTo(product.priceBuy) == 0){
-//            return -this.getPriceSell().compareTo(product.priceSell);
-//        }
-//        return this.getPriceBuy().compareTo(product.priceBuy) ;
-//    }
 }

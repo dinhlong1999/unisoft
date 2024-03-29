@@ -43,7 +43,7 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "           CASE \n" +
             "              WHEN :codeProduct IS NULL OR :codeProduct = '' THEN p.code_product like 'PR-%'\n" +
             "              ELSE p.code_product like CONCAT('%', :codeProduct, '%')\n " +
-            "        END" +
+            "           END" +
             "        AND" +
             "           a.username LIKE :accountName \n" +
             "        AND" +
@@ -54,7 +54,7 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "           CASE \n" +
             "              WHEN :customerPhoneNumber IS NULL OR :customerPhoneNumber = '' THEN c.phone_number like '0%'\n" +
             "              ELSE c.phone_number like CONCAT('%', :customerPhoneNumber, '%')\n" +
-            "        END" +
+            "           END" +
             "        AND " +
             "           date_start between :dateStart AND :dateEnd " +
             "        AND " +
@@ -105,7 +105,9 @@ public interface IOrderRepository extends JpaRepository<OrderDetail, Integer> {
             "           product_id    = :productId," +
             "           price         = :price " +
             "       WHERE " +
-            "           id = :id", nativeQuery = true)
+            "           id = :id " +
+            "       AND    " +
+            "           status_id = 1;", nativeQuery = true)
     int updateOrder(@Param("dateStart") LocalDate dateStart,
                     @Param("quantityBook") int quantityBook,
                     @Param("customerId") int customerId,

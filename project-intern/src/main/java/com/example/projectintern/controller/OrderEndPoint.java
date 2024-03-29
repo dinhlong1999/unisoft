@@ -128,7 +128,7 @@ public class OrderEndPoint {
                     Product product = productService.findProductByCodeProduct(orderDetailInfo.getCodeProduct());
                     Employee employee = employeeService.getEmployeeByAccountUsername(requestFilter.getUserNameToken());
                     int orderSaved = orderDetailService.saveOrder(String.valueOf(LocalDate.now()), orderDetailInfo.getQuantityBook(),
-                            customer.getId(), employee.getId(), product.getId(), 1, orderDetailInfo.getPrice());
+                            customer.getId(), employee.getId(), product.getId(), 1, product.getPriceSell());
                     if (orderSaved != 1) {
                         throw new RuntimeException("Không lưu được đối tượng" + orderDetailInfo.toString());
                     } else {
@@ -144,7 +144,7 @@ public class OrderEndPoint {
                     Product product = productService.findProductByCodeProduct(orderDetailInfo.getCodeProduct());
                     Employee employee = employeeService.getEmployeeByAccountUsername(requestFilter.getUserNameToken());
                     int orderUpdated = orderDetailService.updateOrder(orderDetailInfo.getDateStart(), orderDetailInfo.getQuantityBook(),
-                            customer.getId(), employee.getId(), product.getId(), orderDetailInfo.getPrice(), orderDetailInfo.getId());
+                            customer.getId(), employee.getId(), product.getId(), product.getPriceSell(), orderDetailInfo.getId());
                     if (orderUpdated != 1) {
                         throw new RuntimeException("Không cập nhật được đối tượng" + orderDetailInfo.toString());
                     } else {
@@ -199,7 +199,7 @@ public class OrderEndPoint {
     public AllocationResponse allocationProduct(@RequestPayload AllocationRequest request) {
         ServiceStatus status = new ServiceStatus();
         AllocationResponse response = new AllocationResponse();
-        List<String> errorList = new ArrayList<>();
+        List<String> errorList = validateImportProduct(request);
         if (errorList.size() > 0) {
             status.setError(errorList);
             status.setStatus("FLASE");
