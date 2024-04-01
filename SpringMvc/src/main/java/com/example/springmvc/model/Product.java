@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 public class Product {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -20,13 +21,10 @@ public class Product {
     @Column(columnDefinition = "int default 0",nullable = false)
     private int inventory;
 
-    @Column(nullable = false)
-    private String images;
-
     @Column(columnDefinition = "int default 1",nullable = false)
     private int version;
     public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,
-                   int version,int inventory, String images) {
+                   int version,int inventory) {
         this.id = id;
         this.codeProduct = codeProduct;
         this.nameProduct = nameProduct;
@@ -35,7 +33,6 @@ public class Product {
         this.flag = flag;
         this.version = version;
         this.inventory = inventory;
-        this.images = images;
     }
 
     public Product() {
@@ -109,11 +106,4 @@ public class Product {
         this.inventory = inventory;
     }
 
-    public String getImages() {
-        return images;
-    }
-
-    public void setImages(String images) {
-        this.images = images;
-    }
 }

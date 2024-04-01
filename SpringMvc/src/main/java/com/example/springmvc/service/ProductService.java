@@ -2,6 +2,9 @@ package com.example.springmvc.service;
 
 import com.example.springmvc.model.Product;
 import com.example.springmvc.repository.IProductRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,4 +40,10 @@ public class ProductService implements IProductService {
     public int totalRowGetListProduct(String codeProduct, String nameProduct) {
         return productRepository.totalCountGetListProduct(codeProduct,nameProduct);
     }
+    
+    @Transactional
+	@Override
+	public int deleteProductById(int id) {
+		return  productRepository.deleteProduct(id);
+	}
 }

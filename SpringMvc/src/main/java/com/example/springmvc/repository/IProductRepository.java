@@ -2,6 +2,7 @@ package com.example.springmvc.repository;
 
 import com.example.springmvc.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -40,4 +41,7 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
     int totalCountGetListProduct(@Param("codeProduct") String codeProduct,
                                  @Param("nameProduct") String nameProduct
                                  );
+    @Modifying
+    @Query(value = "update product set flag = 1 where id = :id",nativeQuery = true)
+    int deleteProduct(@Param("id") int id);
 }

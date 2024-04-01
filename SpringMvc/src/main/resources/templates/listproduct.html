@@ -24,8 +24,11 @@
 <body>
 <div class="container">
     <h1>Danh sách sản phẩm</h1>
+    <div style="color: red" th:if="${message}">
+        <span th:text="${message}"></span>
+    </div>
     <div>
-        <form th:action="@{/product/list}" method="get">
+        <form th:action="@{/product/list}" method="get" >
             <div>
             <span>
                 Mã sản phẩm : <input type="text" style="width: 20%" name="codeProduct" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
@@ -37,7 +40,7 @@
             </span>
             </div>
             <div style="margin-top: 5px">
-                <input style="margin-bottom: 5px" type="submit" value="Tìm kiếm">
+                <input style="margin-bottom: 5px" type="submit" value="Search">
                 <input style="margin-bottom: 5px" type="reset" value="Clear" >
             </div>
         </form>
@@ -52,31 +55,42 @@
                 <th>Giá mua vào</th>
                 <th>Giá bán ra</th>
                 <th>Tồn Kho</th>
-                <th>Xoá</th>
+                <th colspan ="2" >Hành động</th>
+                
             </tr>
             <tr th:each="product,status:${productList}">
                 <td th:text="${status.count}"></td>
                 <td th:text="${product.codeProduct}"></td>
                 <td th:text="${product.nameProduct}"></td>
-                <td th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
-                <td th:text="${#numbers.formatDecimal(product.priceSell, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                <td th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                <td th:text="${#numbers.formatDecimal(product.priceSell, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 <td th:text="${product.inventory}"></td>
                 <td>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Xoá
-                    </button>
+                    <button type="button" class="btn btn-primary">
+  						Chỉnh sửa
+					</button>
                 </td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr ="onclick=|sendData(${product.id},'${product.nameProduct}')|">
+  						Xóa
+					</button>
+                </td>
+                 
             </tr>
         </table>
         <div>
             <nav aria-label="Page navigation example" >
                 <ul class="pagination" style="display: flex;justify-content: center">
 
-                    <li th:if="${totalPage > 1}" class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPage)}">
-                        <a th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${pageNumber}" class="page-link">Page <span th:text="${pageNumber}"></span></a>
+                    <li th:if="${page != 0 }" class="page-item">
+                   		 <a class="page-link" th:href="@{/product/list(page=${page},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Previous</a>
                     </li>
-                    <li  th:if="${totalPage > 3 }" class="page-item"><a class="page-link" href="#">Next</a></li>
+                    <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPage)}" >
+                        <a th:if = "${pageNumber != 0}" th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${pageNumber}" class="page-link">Page <span th:text="${pageNumber}"></span></a>
+                    </li>
+<!--                     <li  th:if="${page < totalPage }" class="page-item"> -->
+<!--                     	<a class="page-link" th:href="@{/product/list(page=${page+1},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Next</a> -->
+<!--                     </li> -->
                 </ul>
             </nav>
         </div>
@@ -87,6 +101,35 @@
     </div>
 
 </div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form th:action ="@{/product/delete}" method= "post">
+       <div class="modal-body">
+	      Bạn có muốn xóa sản phẩm <span id="name" style="color:red"></span>
+	   	<input type="hidden" id="id" name="idDelete">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-primary">Xóa</button>
+      </div>
+       </form>
+    </div>
+  </div>
+</div>
+<script>
+	function sendData(id,name){
+		document.getElementById("id").value = id;
+		document.getElementById("name").innerText = name;
+		console.log(id,name)
+	}
+
+</script>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"

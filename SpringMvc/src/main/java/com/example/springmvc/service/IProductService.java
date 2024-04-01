@@ -10,4 +10,7 @@ public interface IProductService {
     List<Product> getListProduct(String codeProduct, String nameProduct, int limit, int offset);
 
     int totalRowGetListProduct(String codeProduct, String nameProduct);
+    
+    int deleteProductById(int id);
+    
 }
