@@ -1,27 +1,23 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
 
-@Entity
+
 public class Product {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
-    @Column(name = "code_product",nullable = false)
+
     private String codeProduct;
-    @Column(name = "name_product",nullable = false)
+
     private String nameProduct;
-    @Column(name = "price_sell",nullable = false)
+
     private Double priceSell;
-    @Column(name = "price_buy",nullable = false)
+
     private Double priceBuy;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+    
     private boolean flag;
-    @Column(columnDefinition = "int default 0",nullable = false)
+
     private int inventory;
 
-    @Column(columnDefinition = "int default 1",nullable = false)
     private int version;
     public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,
                    int version,int inventory) {

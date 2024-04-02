@@ -1,8 +1,8 @@
 package com.example.springmvc.service;
 
 import com.example.springmvc.model.Product;
-import com.example.springmvc.repository.IProductRepository;
 
+import com.example.springmvc.repository.ProductMapper;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,25 +11,25 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class ProductService implements IProductService {
 
     @Autowired
-    private IProductRepository productRepository;
+    private ProductMapper productMapper;
+    
     @Override
     public List<Product> getListProduct(String codeProduct, String nameProduct, int limit, int offset) {
-        List<Map<String,Object>> productMap = productRepository.getListProduct(codeProduct,nameProduct,limit,offset);
+        List<Map<String,Object>> productMap = productMapper.getListProduct(codeProduct,nameProduct,limit,offset);
         List<Product> productList = new ArrayList<>();
         for (Map<String,Object> map: productMap) {
             Product product = new Product();
             product.setId((int) map.get("id"));
-            product.setCodeProduct((String) map.get("code_product"));
-            product.setNameProduct((String) map.get("name_product"));
+            product.setCodeProduct((String) map.get("codeProduct"));
+            product.setNameProduct((String) map.get("nameProduct"));
             product.setInventory((int) map.get("inventory"));
-            product.setPriceBuy((double) map.get("price_buy"));
-            product.setPriceSell((double) map.get("price_sell"));
+            product.setPriceBuy((double) map.get("priceBuy"));
+            product.setPriceSell((double) map.get("priceSell"));
            productList.add(product);
 
         }
@@ -38,12 +38,14 @@ public class ProductService implements IProductService {
 
     @Override
     public int totalRowGetListProduct(String codeProduct, String nameProduct) {
-        return productRepository.totalCountGetListProduct(codeProduct,nameProduct);
+        return productMapper.totalCountGetListProduct(codeProduct,nameProduct);
     }
     
     @Transactional
 	@Override
 	public int deleteProductById(int id) {
-		return  productRepository.deleteProduct(id);
+		  productMapper.deleteProduct(id);
+	 int result = productMapper.getDeleteProductCount(id);
+	 return result;
 	}
 }

@@ -29,26 +29,28 @@ public class ProductController {
         if (page != 0){
             page = page -1;
         }
-        List<Product> productList = productService.getListProduct(codeProduct,nameProduct,4,4*page);
+        int limit = 3;
+        List<Product> productList = productService.getListProduct(codeProduct,nameProduct,limit,limit*page);
         int totalRow = productService.totalRowGetListProduct(codeProduct,nameProduct) ;
-        double temp = (double) totalRow / 4 ;
+        double temp = (double) totalRow / limit ;
         int totalPage = (int) Math.ceil(temp);
         model.addAttribute("productList",productList);
         model.addAttribute("totalPage",totalPage);
         model.addAttribute("codeProduct",codeProduct);
         model.addAttribute("nameProduct",nameProduct);
         model.addAttribute("page",page);
+        model.addAttribute("limit",limit);
         return "listproduct";
     }
     
     @PostMapping("/delete")
     public String deleteProduct(@RequestParam int idDelete, RedirectAttributes redirectAttributes) {
     	int rowEffect = productService.deleteProductById(idDelete);
-    	if (rowEffect != 0) {
-    		redirectAttributes.addFlashAttribute("message","Xóa thành công");
+    	if (rowEffect == 1) {
+    		redirectAttributes.addFlashAttribute("message","Xóa thành công.");
     		return "redirect:/product/list";
     	}else {
-    		redirectAttributes.addFlashAttribute("message","Xóa thất bại");
+    		redirectAttributes.addFlashAttribute("message","Xóa thất bại.");
     		return "redirect:/product/list";
     	}
     }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.springmvc.repository.ProductMapper">
+    <select id="getListProduct" resultType="java.util.Map">
+        <![CDATA[
+        SELECT
+            id, codeProduct, flag, inventory, nameProduct, priceBuy, priceSell
+        FROM
+            product
+        WHERE
+            1=1
+        AND flag = 0
+        AND
+            (CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
+            THEN  codeProduct LIKE concat('%', #{arg0},'%')
+            ELSE 1=1 END)
+        AND
+            ( CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
+            THEN  nameProduct LIKE concat('%', #{arg1},'%')
+            ELSE 1=1 END)
+
+        ORDER BY
+            nameProduct
+        LIMIT
+            #{arg2} OFFSET #{arg3}
+        ]]>
+    </select>
+
+    <select id="totalCountGetListProduct" resultType="int">
+        <![CDATA[
+            select
+                count(*)
+            from
+                 product
+            where
+              1=1
+        	AND
+        	  flag = 0
+            
+            AND
+               (CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
+            		THEN  codeProduct LIKE concat('%', #{arg0},'%')
+            		ELSE 1=1 
+            	END)
+        	AND
+               (CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
+            		THEN  nameProduct LIKE concat('%', #{arg1},'%')
+            		ELSE 1=1 
+            	END)	
+        ]]>
+    </select>
+    
+    <insert id="insertProduct" parameterType="com.example.springmvc.model.Product">
+    	<![CDATA[
+    		insert into product(codeProduct,nameProduct,inventory,priceBuy,priceSell)
+    		values(#{codeProduct},#{nameProduct},#{inventory},#{priceBuy},#{priceSell}
+    	]]>
+    </insert>
+    
+    <update id="deleteProduct"  parameterType="int">
+    	<![CDATA[
+    		update product set flag = 1 where id = #{id};
+    	]]>
+    </update>
+    
+    <select id="getDeleteProductCount" parameterType="int" resultType="int">
+    <![CDATA[
+        select count(*) from product where id = #{id} and flag = 1;
+    ]]>
+</select>
+</mapper>

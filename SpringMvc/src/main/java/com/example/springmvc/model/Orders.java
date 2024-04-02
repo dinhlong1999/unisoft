@@ -1,38 +1,28 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-@Entity
 public class Orders {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
-    private Employee employee;
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
-    private Product product;
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private Customer customer;
-    @ManyToOne
-    @JoinColumn(name = "status_id", referencedColumnName = "id")
-    private Status status;
 
-    @Column(name = "quantity_book",nullable = false)
+    private int id;
+
+    private int employeeId;
+
+    private int productId;
+
+    private int customerId;
+
+    private int statusId;
+
     private int quantityBook;
-    @Column(name = "date_start" ,nullable = false)
+
     private LocalDateTime dateStart;
-    @Column(name = "date_allocation")
+
     private LocalDateTime dateAllocation;
     private double price;
 
-    @Column(columnDefinition = "int default 1",nullable = false)
     private int version;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
     private boolean flag;
 
 
@@ -40,10 +30,10 @@ public class Orders {
     }
 
     public Orders(int id,
-                  Employee employee,
-                  Product product,
-                  Customer customer,
-                  Status status,
+                  int employeeId,
+                  int productId,
+                  int customerId,
+                  int statusId,
                   int quantityBook,
                   LocalDateTime dateStart,
                   boolean flag,
@@ -51,10 +41,10 @@ public class Orders {
                   double price,
                   int version) {
         this.id = id;
-        this.employee = employee;
-        this.product = product;
-        this.customer = customer;
-        this.status = status;
+        this.employeeId = employeeId;
+        this.productId = productId;
+        this.customerId = customerId;
+        this.statusId = statusId;
         this.quantityBook = quantityBook;
         this.dateStart = dateStart;
         this.flag = flag;
@@ -71,36 +61,36 @@ public class Orders {
         this.id = id;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 
-    public Product getProduct() {
-        return product;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
-    public Status getStatus() {
-        return status;
+    public int getStatusId() {
+        return statusId;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
     }
 
     public int getQuantityBook() {
@@ -117,15 +107,6 @@ public class Orders {
 
     public void setDateStart(LocalDateTime dateStart) {
         this.dateStart = dateStart;
-    }
-
-
-    public boolean getFlag() {
-        return flag;
-    }
-
-    public void setFlag(boolean flag) {
-        this.flag = flag;
     }
 
     public LocalDateTime getDateAllocation() {
@@ -154,5 +135,9 @@ public class Orders {
 
     public boolean isFlag() {
         return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
 }

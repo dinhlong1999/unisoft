@@ -1,35 +1,28 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
-
-@Entity
 public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
-    @Column(name = "username",nullable = false)
+    private int id;
     private String username;
-    @Column(nullable = false)
+
     private String password;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+
     private boolean flag;
 
-    @Column(columnDefinition = "int default 1",nullable = false)
+
     private int version;
-    @ManyToOne
-    @JoinColumn(name = "role_id",referencedColumnName = "id")
-    private Role role;
+
+    private int roleId;
 
     public Account() {
     }
 
-    public Account(int id, String username, String password, boolean flag, Role role, int version) {
+    public Account(int id, String username, String password, boolean flag, int roleId, int version) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.flag = flag;
-        this.role = role;
+        this.roleId = roleId;
         this.version = version;
     }
 
@@ -65,19 +58,19 @@ public class Account {
         this.flag = flag;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public int getVersion() {
         return version;
     }
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 }

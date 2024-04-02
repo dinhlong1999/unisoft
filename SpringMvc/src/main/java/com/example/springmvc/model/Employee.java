@@ -1,32 +1,28 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
-@Entity
 public class Employee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
-    @Column(nullable = false)
+
     private String name;
-    @Column(name = "phone_number",nullable = false)
+
     private String phoneNumber;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id",referencedColumnName = "id")
-    private Account account;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+
+    private int accountId;
+
     private boolean flag;
-    @Column(columnDefinition = "int default 1",nullable = false)
+
     private int version;
 
     public Employee() {
     }
 
 
-    public Employee(int id, String name, String phoneNumber, Account account, boolean flag, int version) {
+    public Employee(int id, String name, String phoneNumber, int accountId, boolean flag, int version) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.account = account;
+        this.accountId = accountId;
         this.flag = flag;
         this.version = version;
     }
@@ -55,12 +51,12 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-    public Account getAccount() {
-        return account;
+    public int getAccountId() {
+        return accountId;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
     }
 
     public boolean getFlag() {
