@@ -11,4 +11,8 @@ public interface IProductService {
     
     int deleteProductById(int id);
     
+    int insertProduct(Product product);
+    boolean isNameProductExists(String nameProduct);
+
+    boolean isCodeProductExists(String codeProduct);
 }

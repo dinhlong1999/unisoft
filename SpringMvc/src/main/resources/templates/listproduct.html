@@ -19,6 +19,14 @@
         body {
             background-color: #EAE9E5;
         }
+        .createform {
+        	margin-bottom:5px;
+        }
+        .createform button {
+        	background-color:white;
+        	border-radius:5px;
+        }
+        
        
     </style>
 </head>
@@ -30,6 +38,11 @@
         <span th:text="${message}"></span>
     </div>
     
+  	<div class="createform">
+  		<button th:attr ="onclick=|saveDataInStorage(${page},'${nameProduct}','${codeProduct}')|">
+  			<a th:href="@{/product/showform}" style="text-decoration: none;color:black">Thêm mới sản phẩm</a>
+  		</button>
+  	</div>
     <div>
      
     </div>
@@ -119,7 +132,7 @@
       </div>
       <form th:action ="@{/product/delete}" method= "post">
        <div class="modal-body">
-	      Bạn có muốn xóa sản phẩm : <span id="name" style="color:red"></span> ?
+	      Bạn có muốn xóa sản phẩm : <span id="name" style="color:red"></span>?
 	   	<input type="hidden" id="id" name="idDelete">
       </div>
       <div class="modal-footer">
@@ -136,6 +149,12 @@
 		document.getElementById("name").innerText = name;
 		console.log(id,name)
 	}
+
+    function saveDataInStorage(page,nameProduct,codeProduct) {
+        localStorage.setItem("page",page);
+        localStorage.setItem("nameProduct",nameProduct);
+        localStorage.setItem("codeProduct",codeProduct);
+    }
 
 </script>
 

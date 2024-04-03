@@ -2,6 +2,7 @@ package com.example.springmvc.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.springmvc.model.Product;
 
 import java.util.List;
 import java.util.Map;
@@ -21,4 +22,10 @@ public interface ProductMapper {
     void deleteProduct(int id);
     
     int getDeleteProductCount(int id);
+    
+    int insertProduct(Product product);
+    
+    int getNameProductExists(String nameProduct);
+    
+    int getCodeProductExists(String codeProduct);
 }

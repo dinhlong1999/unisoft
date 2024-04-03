@@ -52,12 +52,22 @@
         ]]>
     </select>
     
-    <insert id="insertProduct" parameterType="com.example.springmvc.model.Product">
+    <insert id="insertProduct" parameterType="com.example.springmvc.model.Product" useGeneratedKeys="true" keyProperty="id">
     	<![CDATA[
     		insert into product(codeProduct,nameProduct,inventory,priceBuy,priceSell)
-    		values(#{codeProduct},#{nameProduct},#{inventory},#{priceBuy},#{priceSell}
+    		values(#{codeProduct},#{nameProduct},#{inventory},#{priceBuy},#{priceSell});
     	]]>
+    	
     </insert>
+    
+    
+  	 <select id="getNameProductExists" resultType="int" >
+   		select count(*) from product where nameProduct = #{nameProduct}
+     </select>
+     
+     <select id="getCodeProductExists" resultType ="int">
+     	select count(*) from product where codeProduct = #{codeProduct}
+     </select>
     
     <update id="deleteProduct"  parameterType="int">
     	<![CDATA[

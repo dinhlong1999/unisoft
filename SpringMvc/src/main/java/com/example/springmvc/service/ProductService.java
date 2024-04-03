@@ -17,6 +17,7 @@ public class ProductService implements IProductService {
 
     @Autowired
     private ProductMapper productMapper;
+
     
     @Override
     public List<Product> getListProduct(String codeProduct, String nameProduct, int limit, int offset) {
@@ -47,5 +48,23 @@ public class ProductService implements IProductService {
 		  productMapper.deleteProduct(id);
 	 int result = productMapper.getDeleteProductCount(id);
 	 return result;
+	}
+
+	@Override
+	public int insertProduct(Product product) {
+		return productMapper.insertProduct(product);
+	}
+
+
+
+    @Override
+	public boolean isCodeProductExists(String codeProduct) {
+		int count = productMapper.getCodeProductExists(codeProduct);
+        return count == 0;
+    }
+	
+	public boolean isNameProductExists(String nameProduct) {
+		int count = productMapper.getNameProductExists(nameProduct);
+		return count == 0;
 	}
 }
