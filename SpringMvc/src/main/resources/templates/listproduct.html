@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Danh sach san pham</title>
@@ -39,7 +38,7 @@
     </div>
     
   	<div class="createform">
-  		<button th:attr ="onclick=|saveDataInStorage(${page},'${nameProduct}','${codeProduct}')|">
+  		<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
   			<a th:href="@{/product/showform}" style="text-decoration: none;color:black">Thêm mới sản phẩm</a>
   		</button>
   	</div>
@@ -86,12 +85,12 @@
                 <td th:text="${#numbers.formatDecimal(product.priceSell, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 <td th:text="${product.inventory}"></td>
                 <td>
-                    <button type="button" class="btn btn-primary">
-  						Chỉnh sửa
-					</button>
+  					<button type="button" class="btn btn-light" th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
+  						<a th:href="@{/product/showformedit/{id}(id=${product.id})}" style="text-decoration: none;color:black">Chỉnh sửa</a>
+  					</button>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr ="onclick=|sendData(${product.id},'${product.nameProduct}')|">
+                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr ="onclick=|sendData(${product.id},'${product.nameProduct}')|">
   						Xóa
 					</button>
                 </td>
@@ -150,12 +149,15 @@
 		console.log(id,name)
 	}
 
-    function saveDataInStorage(page,nameProduct,codeProduct) {
-        localStorage.setItem("page",page);
+    function saveDataInLocalStorage(page,nameProduct,codeProduct) {
+        localStorage.setItem("page",page+1);
         localStorage.setItem("nameProduct",nameProduct);
         localStorage.setItem("codeProduct",codeProduct);
     }
 
+    window.onload=function (){
+        localStorage.clear();
+    }
 </script>
 
 </body>

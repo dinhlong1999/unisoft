@@ -28,4 +28,13 @@ public interface ProductMapper {
     int getNameProductExists(String nameProduct);
     
     int getCodeProductExists(String codeProduct);
+    
+    Product getProductById(int id);
+    
+    int updateProduct(Product product);
+    
+    int getNameProductExistsToUpdate(String nameProduct,int id);
+    
+    int getCodeProductExistsToUpdate(String codeProduct,int id);
+    
 }

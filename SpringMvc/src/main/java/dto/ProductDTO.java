@@ -1,7 +1,5 @@
 package dto;
 
-import jakarta.validation.constraints.NotNull;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -132,6 +130,9 @@ public class ProductDTO	implements  Validator {
 		}
 		if (productDTO.getPriceSell() <= 0) {
 			errors.rejectValue("priceSell", null, "Giá bán ra không hợp lệ");
+		}
+		if (productDTO.getInventory() < 0) {
+			errors.rejectValue("inventory", null, "Số lượng tồn kho nhập vào không hợp lệ");
 		}
 	}
 }

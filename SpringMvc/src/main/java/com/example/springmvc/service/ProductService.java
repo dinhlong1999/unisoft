@@ -55,8 +55,6 @@ public class ProductService implements IProductService {
 		return productMapper.insertProduct(product);
 	}
 
-
-
     @Override
 	public boolean isCodeProductExists(String codeProduct) {
 		int count = productMapper.getCodeProductExists(codeProduct);
@@ -66,5 +64,27 @@ public class ProductService implements IProductService {
 	public boolean isNameProductExists(String nameProduct) {
 		int count = productMapper.getNameProductExists(nameProduct);
 		return count == 0;
+	}
+
+	@Override
+	public Product getProductById(int id) {
+		return productMapper.getProductById(id) ;
+	}
+
+	@Override
+	public int updateProduct(Product product) {
+		return productMapper.updateProduct(product);
+	}
+
+	@Override
+	public boolean isNameProductExistsToUpdate(String nameProduct, int id) {
+		int result = productMapper.getNameProductExistsToUpdate(nameProduct, id);
+		return result == 0;
+	}
+
+	@Override
+	public boolean isCodeProductExistsToUpdate(String codeProduct, int id) {
+		int result = productMapper.getCodeProductExistsToUpdate(codeProduct, id);
+		return result == 0;
 	}
 }

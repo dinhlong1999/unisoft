@@ -30,11 +30,11 @@
 
     <select id="totalCountGetListProduct" resultType="int">
         <![CDATA[
-            select
+            SELECT
                 count(*)
-            from
-                 product
-            where
+            FROM
+                product
+            WHERE
               1=1
         	AND
         	  flag = 0
@@ -54,30 +54,112 @@
     
     <insert id="insertProduct" parameterType="com.example.springmvc.model.Product" useGeneratedKeys="true" keyProperty="id">
     	<![CDATA[
-    		insert into product(codeProduct,nameProduct,inventory,priceBuy,priceSell)
-    		values(#{codeProduct},#{nameProduct},#{inventory},#{priceBuy},#{priceSell});
+    		INSERT INTO product(codeProduct,nameProduct,inventory,priceBuy,priceSell)
+    		VALUES(
+    			#{codeProduct},
+    			#{nameProduct},
+    			#{inventory},
+    			#{priceBuy},
+    			#{priceSell}
+    			);
     	]]>
     	
     </insert>
     
     
   	 <select id="getNameProductExists" resultType="int" >
-   		select count(*) from product where nameProduct = #{nameProduct}
+   		SELECT 
+   			count(*) 
+   		FROM 
+   			product 
+   		WHERE 
+   			nameProduct = #{nameProduct}
      </select>
      
      <select id="getCodeProductExists" resultType ="int">
-     	select count(*) from product where codeProduct = #{codeProduct}
+     	SELECT 
+     		count(*) 
+     	FROM 
+     		product 
+     	WHERE 
+     		codeProduct = #{codeProduct}
+     </select>
+     
+     <select id="getNameProductExistsToUpdate" resultType="int">
+     	<![CDATA[
+     		SELECT 
+   				count(*) 
+   			FROM 
+   				product 
+   			WHERE 
+   				nameProduct = #{arg0}
+			AND
+			id <> #{arg1};
+     	]]>
+     </select>
+     <select id="getCodeProductExistsToUpdate" resultType="int">
+     	<![CDATA[
+     		SELECT 
+   				count(*) 
+   			FROM 
+   				product 
+   			WHERE 
+   				codeProduct = #{arg0}
+			AND
+			id <> #{arg1};
+     	]]>
      </select>
     
     <update id="deleteProduct"  parameterType="int">
     	<![CDATA[
-    		update product set flag = 1 where id = #{id};
+    		UPDATE 
+    			product 
+    		SET 
+    			flag = 1 
+    		WHERE 
+    			id = #{id};
     	]]>
     </update>
     
     <select id="getDeleteProductCount" parameterType="int" resultType="int">
-    <![CDATA[
-        select count(*) from product where id = #{id} and flag = 1;
-    ]]>
-</select>
+    	<![CDATA[
+       		SELECT 
+       			count(*) 
+       		FROM 
+       			product 
+       		WHERE 
+       			id = #{id} 
+       		AND 
+       			flag = 1;
+    	]]>
+    </select>
+    
+    <select id="getProductById" resultType="com.example.springmvc.model.Product">
+    	<![CDATA[
+    		SELECT 
+    			id,nameProduct,codeProduct,priceSell,priceBuy,inventory,version
+    		FROM 
+    			product 
+    		WHERE 
+    			id = #{id};
+    	]]>
+    </select>
+    
+    <update id="updateProduct" >
+    	<![CDATA[
+    		UPDATE
+    			product
+    		SET
+    			nameProduct = #{nameProduct},
+    			codeProduct = #{codeProduct},
+    			priceSell   = #{priceSell},
+    			priceBuy    = #{priceBuy},
+    			version     = (#{version} + 1 )
+    		WHERE
+    			id          = #{id}
+    		AND
+    			version     = #{version}
+    	]]>
+    </update>
+
 </mapper>

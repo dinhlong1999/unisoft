@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -59,21 +60,26 @@ public class ProductController {
     }
     
     @GetMapping("/showform")
-    public String showformCreate(Model model) {
+    public String showFormCreate(Model model) {
     	model.addAttribute("productDTO",new ProductDTO());
     	return "formcreateproduct";	
     }
     
     @PostMapping("/create")
-    public String saveProduct(@Valid @ModelAttribute ("productDTO") ProductDTO productDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String saveProduct(@Valid @ModelAttribute ("productDTO") ProductDTO productDTO,@RequestParam int page,
+    												 @RequestParam String nameSearch,@RequestParam String codeSearch , 
+    												 BindingResult bindingResult,Errors errors, 
+    												 RedirectAttributes redirectAttributes, Model model) {
         new ProductDTO().validate(productDTO,bindingResult);
         if (!productService.isCodeProductExists(productDTO.getCodeProduct())){
-            bindingResult.addError(new FieldError("productDTO","codeProduct","Mã sản phẩm không được trùng"));
+        	errors.rejectValue("codeProduct", null, "Mã sản phẩm không được trùng");
+
         }
         if (!productService.isNameProductExists(productDTO.getNameProduct())){
-            bindingResult.addError(new FieldError("productDTO","nameProduct","Tên sản phẩm không được trùng"));
+        	errors.rejectValue("nameProduct", null, "Tên sản phẩm không được trùng");
         }
     	if(bindingResult.hasFieldErrors()) {
+    		model.addAttribute("productDTO",productDTO);
     		return "formcreateproduct";
     	}
     	Product product = new Product();
@@ -81,11 +87,49 @@ public class ProductController {
     	int result = productService.insertProduct(product);
     	if(result == 0) {
             redirectAttributes.addFlashAttribute("message","Thêm mới thất bại.");
-    		return "redirect:/product/list";
+    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
     	}else {
             redirectAttributes.addFlashAttribute("message","Thêm mới thành công.");
-    		return "redirect:/product/list";
+    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
     	}
     }
     
+    @GetMapping("/showformedit/{id}")
+    public String showFromCreate(@PathVariable("id") int id,Model model) {
+    	Product product = productService.getProductById(id);
+    	ProductDTO productDTO = new ProductDTO();
+    	BeanUtils.copyProperties(product, productDTO);
+    	model.addAttribute("productDTO",productDTO);
+    	return "formupdateproduct";
+    }
+    
+    @PostMapping("/edit")
+    public String editProduct(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
+    								@RequestParam int page,@RequestParam String nameSearch,
+    								@RequestParam String codeSearch , BindingResult bindingResult,Errors errors, 
+    								RedirectAttributes redirectAttributes, Model model) {
+    	if (!productService.isCodeProductExistsToUpdate(productDTO.getCodeProduct(),productDTO.getId())) {
+    		errors.rejectValue("codeProduct", null,"Mã sản phẩm không được trùng");
+    	}
+    	if (!productService.isNameProductExistsToUpdate(productDTO.getNameProduct(), productDTO.getId())) {
+    		errors.rejectValue("nameProduct", null,"Tên sản phẩm không được trùng");
+    	}
+    	new ProductDTO().validate(productDTO, bindingResult);
+    	if (bindingResult.hasErrors()) {
+			model.addAttribute("productDTO",productDTO);
+			return "formupdateproduct";
+		}
+    	Product product = new Product();
+    	BeanUtils.copyProperties(productDTO, product);
+    	int result = productService.updateProduct(product);
+    	if (result != 1) {
+    		redirectAttributes.addFlashAttribute("message","Chỉnh sửa thất bại.");
+    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
+		}else {
+			redirectAttributes.addFlashAttribute("message","Chỉnh sửa thành công.");
+	    	return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
+	    	
+		}
+    	
+    }
 }
