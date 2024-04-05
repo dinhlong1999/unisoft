@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,23 +32,32 @@ public class ProductController {
         if (page != 0){
             page = page -1;
         }
-        int limit = 3;
-        List<Product> productList = productService.getListProduct(codeProduct,nameProduct,limit,limit*page);
-        int totalRow = productService.totalRowGetListProduct(codeProduct,nameProduct) ;
-        double temp = (double) totalRow / limit ;
-        int totalPage = (int) Math.ceil(temp);
-        model.addAttribute("productList",productList);
-        model.addAttribute("totalPage",totalPage);
-        model.addAttribute("codeProduct",codeProduct);
-        model.addAttribute("nameProduct",nameProduct);
-        model.addAttribute("page",page);
-        model.addAttribute("limit",limit);
+        int limit = 2;
+        try {
+        	 List<Product> productList = productService.getListProduct(codeProduct,nameProduct,limit,limit*page);
+             int totalRow = productService.totalRowGetListProduct(codeProduct,nameProduct) ;
+             double temp = (double) totalRow / limit ;
+             int totalPage = (int) Math.ceil(temp);
+             model.addAttribute("productList",productList);
+             model.addAttribute("totalPage",totalPage);
+             model.addAttribute("codeProduct",codeProduct);
+             model.addAttribute("nameProduct",nameProduct);
+             model.addAttribute("page",page);
+             model.addAttribute("limit",limit);
+		} catch (Throwable  e) {
+		System.out.println(e.getMessage());	
+		}
         return "listproduct";
     }
     
     @PostMapping("/delete")
     public String deleteProduct(@RequestParam int idDelete, RedirectAttributes redirectAttributes) {
-    	int rowEffect = productService.deleteProductById(idDelete);
+    	int rowEffect = 0;
+    	try {
+    		 rowEffect = productService.deleteProductById(idDelete);
+		} catch (Throwable e) {
+			System.out.println(e.getMessage());
+		}
     	if (rowEffect == 1) {
     		redirectAttributes.addFlashAttribute("message","Xóa thành công.");
     		return "redirect:/product/list";
@@ -84,7 +92,12 @@ public class ProductController {
     	}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);
-    	int result = productService.insertProduct(product);
+    	int result = 0;
+    	try {
+    		 result = productService.insertProduct(product);
+		} catch (Throwable e) {
+			System.out.println(e.getMessage());
+		}
     	if(result == 0) {
             redirectAttributes.addFlashAttribute("message","Thêm mới thất bại.");
     		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
@@ -96,10 +109,15 @@ public class ProductController {
     
     @GetMapping("/showformedit/{id}")
     public String showFromCreate(@PathVariable("id") int id,Model model) {
-    	Product product = productService.getProductById(id);
-    	ProductDTO productDTO = new ProductDTO();
-    	BeanUtils.copyProperties(product, productDTO);
-    	model.addAttribute("productDTO",productDTO);
+    	try {
+    		Product product = productService.getProductById(id);
+        	ProductDTO productDTO = new ProductDTO();
+        	BeanUtils.copyProperties(product, productDTO);
+        	model.addAttribute("productDTO",productDTO);
+		} catch (Throwable e) {
+			System.out.println(e.getMessage());
+		}
+    	
     	return "formupdateproduct";
     }
     
@@ -121,7 +139,12 @@ public class ProductController {
 		}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);
-    	int result = productService.updateProduct(product);
+    	int result = 0;
+    	try {
+    		 result = productService.updateProduct(product);
+		} catch (Throwable e) {
+			System.out.println(e.getMessage());
+		}
     	if (result != 1) {
     		redirectAttributes.addFlashAttribute("message","Chỉnh sửa thất bại.");
     		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
