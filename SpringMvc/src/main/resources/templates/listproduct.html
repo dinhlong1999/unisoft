@@ -71,25 +71,26 @@
                 <th>STT</th>
                 <th>Mã sản phẩm</th>
                 <th>Tên sản phẩm</th>
-                <th>Giá mua vào</th>
-                <th>Giá bán ra</th>
                 <th>Tồn Kho</th>
-                <th colspan ="2" >Hành động</th>
+                <th>Giá bán ra</th>
+                <th th:if="${isAdmin}">Giá mua vào</th>
+                <th th:if="${isAdmin}" colspan ="2" >Hành động</th>
         
             </tr>
             <tr th:if="${productList.size() > 0}" th:each="product,status:${productList}">
                 <td th:text="${status.count  + page  * limit}"></td>
                 <td th:text="${product.codeProduct}"></td>
                 <td th:text="${product.nameProduct}"></td>
-                <td th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                <td th:text="${#numbers.formatDecimal(product.priceSell, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 <td th:text="${product.inventory}"></td>
-                <td>
+                <td th:text="${#numbers.formatDecimal(product.priceSell, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                <td th:if="${isAdmin == true}" th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                
+                <td th:if="${isAdmin == true}">
   					<button type="button" class="btn btn-light" th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
   						<a th:href="@{/product/showformedit/{id}(id=${product.id})}" style="text-decoration: none;color:black">Chỉnh sửa</a>
   					</button>
                 </td>
-                <td>
+                <td th:if="${isAdmin == true}">
                     <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr ="onclick=|sendData(${product.id},'${product.nameProduct}')|">
   						Xóa
 					</button>
@@ -97,7 +98,9 @@
                  
             </tr>
             <tr th:if = "${productList.size() == 0}"> 
-            	<td colspan="8">Không tìm thấy sản phẩm</td>
+            	<!-- <td th:if="${isAdmin == true}" colspan="8">Không tìm thấy sản phẩm</td>
+            	<td th:if="${isAdmin != true}" colspan="5">Không tìm thấy sản phẩm</td> -->
+            	<td th:colspan ="${isAdmin ? 8 : 5}">Không tìm thấy sản phẩm</td>
             </tr>
         </table>
         

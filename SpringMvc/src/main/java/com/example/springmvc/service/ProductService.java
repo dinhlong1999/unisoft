@@ -3,7 +3,7 @@ package com.example.springmvc.service;
 import com.example.springmvc.model.Product;
 
 import com.example.springmvc.repository.ProductMapper;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

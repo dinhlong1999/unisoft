@@ -1,13 +1,20 @@
 package com.example.springmvc.controller;
 
+import com.example.springmvc.model.Account;
 import com.example.springmvc.model.Product;
+import com.example.springmvc.model.Role;
+import com.example.springmvc.service.IAccountService;
 import com.example.springmvc.service.IProductService;
+import com.example.springmvc.service.IRoleService;
 
 import dto.ProductDTO;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +30,23 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private IProductService productService;
+    
+    @Autowired
+    private IAccountService accountService;
+    
+    @Autowired
+    private IRoleService roleService;
+    
+    
+    private Account getAccountLogin () {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			String usernameLogin = authentication.getName();
+			Account account  = accountService.getAccountByUsername(usernameLogin);
+			return account;
+		}
+    	return null;
+    }
 
     @GetMapping("/list")
     public String getListProduct(@RequestParam(required = false,defaultValue = "0") int page,
@@ -34,6 +58,13 @@ public class ProductController {
         }
         int limit = 2;
         try {
+        	 Account accountLogin = getAccountLogin();
+        	 Role roleLogin = roleService.getRoleById(accountLogin.getRoleId());
+        	 if (roleLogin.getName().equals("ROLE_ADMIN")) {
+        		 model.addAttribute("isAdmin",true);
+        	 }else {
+        		 model.addAttribute("isAdmin",false);
+        	 }
         	 List<Product> productList = productService.getListProduct(codeProduct,nameProduct,limit,limit*page);
              int totalRow = productService.totalRowGetListProduct(codeProduct,nameProduct) ;
              double temp = (double) totalRow / limit ;
@@ -44,7 +75,7 @@ public class ProductController {
              model.addAttribute("nameProduct",nameProduct);
              model.addAttribute("page",page);
              model.addAttribute("limit",limit);
-		} catch (Throwable  e) {
+		} catch (Exception  e) {
 		System.out.println(e.getMessage());	
 		}
         return "listproduct";
