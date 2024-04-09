@@ -134,20 +134,24 @@ button{
 }
 
     </style>
+    
+<script src="/webjars/jquery/dist/jquery.min.js"></script>
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
 </head>
 <body>
     <div class="background">
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form th:action="@{/j_spring_security_check}" method="post">
+    <form th:action="@{/j_spring_security_check}" method="post" id="form-login">
         <h3>Dang nhap</h3>
 
         <label for="username">Ten dang nhap</label>
-        <input type="text" name="username" placeholder="Vui long nhap ten dang nhap" id="username">
+        <input type="text"  name="username" placeholder="Vui long nhap ten dang nhap" id="username">
 
         <label for="password">Mat khau</label>
-        <input type="password" name = "password" placeholder="Vui long nhap mat khau" id="password">
+        <input type="password"  name = "password" placeholder="Vui long nhap mat khau" id="password">
    		<!-- <small th:if="${param.error}" class="error-message" style="color:white">Sai tên đăng nhập hoặc mật khẩu</small> -->
    		<div th:if="${param.error}" class="error-message">
         	 <p th:switch="${session['SPRING_SECURITY_LAST_EXCEPTION'].class.simpleName}" id="error-msg">
@@ -158,4 +162,21 @@ button{
        
     </form>
 </body>
+<!-- <script>
+var stompClient = null;
+	$(document).ready(function(){
+		var socket = new SockJS('/hello'); // Tạo kết nối SockJS tới endpoint "/hello"
+	    stompClient = Stomp.over(socket); // Tạo đối tượng StompClient
+	    stompClient.connect({}, function(frame) { // Kết nối đến server WebSocket
+	        console.log('Connected: ' + frame);
+	    });
+	    
+		$('#form-login').submit(function(event){
+			event.preventDefault();
+			var username = $('#username').val();
+			stompClient.send("/app/login", {}, JSON.stringify({ 'username': username }));
+		})
+	})
+
+</script> -->
 </html>
