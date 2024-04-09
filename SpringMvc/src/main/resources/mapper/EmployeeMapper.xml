@@ -35,7 +35,7 @@
             	#{arg3}  OFFSET #{arg4}
 		]]>
 		</select>
-	<select id="getEmployeeByAccountId" resultType="com.example.springmvc.model">
+	<select id="getEmployeeByAccountId" resultType="com.example.springmvc.model.Employee">
 		<![CDATA[
 			SELECT
 				id,name,flag,phoneNumber,accountId,isOnline,version
