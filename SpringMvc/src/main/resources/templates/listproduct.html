@@ -25,12 +25,36 @@
         	background-color:white;
         	border-radius:5px;
         }
+       .btn{
+       		margin-left: auto;
+       }
         
        
     </style>
 </head>
 <body>
+   <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #adb5bd;">
+  		<div class="container-fluid">
+ 	   	  <div class="navbar-brand"  dis>Cellphones </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link" th:href="@{/product/list}">Sản phẩm</a>
+              <a class="nav-link" th:href="@{/employee/list}">Nhân viên</a>
+              <a class="nav-link" th:href="@{/customer/list}">Khách hàng</a>
+              <a class="nav-link" th:href="@{/order/list}">Đơn hàng</a>
+              <a class="nav-link" th:href="@{/analystic/list}">Thống kê</a>
+      		</div>
+      		<button class="btn btn-outline-danger" type="submit">Log out</button>
+    	  </div>
+       </div>
+   </nav>
 <div class="container">
+
+	
+
     <h1>Danh sách sản phẩm</h1>
    
     <div style="color: red" th:if="${message}">
@@ -42,9 +66,6 @@
   			<a th:href="@{/product/showform}" style="text-decoration: none;color:black">Thêm mới sản phẩm</a>
   		</button>
   	</div>
-    <div>
-     
-    </div>
     	
     <div class="form-search">
         <form th:action="@{/product/list}" method="get" >
@@ -67,7 +88,7 @@
    
    <div>
    		<table class="table table-hover ">
-            <tr>
+            <tr style="background-color: grey;color: white">
                 <th>STT</th>
                 <th>Mã sản phẩm</th>
                 <th>Tên sản phẩm</th>
@@ -86,12 +107,12 @@
                 <td th:if="${isAdmin == true}" th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 
                 <td th:if="${isAdmin == true}">
-  					<button type="button" class="btn btn-light" th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
+  					<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
   						<a th:href="@{/product/showformedit/{id}(id=${product.id})}" style="text-decoration: none;color:black">Chỉnh sửa</a>
   					</button>
                 </td>
                 <td th:if="${isAdmin == true}">
-                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr ="onclick=|sendData(${product.id},'${product.nameProduct}')|">
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr ="onclick=|sendData(${product.id},'${product.nameProduct}')|">
   						Xóa
 					</button>
                 </td>
@@ -108,28 +129,6 @@
            <nav aria-label="Page navigation example" >
                 <ul th:if="${totalPage <= 5}" class="pagination" style="display: flex;justify-content: center">
 
-                    <!-- <li th:if="${page != 0 }" class="page-item">
-                   		 <a class="page-link" th:href="@{/product/list(page=${page},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Previous</a>
-                    </li>
-                    <li class="page-item">
-                   		 <a class="page-link" th:href="@{/product/list(page=1,codeProduct=${codeProduct},nameProduct=${nameProduct})}">1</a>
-                    </li>
-                    <li th:if="${totalPage >= 2}" class="page-item">
-                   		 <a class="page-link" th:href="@{/product/list(page=2,codeProduct=${codeProduct},nameProduct=${nameProduct})}">2</a>
-                    </li>
-                   
-                    <li th:if="${totalPage > 3}" class="page-item disabled">
-                    	<span class="page-link">...</span>
-                    </li>
-                    <li class  = "page-item" th:if="${totalPage > 2}">
-                    	<a th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" class="page-link" th:text="${totalPage}"></a>
-                    </li>
-                    
-                 
-                     <li  th:if="${page + 1 != totalPage }" class="page-item">
-                     	<a class="page-link" th:href="@{/product/list(page=${page+2},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Next</a>
-                     </li> -->  
-                     
                     <li th:if="${page != 0 }" class="page-item">
                    		 <a class="page-link" th:href="@{/product/list(page=${page},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Previous</a>
                     </li>
@@ -152,7 +151,7 @@
                    		 <a class="page-link" th:href="@{/product/list(page=1,codeProduct=${codeProduct},nameProduct=${nameProduct})}">1</a>
                     </li>
         
-    				 <th:block th:each="pageNumber: ${#numbers.sequence(2, totalPage-1)}">
+    				 <th:block th:each="pageNumber: ${#numbers.sequence(2, totalPage -1)}">
         				<li th:if="${pageNumber <= page + 2 or pageNumber >= totalPage - 2}" class="page-item">
            					 <a class="page-link" th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${pageNumber}"></a>
         				</li>
@@ -214,6 +213,7 @@
         localStorage.clear();
     }
 </script>
+
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"

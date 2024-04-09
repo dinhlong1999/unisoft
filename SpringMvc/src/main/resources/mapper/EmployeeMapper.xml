@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvc.repository.EmployeeMapper">
+	<select id="getAllEmployee" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				e.id,e.isOnline,e.name,e.phoneNumber,a.username
+			FROM
+				employee e
+			JOIN
+				account a ON a.id = e.accountId
+			WHERE
+				1 = 1
+			AND
+				e.flag = 0
+			AND
+				(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
+           			  THEN  a.username LIKE concat('%', #{arg0},'%')
+            		  ELSE 1=1 
+                END)
+            AND
+            	(CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
+            		  THEN  e.name LIKE concat('%', #{arg1},'%')
+            		  ELSE 1=1 
+            	END)
+            AND
+            	(CASE WHEN #{arg2} IS NOT NULL OR #{arg2 } != ''
+            		  THEN  e.phoneNumber LIKE concat('0', #{arg2},'%')
+            		  ELSE 1=1 
+            	END)
+            ORDER BY
+            	e.name
+            LIMIT
+            	#{arg3}  OFFSET #{arg4}
+		]]>
+		</select>
+	<select id="getEmployeeByAccountId" resultType="com.example.springmvc.model.Employee">
+		<![CDATA[
+			SELECT
+				id,name,flag,phoneNumber,accountId,isOnline,version
+			FROM
+				employee
+			WHERE
+				accountId = #{accountId}
+			AND
+				flag = 0;
+			]]>
+	</select>
+	
+	<update id="updateStatusEmployee">
+		UPDATE
+			employee
+		SET
+			isOnline = #{status},
+			version = #{version} + 1
+		WHERE
+			id = {id}
+		AND
+			version = #{version}
+	</update>
+	
+	<select id ="countTotalRow" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(*)
+			FROM 
+				employee
+			JOIN
+				account on account.id = employee.accountId
+			WHERE
+				1 = 1
+			AND
+				employee.flag = 0
+			AND
+				(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
+           			  THEN  account.username LIKE concat('%', #{arg0},'%')
+            		  ELSE 1=1 
+                END)
+            AND
+            	(CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
+            		  THEN  employee.name LIKE concat('%', #{arg1},'%')
+            		  ELSE 1=1 
+            	END)
+            AND
+            	(CASE WHEN #{arg2} IS NOT NULL OR #{arg2 } != ''
+            		  THEN  employee.phoneNumber LIKE concat('0', #{arg2},'%')
+            		  ELSE 1=1 
+            	END)	
+		]]>
+	</select>
+</mapper>

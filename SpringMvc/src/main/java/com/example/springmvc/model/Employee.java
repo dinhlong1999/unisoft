@@ -13,18 +13,21 @@ public class Employee {
     private boolean flag;
 
     private int version;
+    
+    private boolean isOnline;
 
     public Employee() {
     }
 
 
-    public Employee(int id, String name, String phoneNumber, int accountId, boolean flag, int version) {
+    public Employee(int id, String name, String phoneNumber, int accountId, boolean flag, int version, boolean isOnline) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.accountId = accountId;
         this.flag = flag;
         this.version = version;
+        this.isOnline = isOnline;
     }
 
     public int getId() {
@@ -74,4 +77,15 @@ public class Employee {
     public void setVersion(int version) {
         this.version = version;
     }
+
+
+	public boolean isOnline() {
+		return isOnline;
+	}
+
+
+	public void setOnline(boolean isOnline) {
+		this.isOnline = isOnline;
+	}
+    
 }
