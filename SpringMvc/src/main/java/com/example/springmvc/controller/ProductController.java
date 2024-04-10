@@ -56,7 +56,7 @@ public class ProductController {
         if (page != 0){
             page = page -1;
         }
-        int limit = 2;
+        int limit = 4;
         try {
         	 Account accountLogin = getAccountLogin();
         	 Role roleLogin = roleService.getRoleById(accountLogin.getRoleId());
@@ -69,12 +69,49 @@ public class ProductController {
              int totalRow = productService.totalRowGetListProduct(codeProduct,nameProduct) ;
              double temp = (double) totalRow / limit ;
              int totalPage = (int) Math.ceil(temp);
-             model.addAttribute("productList",productList);
-             model.addAttribute("totalPage",totalPage);
-             model.addAttribute("codeProduct",codeProduct);
-             model.addAttribute("nameProduct",nameProduct);
+             
+             
+             
+             int maxVisitablePages = 10; //Số trang tối đa hiển thị
+             int adjacentPages = 2;  //số trang bên cạnh trang hiện tại
+             int startPage;
+             int endPage;
+             boolean showStartEllipsis = false; // Dấu ... đầu
+             boolean showEndEllipsis = false;  // Dấu ... cuối
+             if (totalPage <= maxVisitablePages) {
+            	    startPage = 1;
+            	    endPage = totalPage;
+            	} else {
+            	    if (page <= maxVisitablePages - adjacentPages) {
+            	        startPage = 1;
+            	        endPage = maxVisitablePages;
+            	        showEndEllipsis = true;
+            	    } else if (page >= totalPage - adjacentPages) {
+            	        startPage = totalPage - maxVisitablePages + 1;
+            	        endPage = totalPage;
+            	        showStartEllipsis = true;
+            	    } else {
+            	        startPage = page - adjacentPages;
+            	        endPage = page + adjacentPages;
+            	        showStartEllipsis = true;
+            	        showEndEllipsis = true;
+            	    }
+            	}
+             
+             model.addAttribute("startPage",startPage);
+             model.addAttribute("endPage", endPage);
              model.addAttribute("page",page);
              model.addAttribute("limit",limit);
+             model.addAttribute("totalPage",totalPage);
+             model.addAttribute("showStartEllipsis",showStartEllipsis);
+             model.addAttribute("showEndEllipsis",showEndEllipsis);
+             
+             
+             
+             model.addAttribute("productList",productList);
+             model.addAttribute("codeProduct",codeProduct);
+             model.addAttribute("nameProduct",nameProduct);
+             model.addAttribute("nameLogin",accountLogin.getUsername());
 		} catch (Exception  e) {
 		System.out.println(e.getMessage());	
 		}
@@ -100,7 +137,9 @@ public class ProductController {
     
     @GetMapping("/showform")
     public String showFormCreate(Model model) {
+    	Account account = getAccountLogin();
     	model.addAttribute("productDTO",new ProductDTO());
+    	model.addAttribute("nameLogin",account.getUsername());
     	return "formcreateproduct";	
     }
     
@@ -140,11 +179,13 @@ public class ProductController {
     
     @GetMapping("/showformedit/{id}")
     public String showFromCreate(@PathVariable("id") int id,Model model) {
+    	Account account = getAccountLogin();
     	try {
     		Product product = productService.getProductById(id);
         	ProductDTO productDTO = new ProductDTO();
         	BeanUtils.copyProperties(product, productDTO);
         	model.addAttribute("productDTO",productDTO);
+        	model.addAttribute("nameLogin",account.getUsername());
 		} catch (Throwable e) {
 			System.out.println(e.getMessage());
 		}

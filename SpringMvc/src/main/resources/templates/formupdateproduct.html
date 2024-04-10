@@ -29,11 +29,17 @@
     		display:flex;
     		justify-content:center;		
     	}
+    	 #btn{
+       		margin-left: auto;
+       		margin-right:20px;
+       }
     	
 		
 	</style>
 </head>
 <body>
+
+  <div th:insert = "header :: nav"></div>
   <div class="container">
 	<h1>Chỉnh sửa sản phẩm</h1>
 		
@@ -79,8 +85,12 @@
   			 </div>
 		</form>   
   	</div>  
+  	
+  	
+  	
+  	
+  	
  
-
 </body>
 <script>
 	let link = document.getElementById("link")

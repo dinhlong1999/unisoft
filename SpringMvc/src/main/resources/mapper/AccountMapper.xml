@@ -5,6 +5,7 @@
 	<select id="getAccountByUsername" resultType="com.example.springmvc.model.Account">
 		<![CDATA[
 			SELECT
+				id,
 				username,
 				password,
 				roleId,

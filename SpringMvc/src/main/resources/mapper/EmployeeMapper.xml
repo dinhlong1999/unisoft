@@ -52,12 +52,12 @@
 		UPDATE
 			employee
 		SET
-			isOnline = #{status},
-			version = #{version} + 1
+			isOnline = #{arg0},
+			version = #{arg1} + 1
 		WHERE
-			id = {id}
+			id = #{arg2}
 		AND
-			version = #{version}
+			version = #{arg1}
 	</update>
 	
 	<select id ="countTotalRow" resultType="int">
@@ -89,4 +89,16 @@
             	END)	
 		]]>
 	</select>
+	
+	<update id="deleteEmployeeById">
+		<![CDATA[
+			UPDATE
+				employee
+			SET
+				flag =1
+			WHERE
+				id = #{id};
+		]]>
+	</update>
+	
 </mapper>

@@ -25,32 +25,14 @@
         	background-color:white;
         	border-radius:5px;
         }
-       .btn{
+       #btn{
        		margin-left: auto;
        }
 	</style>  
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #adb5bd;">
-  		<div class="container-fluid">
- 	   	  <a class="navbar-brand" href="#">Cellphones</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-              <a class="nav-link" th:href="@{/product/list}">Sản phẩm</a>
-              <a class="nav-link" th:href="@{/employee/list}">Nhân viên</a>
-              <a class="nav-link" th:href="@{/customer/list}">Khách hàng</a>
-              <a class="nav-link" th:href="@{/order/list}">Đơn hàng</a>
-              <a class="nav-link" th:href="@{/analystic/list}">Thống kê</a>
-      		</div>
-      		<button class="btn btn-outline-danger" type="submit">Log out</button>
-    	  </div>
-       </div>
-   </nav>
-
-   <div class="container">
+	<div th:insert = "header :: nav"></div>
+   <div class="container-fluid">
       <h1>Danh sách nhân viên</h1>
       
       <div style="color: red" th:if="${message}">
@@ -58,8 +40,8 @@
       </div>
     
       <div class="createform">
-  		<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
-  			<a th:href="@{/product/showform}" style="text-decoration: none;color:black">Thêm mới nhân viên</a>
+  		<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${username}','${employeeName}','${phoneNumber}')|">
+  			<a th:href="@{/employee/showform}" style="text-decoration: none;color:black">Thêm mới nhân viên</a>
   		</button>
   	  </div>
   	  
@@ -67,17 +49,17 @@
         <form th:action="@{/employee/list}" method="get" >
             <div>
             	<span>
-                	Tên đăng nhập : <input type="text"  name="username" style="width:20%;" th:value="${username}" placeholder="Vui lòng nhập tên đăng nhập">
+                	Tên đăng nhập : <input type="text"  name="username" style="width:12%;" th:value="${username}" placeholder="Vui lòng nhập tên đăng nhập">
             	</span>
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Tên nhân viên : <input type="text"  name="employeeName" style="width:20%;margin-left: 7px" th:value="${employeeName}" placeholder="Vui lòng nhập tên nhân viên">
+                	Tên nhân viên : <input type="text"  name="employeeName" style="width:12%;margin-left: 7px" th:value="${employeeName}" placeholder="Vui lòng nhập tên nhân viên">
             	</span>
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Số điện thoại : <input type="text"  name="phoneNumber" style="width:20%;margin-left: 3px" th:value="${phoneNumber}" placeholder="Vui lòng nhập số điện thoại">
+                	Số điện thoại : <input type="text"  name="phoneNumber" style="width:12%;margin-left: 3px" th:value="${phoneNumber}" placeholder="Vui lòng nhập số điện thoại">
             	</span>
             </div>
             <div style="margin-top: 5px;">
@@ -88,7 +70,7 @@
       </div>
    	
    	  <div>
-   	     	<table class ="table table-hover">
+   	     	<table  id ="employeeTable" class ="table table-hover">
    	     		<tr style="background-color: grey;color: white">
    	     			<th>STT</th>
    	     			<th>TÊN ĐĂNG NHẬP</th>
@@ -102,14 +84,14 @@
    	     			<td th:text="${map['username']}"></td>
    	     			<td th:text="${map['name']}"></td>
    	     			<td th:text="${map['phoneNumber']}"></td>
-   	     			<td th:text="${map['isOnline'] ? 'Online' : 'Offline' }"></td>
+   	     			<td class="isOnline" th:text="${map['isOnline'] ? 'Online' : 'Offline' }"></td>
    	     			<td>
    	     				<button type="button" class="btn btn-outline-warning" >
   							<a  style="text-decoration: none;color:black">Chỉnh sửa</a>
   						</button>
    	     			</td>
    	     			<td>
-   	     				 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+   	     				 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr="onclick=|sendData(${map['id']},'${map['name']}')|">
   							Xóa
 						</button>
    	     			</td>
@@ -119,63 +101,35 @@
            		</tr>	
    	     	</table>
    	     <div th:if="${listEmployee.size() > 0}">
-           <nav aria-label="Page navigation example" >
-                <ul th:if="${totalPage <= 5}" class="pagination" style="display: flex;justify-content: center">
-
-                    <li th:if="${page != 0 }" class="page-item">
-                   		 <a class="page-link" th:href="@{/employee/list(page=${page},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Previous</a>
-                    </li>
-                    <th:block th:each="pageNumber: ${#numbers.sequence(1,totalPage)}">
-                    	<li class="page-item">
-                   		 	<a class="page-link" th:href="@{/employee/list(page=${pageNumber},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}" th:text="${pageNumber}"></a>
-                    	</li>
-                    </th:block>
-                    
-                     <li  th:if="${page + 1 != totalPage }" class="page-item">
-                     	<a class="page-link" th:href="@{/employee/list(page=${page + 2},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Next</a>
-                     </li> 
+            <nav aria-label="Page navigation example" > 
+	            <ul class="pagination" style="display: flex;justify-content: center">
+	            	<li th:if="${page > 0}" class="page-item" >
+	            		<a class="page-link" th:href="@{/employee/list(page=${page},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Previous</a>
+	            	</li>
+	            	<li class="page-item"  th:if="${showStartEllipsis}">
+	            		<span class="page-link">...</span >
+	            	</li>
+	            	<th:block th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}">
+	            		<li class="page-item active" th:if="${pageNumber -1 == page}">
+	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
+	            		</li>
+	            		<li class="page-item" th:if="${pageNumber -1 != page}">
+	            			<a class="page-link " th:href="@{/employee/list(page=${pageNumber},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}" th:text="${pageNumber}" ></a>
+	            		</li>
+	            	</th:block>
+	            	<li class="page-item"  th:if="${showEndEllipsis}">
+	            		<span  class="page-link">...</span>
+	            	</li>
+	            	<li class="page-item" th:if="${page + 1 != totalPage }">
+	            		<a class="page-link" th:href="@{/employee/list(page=${page +2 },username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Next</a>
+	            	</li>
 	            </ul>
-	            
-	            <ul th:if="${totalPage > 5}" class="pagination" style = "display:flex;justify-content:center">
-	            	<li th:if="${page != 0 }" class="page-item">
-                   		  <a class="page-link" th:href="@{/employee/list(page=${page},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Previous</a>
-                    </li>
-                    <li class="page-item">
-                   		 <a class="page-link" th:href="@{/employee/list(page=${page},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">1</a>
-                    </li>
-        
-    				 <th:block th:each="pageNumber: ${#numbers.sequence(2, totalPage -1)}">
-        				<li th:if="${pageNumber <= page + 2 or pageNumber >= totalPage - 2}" class="page-item">
-           					<a class="page-link" th:href="@{/employee/list(page=${pageNumber},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}" th:text="${pageNumber}" ></a>
-        				</li>
-        				<li th:if="${pageNumber == page + 3 }" class="page-item disabled">
-           					 <span class="page-link">...</span>
-        				</li>
-    				</th:block>
-    
-    				              
-                    <li class="page-item">
-                   		 <a class="page-link" th:href="@{/employee/list(page=${page + 2},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}" th:text="${totalPage}"></a>
-                    </li>
-	           		<li  th:if="${page + 1 != totalPage }" class="page-item">
-                     <a class="page-link" th:href="@{/employee/list(page=${page + 2},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Next</a>
-                    </li> 
-	            </ul>
+   
             </nav> 
+          
            
         </div>	
-   	     	
-   	     	
-   	     	
-   	     	
    	  </div>
-   	  
-   	
-   	
-   	
-   	
-   	
-   	
    </div>	
 	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   		<div class="modal-dialog">
@@ -184,19 +138,22 @@
         			<h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa</h5>
         				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       			</div>
-      			<form th:action ="@{/product/delete}" method= "post">
+      			<form th:action ="@{/employee/delete}" method= "post">
        				<div class="modal-body">
 	      				Bạn có muốn xóa sản phẩm : <span id="name" style="color:red"></span>?
 	   					<input type="hidden" id="id" name="idDelete">
       				</div>
       				<div class="modal-footer">
-        				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-        				<button type="submit" class="btn btn-primary">Xóa</button>
+        				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+        				<button type="submit" class="btn btn-outline-danger">Xóa</button>
       				</div>
        			</form>
     		</div>
   		</div>
 	</div>
+
+
+
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -218,13 +175,35 @@
                 console.log("Connected");
                 stompClient.subscribe('/topic/employeeStatus', function(message) {
                 	var employee = JSON.parse(message.body);
-                	console.log("nhan vien"+employee);
+                	console.log("nhan vien" + employee.name);
+                	console.log(message)
+                	console.log("online " + employee.online)
+                	console.log("Online " + employee.Online)
                 	var employeeId = employee.id;
-                    $('#employeeTable').find('tr[data-id="' + employeeId + '"]').find('.isOnline').text(employee.isOnline ? 'Online' : 'Offline');
+                    $('#employeeTable').find('tr[data-id="' + employeeId + '"]').find('.isOnline').text(employee.online ? 'Online' : 'Offline');
 
                 	
                 });
             });
+        };
+        
+        
+        function sendData(id,name){
+        	document.getElementById("id").value = id;
+        	document.getElementById("name").innerText = name;
         }
-    </script>
+        
+        function saveDataInLocalStorage(page,username,employeeName,phoneNumber) {
+            localStorage.setItem("page",page+1);
+            localStorage.setItem("username",username);
+            localStorage.setItem("employeeName",employeeName);
+            localStorage.setItem("phoneNumber",phoneNumber);
+        }
+
+        window.onload=function (){
+            localStorage.clear();
+        }
+        
+  </script>
+  
 </html>
