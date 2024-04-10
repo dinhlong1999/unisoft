@@ -43,6 +43,5 @@ public class EmployeeController {
 		model.addAttribute("limit",limit);
 		return "listEmployee";
 	}
-	
->>>>>>> origin/main
+
 }
