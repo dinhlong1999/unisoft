@@ -16,5 +16,7 @@ public interface EmployeeMapper {
 	
 	Employee getEmployeeByAccountId(int accountId);
 	
-	int updateStatusEmployee(int status,int id, int version);
+	int updateStatusEmployee(int status, int version,int id);
+	
+	int deleteEmployeeById (int id);
 }

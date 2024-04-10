@@ -25,36 +25,19 @@
         	background-color:white;
         	border-radius:5px;
         }
-       .btn{
+       #btn{
        		margin-left: auto;
+       		margin-right:20px;
        }
         
        
     </style>
 </head>
 <body>
-   <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #adb5bd;">
-  		<div class="container-fluid">
- 	   	  <div class="navbar-brand"  dis>Cellphones </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-              <a class="nav-link" th:href="@{/product/list}">Sản phẩm</a>
-              <a class="nav-link" th:href="@{/employee/list}">Nhân viên</a>
-              <a class="nav-link" th:href="@{/customer/list}">Khách hàng</a>
-              <a class="nav-link" th:href="@{/order/list}">Đơn hàng</a>
-              <a class="nav-link" th:href="@{/analystic/list}">Thống kê</a>
-      		</div>
-      		<button class="btn btn-outline-danger" type="submit">Log out</button>
-    	  </div>
-       </div>
-   </nav>
-<div class="container">
-
-	
-
+ 
+  <div th:insert="header :: nav"></div>
+  
+  <div class="container-fluid">
     <h1>Danh sách sản phẩm</h1>
    
     <div style="color: red" th:if="${message}">
@@ -71,12 +54,12 @@
         <form th:action="@{/product/list}" method="get" >
             <div>
             <span>
-                Mã sản phẩm : <input type="text"  name="codeProduct" style="width:20%;" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
+                Mã sản phẩm : <input type="text"  name="codeProduct" style="width:13%;" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
             </span>
             </div>
             <div style="margin-top: 5px">
             <span>
-                 Tên sản phẩm: <input type="text"  name="nameProduct" style="width:20%;" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
+                 Tên sản phẩm: <input type="text"  name="nameProduct" style="width:13%;margin-left:3px" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
             </span>
             </div>
             <div style="margin-top: 5px;">
@@ -86,7 +69,7 @@
         </form>
     </div>
    
-   <div>
+   	<div>
    		<table class="table table-hover ">
             <tr style="background-color: grey;color: white">
                 <th>STT</th>
@@ -126,56 +109,39 @@
         </table>
         
         <div th:if="${productList.size() > 0}">
-           <nav aria-label="Page navigation example" >
-                <ul th:if="${totalPage <= 5}" class="pagination" style="display: flex;justify-content: center">
-
-                    <li th:if="${page != 0 }" class="page-item">
-                   		 <a class="page-link" th:href="@{/product/list(page=${page},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Previous</a>
-                    </li>
-                    <th:block th:each="pageNumber: ${#numbers.sequence(1,totalPage)}">
-                    	<li class="page-item">
-                   		 	<a class="page-link" th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${pageNumber}"></a>
-                    	</li>
-                    </th:block>
-                    
-                     <li  th:if="${page + 1 != totalPage }" class="page-item">
-                     	<a class="page-link" th:href="@{/product/list(page=${page+2},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Next</a>
-                     </li> 
+            <nav aria-label="Page navigation example" > 
+	            <ul class="pagination" style="display: flex;justify-content: center">
+	            	<li th:if="${page > 0}" class="page-item" >
+	            		<a class="page-link" th:href="@{/product/list(page=${page},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Previous</a>
+	            	</li>
+	            	<li class="page-item"  th:if="${showStartEllipsis}">
+	            		<span class="page-link">...</span >
+	            	</li>
+	            	<th:block th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}">
+	            		<li class="page-item active" th:if="${pageNumber -1 == page}">
+	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
+	            		</li>
+	            		<li class="page-item" th:if="${pageNumber -1 != page}">
+	            			<a class="page-link " th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${pageNumber}" ></a>
+	            		</li>
+	            	</th:block>
+	            	<li class="page-item"  th:if="${showEndEllipsis}">
+	            		<span  class="page-link">...</span>
+	            	</li>
+	            	<li class="page-item" th:if="${page + 1 != totalPage }">
+	            		<a class="page-link" th:href="@{/product/list(page=${page+2},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Next</a>
+	            	</li>
 	            </ul>
-	            
-	            <ul th:if="${totalPage > 5}" class="pagination" style = "display:flex;justify-content:center">
-	            	<li th:if="${page != 0 }" class="page-item">
-                   		 <a class="page-link" th:href="@{/product/list(page=${page},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Previous</a>
-                    </li>
-                    <li class="page-item">
-                   		 <a class="page-link" th:href="@{/product/list(page=1,codeProduct=${codeProduct},nameProduct=${nameProduct})}">1</a>
-                    </li>
-        
-    				 <th:block th:each="pageNumber: ${#numbers.sequence(2, totalPage -1)}">
-        				<li th:if="${pageNumber <= page + 2 or pageNumber >= totalPage - 2}" class="page-item">
-           					 <a class="page-link" th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${pageNumber}"></a>
-        				</li>
-        				<li th:if="${pageNumber == page + 3 }" class="page-item disabled">
-           					 <span class="page-link">...</span>
-        				</li>
-    				</th:block>
-    
-    				              
-                    <li class="page-item">
-                   		 <a class="page-link" th:href="@{/product/list(page=${totalPage},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${totalPage}"></a>
-                    </li>
-	           		<li  th:if="${page + 1 != totalPage }" class="page-item">
-                     	<a class="page-link" th:href="@{/product/list(page=${page+2},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Next</a>
-                    </li> 
-	            </ul>
+   
             </nav> 
-           
+          
+         
         </div>
    </div>
         
 
 </div>
-
+<!-- modal xóa -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -189,13 +155,14 @@
 	   	<input type="hidden" id="id" name="idDelete">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-        <button type="submit" class="btn btn-primary">Xóa</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-outline-warning">Xóa</button>
       </div>
        </form>
     </div>
   </div>
 </div>
+
 <script>
 	function sendData(id,name){
 		document.getElementById("id").value = id;

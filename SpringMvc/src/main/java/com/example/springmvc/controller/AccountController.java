@@ -16,7 +16,6 @@ import com.example.springmvc.service.IAccountService;
 import com.example.springmvc.service.IEmployeeService;
 
 @Controller
-@RequestMapping("/login")
 public class AccountController {
 
 	@Autowired
@@ -29,7 +28,7 @@ public class AccountController {
 	@Autowired
 	 private SimpMessagingTemplate messagingTemplate;
 	
-	private Account getAccountLogin () {
+	private Account getAccountLogin () {	
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			String usernameLogin = authentication.getName();
@@ -39,20 +38,21 @@ public class AccountController {
     	return null;
     }
 
-	@GetMapping
+	@GetMapping(value={"/login","/logoutSuccessful"})
 	public String loginForm() {
 		return "formlogin";
 	}
-	@GetMapping("/success")
+	@GetMapping("/login/success")
 	public String loginSuccess() {
 		Account account = getAccountLogin();
 		if (account.getRoleId() == 1) {
 			return "redirect:/product/list";
 		}
 		Employee employee = employeeService.getEmployeeByAccountId(account.getId());
-		int rowEffect = employeeService.updateStatusEmployee(1, employee.getId(), employee.getVersion());
-		messagingTemplate.convertAndSend("/topic/employeeStatus", employee);
-		return "test";
+		int rowEffect = employeeService.updateStatusEmployee(1, employee.getVersion(), employee.getId());
+		Employee employeeResult = employeeService.getEmployeeByAccountId(employee.getAccountId());
+		messagingTemplate.convertAndSend("/topic/employeeStatus", employeeResult);
+		return "redirect:/product/list";
 	}
 
 	
@@ -60,4 +60,6 @@ public class AccountController {
 	public String accessDenied() {
 		return "403Page";
 	}
+	
+	
 }

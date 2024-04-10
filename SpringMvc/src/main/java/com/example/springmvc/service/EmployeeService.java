@@ -34,9 +34,15 @@ public class EmployeeService implements IEmployeeService {
 	}
 
 	@Override
-	public int updateStatusEmployee(int status, int id, int version) {
+	public int updateStatusEmployee(int status, int version, int id ) {
 		// TODO Auto-generated method stub
-		return employeeMapper.updateStatusEmployee(status, id, version);
+		return employeeMapper.updateStatusEmployee(status, version, id );
+	}
+
+	@Override
+	public int deleteEmployeeById(int id) {
+		// TODO Auto-generated method stub
+		return employeeMapper.deleteEmployeeById(id);
 	}
 
 	
