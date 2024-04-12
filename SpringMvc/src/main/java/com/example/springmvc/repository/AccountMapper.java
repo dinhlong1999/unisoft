@@ -1,10 +1,19 @@
 package com.example.springmvc.repository;
 
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 
-import com.example.springmvc.model.Account;
 
 @Mapper
 public interface AccountMapper {
-	Account getAccountByUsername(String username);
+	Map<String, Object> getAccountByUsername(String username);
+	
+	int insertAccount(String username, String password, int roleId);
+	
+	int checkUsernameOfAccount(String username);
+	
+	int editAccount(String username, String password,int version,int id);
+	
+	int checkUsernameExists(String username, int id);
 }

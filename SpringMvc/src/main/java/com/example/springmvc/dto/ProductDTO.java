@@ -1,4 +1,4 @@
-package dto;
+package com.example.springmvc.dto;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

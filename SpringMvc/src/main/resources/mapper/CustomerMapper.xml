@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvc.repository.CustomerMapper" >
+	<select id="getListCustomer" resultType="java.util.Map">
+	  <![CDATA[
+		SELECT
+			c.id, 
+			c.name,
+			c.phoneNumber,
+			c.address,
+			e.name AS employeeName,
+			e.id AS employeeId ,
+			e.accountId
+		FROM 
+			customer c
+		JOIN
+			employee e on c.employeeId = e.id
+		WHERE 
+	 		c.flag = 0
+	 	AND
+	 		(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
+	 			  THEN c.name LIKE CONCAT ('%',#{arg0},'%')
+	 			  ELSE 1=1
+	 		 END)
+	 	AND
+	 		(CASE WHEN #{arg1} IS NOT NULL OR #{arg1} != ''
+	 			  THEN c.phoneNumber LIKE CONCAT (#{arg1},'%')
+	 			  ELSE 1=1
+	 		 END)
+	 	ORDER BY
+	 		c.name
+	 	LIMIT
+	 		#{arg2} OFFSET #{arg3}
+	  ]]>
+	</select>
+	
+	<select id="countRecordOfCustomer" resultType="int">
+		<![CDATA[
+			SELECT
+				count(*)
+			FROM 
+				customer c
+			JOIN
+				employee e on c.employeeId = e.id
+			WHERE 
+	 			c.flag = 0
+	 		AND
+	 			(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
+	 			  	  THEN c.name LIKE CONCAT ('%',#{arg0},'%')
+	 			 ELSE 1=1
+	 		 	 END)
+	 		AND
+	 			(CASE WHEN #{arg1} IS NOT NULL OR #{arg1} != ''
+	 			  	 THEN c.phoneNumber LIKE CONCAT (#{arg1},'%')
+	 			 ELSE 1=1
+	 	    END)
+		]]>
+	</select>
+	
+	<update id="deleteCustomer">
+		<![CDATA[
+			UPDATE 
+				customer
+			SET
+				flag = 1
+			WHERE
+				id = #{id}
+		]]>
+	</update>
+
+	<update id="editCustomer">
+		<![CDATA[
+			UPDATE
+				customer
+			SET
+			    name = #{arg0},
+			    address = #{arg1},
+			    version = #{arg2} + 1,
+			    phoneNumber = #{arg3}
+			WHERE
+			    id = #{arg4}
+			AND
+			    version = #{arg2}
+		]]>
+	</update>
+
+	<select id="getCustomerById" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+			    c.id,
+			    c.name,
+			    c.phoneNumber,
+			    c.version,
+			    c.address,
+			    e.name AS employeeName,
+			    e.id AS employeeId
+			FROM
+			    customer c
+			JOIN
+				employee e on e.id = c.employeeId
+			WHERE
+			    c.id = #{id}
+		]]>
+	</select>
+
+	<select id="checkPhoneNumberExists" resultType="int">
+		<![CDATA[
+			SELECT
+			    count(*)
+			FROM
+			    customer
+			WHERE
+			    phoneNumber = #{arg0}
+			AND
+			    id <> #{arg1}
+		]]>
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

@@ -2,18 +2,64 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.springmvc.repository.AccountMapper">
-	<select id="getAccountByUsername" resultType="com.example.springmvc.model.Account">
+	<select id="getAccountByUsername" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
-				id,
-				username,
-				password,
-				roleId,
-				flag
+				a.id,
+				a.username,
+				a.password,
+				r.name AS roleName,
+				r.id AS roleId
 			FROM
-				account
+				account a
+			JOIN
+				role r on r.id = a.roleId
 			WHERE
-				username = #{username}
+				a.username = #{username}
 		]]>
 	</select>
+	
+	<insert id="insertAccount" >
+		INSERT INTO account(
+			username,password,roleId		
+			)
+		VALUES(
+			#{arg0},#{arg1},#{arg2}
+			)
+	</insert>
+	
+	<select id ="checkUsernameOfAccount" resultType="int">
+		SELECT
+			 count(*) 
+		FROM
+			 account 
+		WHERE 
+			 username = #{username};
+	</select>
+	
+	<select id="checkUsernameExists" resultType="int">
+	<![CDATA[
+		SELECT
+			 count(*) 
+		FROM
+			 account 
+		WHERE 
+			 username = #{arg0}
+		AND
+			id <> #{arg1}
+	]]>
+	</select>
+	
+	<update id="editAccount">
+		UPDATE
+			account
+		SET
+			username = #{arg0},
+			password = #{arg1},
+			version = #{arg2} + 1
+		WHERE
+			version = #{arg2}
+		AND
+			id = #{arg3}
+	</update>
 </mapper>

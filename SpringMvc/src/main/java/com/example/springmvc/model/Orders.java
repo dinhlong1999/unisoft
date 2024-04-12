@@ -7,13 +7,13 @@ public class Orders {
 
     private int id;
 
-    private int employeeId;
+    private Employee employee;
 
-    private int productId;
+    private Product product;
 
-    private int customerId;
+    private Customer customer;
 
-    private int statusId;
+    private Status status;
 
     private int quantityBook;
 
@@ -29,115 +29,115 @@ public class Orders {
     public Orders() {
     }
 
-    public Orders(int id,
-                  int employeeId,
-                  int productId,
-                  int customerId,
-                  int statusId,
-                  int quantityBook,
-                  LocalDateTime dateStart,
-                  boolean flag,
-                  LocalDateTime dateAllocation,
-                  double price,
-                  int version) {
-        this.id = id;
-        this.employeeId = employeeId;
-        this.productId = productId;
-        this.customerId = customerId;
-        this.statusId = statusId;
-        this.quantityBook = quantityBook;
-        this.dateStart = dateStart;
-        this.flag = flag;
-        this.dateAllocation=dateAllocation;
-        this.price = price;
-        this.version = version;
-    }
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
-    public int getEmployeeId() {
-        return employeeId;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
 
-    public int getProductId() {
-        return productId;
-    }
+	public Employee getEmployee() {
+		return employee;
+	}
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
 
-    public int getCustomerId() {
-        return customerId;
-    }
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
 
-    public int getStatusId() {
-        return statusId;
-    }
+	public Product getProduct() {
+		return product;
+	}
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
-    }
 
-    public int getQuantityBook() {
-        return quantityBook;
-    }
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
-    public void setQuantityBook(int quantityBook) {
-        this.quantityBook = quantityBook;
-    }
 
-    public LocalDateTime getDateStart() {
-        return dateStart;
-    }
+	public Customer getCustomer() {
+		return customer;
+	}
 
-    public void setDateStart(LocalDateTime dateStart) {
-        this.dateStart = dateStart;
-    }
 
-    public LocalDateTime getDateAllocation() {
-        return dateAllocation;
-    }
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
-    public void setDateAllocation(LocalDateTime dateAllocation) {
-        this.dateAllocation = dateAllocation;
-    }
 
-    public double getPrice() {
-        return price;
-    }
+	public Status getStatus() {
+		return status;
+	}
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
 
-    public int getVersion() {
-        return version;
-    }
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
 
-    public boolean isFlag() {
-        return flag;
-    }
+	public int getQuantityBook() {
+		return quantityBook;
+	}
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
+
+	public void setQuantityBook(int quantityBook) {
+		this.quantityBook = quantityBook;
+	}
+
+
+	public LocalDateTime getDateStart() {
+		return dateStart;
+	}
+
+
+	public void setDateStart(LocalDateTime dateStart) {
+		this.dateStart = dateStart;
+	}
+
+
+	public LocalDateTime getDateAllocation() {
+		return dateAllocation;
+	}
+
+
+	public void setDateAllocation(LocalDateTime dateAllocation) {
+		this.dateAllocation = dateAllocation;
+	}
+
+
+	public double getPrice() {
+		return price;
+	}
+
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+
+	public int getVersion() {
+		return version;
+	}
+
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+
+	public boolean isFlag() {
+		return flag;
+	}
+
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+
+    
 }

@@ -15,79 +15,66 @@ public class Customer {
 
     private int version;
 
-    private int employeeId;
+    private Employee employeeName;
+    
+	public Customer() {
+	}
 
-    public Customer() {
-    }
+	public int getId() {
+		return id;
+	}
 
-    public Customer(int id, String name, String phoneNumber, String address, boolean flag,int version,int employeeId) {
-        this.id = id;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.flag = flag;
-        this.version = version;
-        this.employeeId = employeeId;
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    }
+	public String getName() {
+		return name;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+	public boolean isFlag() {
+		return flag;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public int getVersion() {
+		return version;
+	}
 
-    public boolean getFlag() {
-        return flag;
-    }
+	public void setVersion(int version) {
+		this.version = version;
+	}
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
+	public Employee getEmployeeName() {
+		return employeeName;
+	}
 
-    public boolean isFlag() {
-        return flag;
-    }
+	public void setEmployeeName(Employee employeeName) {
+		this.employeeName = employeeName;
+	}
 
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public int getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
+  
 }
