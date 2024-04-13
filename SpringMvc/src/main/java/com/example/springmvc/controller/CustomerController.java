@@ -1,6 +1,5 @@
 package com.example.springmvc.controller;
 
-import java.lang.ProcessBuilder.Redirect;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -122,18 +123,100 @@ public class CustomerController {
 	@GetMapping("/showformeditcustomer/{idUpdate}")
 	public String showFormEdit(@PathVariable("idUpdate") int idUpdate,Model model,RedirectAttributes redirectAttributes){
 		Account accountLogin = getAccountLogin();
-		Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
 		Customer customer = customerService.getCustomerById(idUpdate);
-		if (customer.getEmployeeName().getId() != employee.getId()){
-			redirectAttributes.addFlashAttribute("message","Bạn không có quyền cập nhật đối tượng này");
+		if (customer == null) {
+			redirectAttributes.addFlashAttribute("message","Không tồn tại đối tượng này");
 			return "redirect:/customer/list";
 		}
-
-		CustomerDTO customerDTO = new CustomerDTO();
-		BeanUtils.copyProperties(customer,customerDTO);
-		model.addAttribute("customerDTO",customer);
-		model.addAttribute("nameLogin",accountLogin.getUsername());
+		Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
+		if (employee != null) {
+			if ((customer.getEmployeeName().getId() != employee.getId()) && !accountLogin.getRole().getName().equals("ROLE_ADMIN")){
+				redirectAttributes.addFlashAttribute("message","Bạn không có quyền cập nhật đối tượng này");
+				return "redirect:/customer/list";
+			}else {
+				CustomerDTO customerDTO = new CustomerDTO();
+				BeanUtils.copyProperties(customer,customerDTO);
+				model.addAttribute("customerDTO",customerDTO);
+				model.addAttribute("nameLogin",accountLogin.getUsername());
+			}
+		}
 		return "customer/showformeditcustomer";
+	}
+	
+	@PostMapping("/edit")
+	public String editCustomer(@ModelAttribute CustomerDTO customerDTO,
+							   @RequestParam int page, @RequestParam String nameCustomer,
+							   @RequestParam String phoneNumberCustomer,
+							   BindingResult bindingResult,Errors errors, Model model, RedirectAttributes redirectAttributes) {
+		new CustomerDTO().validate(customerDTO, bindingResult);
+		int checkPhoneNumberExists = customerService.checkPhoneNumberExists(customerDTO.getPhoneNumber(), customerDTO.getId());
+		if (checkPhoneNumberExists != 0) {
+			errors.rejectValue("phoneNumber", null, "Số điện thoại đã bị trùng");
+		}
+		Account accountLogin = getAccountLogin();
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("customerDTO",customerDTO);
+			model.addAttribute("nameLogin",accountLogin.getUsername());
+			return "customer/showformeditcustomer";
+		}
+		Customer customer = new Customer();
+		BeanUtils.copyProperties(customerDTO, customer);
+		int rowEffectByEditCustomer = customerService.editCustomer(customer.getName(), customer.getAddress(), customer.getVersion(), customer.getPhoneNumber(), customer.getId());
+		if (rowEffectByEditCustomer == 1) {
+			model.addAttribute("customerName", nameCustomer);
+			model.addAttribute("customerPhoneNumber", phoneNumberCustomer);
+			redirectAttributes.addFlashAttribute("message", "Chỉnh sửa thành công.");
+			return "redirect:/customer/list?page=" + page + "&customerName=" + nameCustomer + "&customerPhoneNumber=" + phoneNumberCustomer;
+		}else {
+			model.addAttribute("customerName", nameCustomer);
+			model.addAttribute("customerPhoneNumber", phoneNumberCustomer);
+			redirectAttributes.addFlashAttribute("message", "Chỉnh sửa thất bại.");
+			return "redirect:/customer/list?page=" + page + "&customerName=" + nameCustomer + "&customerPhoneNumber=" + phoneNumberCustomer;
+		
+		}
+	}
+
+	@GetMapping("/showformcreatecustomer")
+	public String showFormCreateCustomer(Model model){
+		Account accountLogin = getAccountLogin();
+		model.addAttribute("customerDTO",new CustomerDTO());
+		model.addAttribute("nameLogin",accountLogin.getUsername());
+		return "customer/showformcreatecustomer";
+	}
+
+	@PostMapping("/create")
+	public String createCustomer(@ModelAttribute CustomerDTO customerDTO,
+								 @RequestParam String nameCustomer, @RequestParam int page,
+								 @RequestParam String phoneNumberCustomer,BindingResult bindingResult,
+								 Errors errors,Model model,RedirectAttributes redirectAttributes){
+
+		Account accountLogin = getAccountLogin();
+		int checkPhoneNumberExists = customerService.checkPhoneNumberExists(customerDTO.getPhoneNumber(),0);
+		if (checkPhoneNumberExists != 0){
+			errors.rejectValue("phoneNumber",null,"Số điện thoại đã tồn tại");
+		}
+		new CustomerDTO().validate(customerDTO,bindingResult);
+		if (bindingResult.hasErrors()){
+			model.addAttribute("customerDTO",customerDTO);
+			model.addAttribute("nameLogin",accountLogin.getUsername());
+			return "customer/showformcreatecustomer";
+		}
+		Customer customer = new Customer();
+		BeanUtils.copyProperties(customerDTO,customer);
+		Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
+		int rowEffectByInsertCustomer = customerService.saveCustomer(customer.getName(),customer.getAddress(),customer.getPhoneNumber(),employee.getId());
+		if (rowEffectByInsertCustomer == 1){
+			model.addAttribute("customerName", nameCustomer);
+			model.addAttribute("customerPhoneNumber", phoneNumberCustomer);
+			redirectAttributes.addFlashAttribute("message", "Thêm mới thành công.");
+			return "redirect:/customer/list?page=" + page + "&customerName=" + nameCustomer + "&customerPhoneNumber=" + phoneNumberCustomer;
+		}else {
+			model.addAttribute("customerName", nameCustomer);
+			model.addAttribute("customerPhoneNumber", phoneNumberCustomer);
+			redirectAttributes.addFlashAttribute("message", "Thêm mới thất bại.");
+			return "redirect:/customer/list?page=" + page + "&customerName=" + nameCustomer + "&customerPhoneNumber=" + phoneNumberCustomer;
+
+		}
 	}
 	
 	

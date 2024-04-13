@@ -70,6 +70,9 @@ public class EmployeeService implements IEmployeeService {
 	public Employee getEmployeeById(int id) {
 		Employee employee = new Employee();
 		Map<String, Object> emplMap = employeeMapper.getEmployeeById(id);
+		if(emplMap== null) {
+			return null;
+		}
 		employee.setId((int) emplMap.get("id"));
 		employee.setName((String) emplMap.get("name"));
 		employee.setPhoneNumber((String) emplMap.get("phoneNumber"));

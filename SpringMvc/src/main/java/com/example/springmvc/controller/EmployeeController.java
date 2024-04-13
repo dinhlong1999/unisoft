@@ -168,9 +168,13 @@ public class EmployeeController {
 	}
 
 	 @GetMapping("/showformedit/{id}")
-	 public String showfromEdit(@PathVariable("id") int id, Model model) {
+	 public String showfromEdit(@PathVariable("id") int id, Model model,RedirectAttributes redirectAttributes) {
 		 Account account = getAccountLogin();
 		 Employee employee = employeeService.getEmployeeById(id);
+		 if (employee == null) {
+			redirectAttributes.addFlashAttribute("message","Không tồn tại nhân viên này.");
+			return "redirect:/employee/list";
+		}
 		 EmployeeDTO employeeDTO = new EmployeeDTO();
 		 BeanUtils.copyProperties(employee, employeeDTO);
 		 employeeDTO.setAccount(employee.getAccount());

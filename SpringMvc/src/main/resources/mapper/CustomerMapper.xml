@@ -113,32 +113,54 @@
 			WHERE
 			    phoneNumber = #{arg0}
 			AND
-			    id <> #{arg1}
+			    (CASE WHEN #{arg1} IS NOT NULL OR #{arg1} != 0
+			    	  THEN  id <> #{arg1}
+			          ELSE 1 = 1
+			     END)
 		]]>
 	</select>
+
+
+
+	<insert id="saveCustomer">
+		<![CDATA[
+			INSERT INTO
+				customer(name, address,phoneNumber, employeeId)
+			VALUES (
+			    #{arg0}, #{arg1}, #{arg2},#{arg3}
+				   )
+
+		]]>
+	</insert>
+
+	<select id="getPhoneNumberByNameCustomer" resultType="String">
+		<![CDATA[
+			SELECT
+			    phoneNumber
+			FROM
+			    customer
+			WHERE
+			    name = #{name}
+		]]>
+	</select>
+
+	<select id="getNameByPhoneNumberCustomer" resultType="String">
+		<![CDATA[
+		SELECT
+			name
+		FROM
+			customer
+		WHERE
+			phoneNumber = #{phoneNumber}
+		]]>
+	</select>
+
+
+
+
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 </mapper>

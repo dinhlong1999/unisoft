@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đơn hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        h1,td,th {
+            text-align: center;
+        }
+        input{
+            border-radius: 5px;
+        }
+        table{
+            background-color: white;
+        }
+        body {
+            background-color: #EAE9E5;
+        }
+        .createform {
+            margin-bottom:5px;
+        }
+        .createform button {
+            background-color:white;
+            border-radius:5px;
+        }
+        #btn{
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div th:insert = "header :: nav"></div>
+    <div class="container-fluid">
+        <h1>Danh sách đơn hàng</h1>
+        <label for="name">
+            <input type="text" id="name" name="name" th:attr="onblur='autofillPhoneNumber()'">
+        </label>
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber">
+        <table id="myTable">
+            <thead>
+            <tr>
+                <th>Column 1</th>
+                <th>Column 2</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input type="text" class="input-data" oninput="addRowIfNeeded(this)" value="adad"></td>
+                <td><input type="text" class="input-data" oninput="addRowIfNeeded(this)" value="adadad"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    function addRowIfNeeded(input) {
+        var table = document.getElementById("myTable");
+        var lastRow = table.rows[table.rows.length - 1];
+        var inputs = lastRow.getElementsByTagName("input");
+        var shouldAddRow = true;
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].value === "") {
+                shouldAddRow = false;
+                break;
+            }
+        }
+        console.log(shouldAddRow)
+        if (shouldAddRow) {
+            var newRow = table.insertRow(table.rows.length);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            cell1.innerHTML = "<input type='text' class='input-data' oninput='addRowIfNeeded(this)'>";
+            cell2.innerHTML = "<input type='text' class='input-data' oninput='addRowIfNeeded(this)'>";
+        }
+    }
+</script>
+<script th:inline="javascript">
+    function autofillPhoneNumber() {
+        let nameInput = $('#name').val();
+        $.ajax({
+            contentType:"application/json",
+            method:"GET",
+            url: `http://localhost:8081/api/getPhoneNumberFromCustomerName?customerName=`+encodeURIComponent(nameInput),
+            success:function (data) {
+            	console.log(data)
+                if (data === ""){
+                    alert("Không tồn tại khách hàng")
+                    $('#name').val('');
+                    $('#phoneNumber').val('')
+                }else{
+                	 $('#phoneNumber').val(data)
+                }
+            },
+            error:function (xhr,textStatus,errorThrow) {
+                console.log("Error",errorThrow)
+            }
+        })
+
+    }
+</script>
+</html>

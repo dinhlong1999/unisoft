@@ -45,6 +45,9 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public Customer getCustomerById(int id) {
 		Map<String,Object> customerMap = customerMapper.getCustomerById(id);
+		if(customerMap == null) {
+			return null;
+		}
 		Customer customer = new Customer();
 		Employee employee = new Employee();
 		customer.setId((int) customerMap.get("id"));
@@ -61,6 +64,21 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public int checkPhoneNumberExists(String phoneNumber, int id) {
 		return customerMapper.checkPhoneNumberExists(phoneNumber,id);
+	}
+
+	@Override
+	public int saveCustomer(String name, String address, String phoneNumber, int employeeId) {
+		return customerMapper.saveCustomer(name, address, phoneNumber, employeeId);
+	}
+
+	@Override
+	public String getPhoneNumberByNameCustomer(String nameCustomer) {
+		return customerMapper.getPhoneNumberByNameCustomer(nameCustomer);
+	}
+
+	@Override
+	public String getNameByPhoneNumberCustomer(String phoneNumber) {
+		return customerMapper.getNameByPhoneNumberCustomer(phoneNumber);
 	}
 
 

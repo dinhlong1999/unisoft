@@ -179,10 +179,14 @@ public class ProductController {
     }
     
     @GetMapping("/showformedit/{id}")
-    public String showFromEdit(@PathVariable("id") int id,Model model) {
+    public String showFromEdit(@PathVariable("id") int id,Model model,RedirectAttributes redirectAttributes) {
     	Account account = getAccountLogin();
     	try {
     		Product product = productService.getProductById(id);
+    		if (product == null) {
+				redirectAttributes.addFlashAttribute("message", "Không tồn tại sản phẩm này trong hệ thống");
+				return "redirect:/product/list";
+			}
         	ProductDTO productDTO = new ProductDTO();
         	BeanUtils.copyProperties(product, productDTO);
         	model.addAttribute("productDTO",productDTO);
