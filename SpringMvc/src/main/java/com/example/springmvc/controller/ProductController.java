@@ -1,15 +1,15 @@
 package com.example.springmvc.controller;
 
+import com.example.springmvc.dto.ProductDTO;
 import com.example.springmvc.model.Account;
 import com.example.springmvc.model.Product;
-import com.example.springmvc.model.Role;
 import com.example.springmvc.service.IAccountService;
 import com.example.springmvc.service.IProductService;
 import com.example.springmvc.service.IRoleService;
 
-import dto.ProductDTO;
 import javax.validation.Valid;
 
+import org.apache.ibatis.javassist.expr.NewArray;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -22,6 +22,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,8 +35,6 @@ public class ProductController {
     @Autowired
     private IAccountService accountService;
     
-    @Autowired
-    private IRoleService roleService;
     
     
     private Account getAccountLogin () {
@@ -52,15 +51,17 @@ public class ProductController {
     public String getListProduct(@RequestParam(required = false,defaultValue = "0") int page,
                                  @RequestParam(required = false,defaultValue = "") String codeProduct,
                                  @RequestParam(required = false,defaultValue = "") String nameProduct,
-                                 Model model) {
+                                 Model model,RedirectAttributes redirectAttributes) {
         if (page != 0){
             page = page -1;
         }
+        if (page < 0) {
+        	return "redirect:/product/list";
+		}
         int limit = 4;
         try {
         	 Account accountLogin = getAccountLogin();
-        	 Role roleLogin = roleService.getRoleById(accountLogin.getRoleId());
-        	 if (roleLogin.getName().equals("ROLE_ADMIN")) {
+        	 if (accountLogin.getRole().getName().equals("ROLE_ADMIN")) {
         		 model.addAttribute("isAdmin",true);
         	 }else {
         		 model.addAttribute("isAdmin",false);
@@ -70,8 +71,7 @@ public class ProductController {
              double temp = (double) totalRow / limit ;
              int totalPage = (int) Math.ceil(temp);
              
-             
-             
+             //logic phân trang
              int maxVisitablePages = 10; //Số trang tối đa hiển thị
              int adjacentPages = 2;  //số trang bên cạnh trang hiện tại
              int startPage;
@@ -114,8 +114,9 @@ public class ProductController {
              model.addAttribute("nameLogin",accountLogin.getUsername());
 		} catch (Exception  e) {
 		System.out.println(e.getMessage());	
+		
 		}
-        return "listproduct";
+        return "product/listproduct";
     }
     
     @PostMapping("/delete")
@@ -140,7 +141,7 @@ public class ProductController {
     	Account account = getAccountLogin();
     	model.addAttribute("productDTO",new ProductDTO());
     	model.addAttribute("nameLogin",account.getUsername());
-    	return "formcreateproduct";	
+    	return "product/formcreateproduct";	
     }
     
     @PostMapping("/create")
@@ -158,7 +159,7 @@ public class ProductController {
         }
     	if(bindingResult.hasFieldErrors()) {
     		model.addAttribute("productDTO",productDTO);
-    		return "formcreateproduct";
+    		return "product/formcreateproduct";
     	}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);
@@ -178,10 +179,14 @@ public class ProductController {
     }
     
     @GetMapping("/showformedit/{id}")
-    public String showFromCreate(@PathVariable("id") int id,Model model) {
+    public String showFromEdit(@PathVariable("id") int id,Model model,RedirectAttributes redirectAttributes) {
     	Account account = getAccountLogin();
     	try {
     		Product product = productService.getProductById(id);
+    		if (product == null) {
+				redirectAttributes.addFlashAttribute("message", "Không tồn tại sản phẩm này trong hệ thống");
+				return "redirect:/product/list";
+			}
         	ProductDTO productDTO = new ProductDTO();
         	BeanUtils.copyProperties(product, productDTO);
         	model.addAttribute("productDTO",productDTO);
@@ -190,7 +195,7 @@ public class ProductController {
 			System.out.println(e.getMessage());
 		}
     	
-    	return "formupdateproduct";
+    	return "product/formupdateproduct";
     }
     
     @PostMapping("/edit")
@@ -207,7 +212,7 @@ public class ProductController {
     	new ProductDTO().validate(productDTO, bindingResult);
     	if (bindingResult.hasErrors()) {
 			model.addAttribute("productDTO",productDTO);
-			return "formupdateproduct";
+			return "product/formupdateproduct";
 		}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);

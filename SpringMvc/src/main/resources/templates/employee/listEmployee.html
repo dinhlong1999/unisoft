@@ -35,12 +35,22 @@
    <div class="container-fluid">
       <h1>Danh sách nhân viên</h1>
       
-      <div style="color: red" th:if="${message}">
-        <span th:text="${message}"></span>
-      </div>
+       <div style="color: red" th:if="${message}">
+        <span  th:text="${message}"></span>
+        <script th:inline="javascript">           
+            function myJavaScriptFunction() {
+                var message = /*[[${message}]]*/ '';
+                alert(message);
+                
+            }
+                myJavaScriptFunction();
+           
+
+        </script>
+    </div>
     
       <div class="createform">
-  		<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${username}','${employeeName}','${phoneNumber}')|">
+  		<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${username}','${employeeName}','${phoneNumberSearch}')|">
   			<a th:href="@{/employee/showform}" style="text-decoration: none;color:black">Thêm mới nhân viên</a>
   		</button>
   	  </div>
@@ -59,7 +69,7 @@
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Số điện thoại : <input type="text"  name="phoneNumber" style="width:12%;margin-left: 3px" th:value="${phoneNumber}" placeholder="Vui lòng nhập số điện thoại">
+                	Số điện thoại : <input type="text"  name="phoneNumberSearch" style="width:12%;margin-left: 3px" th:value="${phoneNumberSearch}" placeholder="Vui lòng nhập số điện thoại">
             	</span>
             </div>
             <div style="margin-top: 5px;">
@@ -70,7 +80,7 @@
       </div>
    	
    	  <div>
-   	     	<table  id ="employeeTable" class ="table table-hover">
+   	     	<table  id ="employeeTable" class ="table table-hover table-bordered">
    	     		<tr style="background-color: grey;color: white">
    	     			<th>STT</th>
    	     			<th>TÊN ĐĂNG NHẬP</th>
@@ -85,9 +95,9 @@
    	     			<td th:text="${map['name']}"></td>
    	     			<td th:text="${map['phoneNumber']}"></td>
    	     			<td class="isOnline" th:text="${map['isOnline'] ? 'Online' : 'Offline' }"></td>
-   	     			<td>
-   	     				<button type="button" class="btn btn-outline-warning" >
-  							<a  style="text-decoration: none;color:black">Chỉnh sửa</a>
+   	     			<td style="width:10%">
+   	     				<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage(${page},'${username}','${employeeName}','${phoneNumberSearch}')|" >
+  							<a th:href ="@{/employee/showformedit/{id}(id=${map['id']})}"  style="text-decoration: none;color:black">Chỉnh sửa</a>
   						</button>
    	     			</td>
    	     			<td>
@@ -104,7 +114,7 @@
             <nav aria-label="Page navigation example" > 
 	            <ul class="pagination" style="display: flex;justify-content: center">
 	            	<li th:if="${page > 0}" class="page-item" >
-	            		<a class="page-link" th:href="@{/employee/list(page=${page},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Previous</a>
+	            		<a class="page-link" th:href="@{/employee/list(page=${page},username=${username},employeeName=${employeeName},phoneNumberSearch=${phoneNumberSearch})}">Previous</a>
 	            	</li>
 	            	<li class="page-item"  th:if="${showStartEllipsis}">
 	            		<span class="page-link">...</span >
@@ -114,14 +124,14 @@
 	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
 	            		</li>
 	            		<li class="page-item" th:if="${pageNumber -1 != page}">
-	            			<a class="page-link " th:href="@{/employee/list(page=${pageNumber},username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}" th:text="${pageNumber}" ></a>
+	            			<a class="page-link " th:href="@{/employee/list(page=${pageNumber},username=${username},employeeName=${employeeName},phoneNumberSearch=${phoneNumberSearch})}" th:text="${pageNumber}" ></a>
 	            		</li>
 	            	</th:block>
 	            	<li class="page-item"  th:if="${showEndEllipsis}">
 	            		<span  class="page-link">...</span>
 	            	</li>
 	            	<li class="page-item" th:if="${page + 1 != totalPage }">
-	            		<a class="page-link" th:href="@{/employee/list(page=${page +2 },username=${username},employeeName=${employeeName},phoneNumber=${phoneNumber})}">Next</a>
+	            		<a class="page-link" th:href="@{/employee/list(page=${page +2 },username=${username},employeeName=${employeeName},phoneNumberSearch=${phoneNumberSearch})}">Next</a>
 	            	</li>
 	            </ul>
    
@@ -140,7 +150,7 @@
       			</div>
       			<form th:action ="@{/employee/delete}" method= "post">
        				<div class="modal-body">
-	      				Bạn có muốn xóa sản phẩm : <span id="name" style="color:red"></span>?
+	      				Bạn có muốn xóa nhân viên : <span id="name" style="color:red"></span>?
 	   					<input type="hidden" id="id" name="idDelete">
       				</div>
       				<div class="modal-footer">
@@ -193,11 +203,11 @@
         	document.getElementById("name").innerText = name;
         }
         
-        function saveDataInLocalStorage(page,username,employeeName,phoneNumber) {
+        function saveDataInLocalStorage(page,username,employeeName,phoneNumberSearch) {
             localStorage.setItem("page",page+1);
             localStorage.setItem("username",username);
             localStorage.setItem("employeeName",employeeName);
-            localStorage.setItem("phoneNumber",phoneNumber);
+            localStorage.setItem("phoneNumberSearch",phoneNumberSearch);
         }
 
         window.onload=function (){

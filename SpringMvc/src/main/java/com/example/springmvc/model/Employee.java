@@ -8,7 +8,7 @@ public class Employee {
 
     private String phoneNumber;
 
-    private int accountId;
+    private Account account;
 
     private boolean flag;
 
@@ -19,73 +19,62 @@ public class Employee {
     public Employee() {
     }
 
+	public int getId() {
+		return id;
+	}
 
-    public Employee(int id, String name, String phoneNumber, int accountId, boolean flag, int version, boolean isOnline) {
-        this.id = id;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.accountId = accountId;
-        this.flag = flag;
-        this.version = version;
-        this.isOnline = isOnline;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+	public Account getAccount() {
+		return account;
+	}
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+	public void setAccount(Account account) {
+		this.account = account;
+	}
 
-    public int getAccountId() {
-        return accountId;
-    }
+	public boolean isFlag() {
+		return flag;
+	}
 
-    public void setAccountId(int accountId) {
-        this.accountId = accountId;
-    }
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
 
-    public boolean getFlag() {
-        return flag;
-    }
+	public int getVersion() {
+		return version;
+	}
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
+	public void setVersion(int version) {
+		this.version = version;
+	}
 
 	public boolean isOnline() {
 		return isOnline;
 	}
 
-
 	public void setOnline(boolean isOnline) {
 		this.isOnline = isOnline;
 	}
+
+
     
 }

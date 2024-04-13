@@ -41,7 +41,17 @@
     <h1>Danh sách sản phẩm</h1>
    
     <div style="color: red" th:if="${message}">
-        <span th:text="${message}"></span>
+        <span id ="test" th:text="${message}"></span>
+        <script th:inline="javascript">           
+            function myJavaScriptFunction() {
+                var message = /*[[${message}]]*/ '';
+                alert(message);
+                
+            }
+                myJavaScriptFunction();
+           
+
+        </script>
     </div>
     
   	<div class="createform">
@@ -54,12 +64,12 @@
         <form th:action="@{/product/list}" method="get" >
             <div>
             <span>
-                Mã sản phẩm : <input type="text"  name="codeProduct" style="width:13%;" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
+                Mã sản phẩm : <input type="text"  name="codeProduct" style="width:14%;" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
             </span>
             </div>
             <div style="margin-top: 5px">
             <span>
-                 Tên sản phẩm: <input type="text"  name="nameProduct" style="width:13%;margin-left:3px" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
+                 Tên sản phẩm: <input type="text"  name="nameProduct" style="width:14%;margin-left:3px" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
             </span>
             </div>
             <div style="margin-top: 5px;">
@@ -70,7 +80,7 @@
     </div>
    
    	<div>
-   		<table class="table table-hover ">
+   		<table class="table table-hover table-bordered">
             <tr style="background-color: grey;color: white">
                 <th>STT</th>
                 <th>Mã sản phẩm</th>
@@ -81,7 +91,7 @@
                 <th th:if="${isAdmin}" colspan ="2" >Hành động</th>
         
             </tr>
-            <tr th:if="${productList.size() > 0}" th:each="product,status:${productList}">
+            <tr th:if="${productList.size() > 0  }" th:each="product,status:${productList}">
                 <td th:text="${status.count  + page  * limit}"></td>
                 <td th:text="${product.codeProduct}"></td>
                 <td th:text="${product.nameProduct}"></td>
@@ -89,7 +99,7 @@
                 <td th:text="${#numbers.formatDecimal(product.priceSell, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 <td th:if="${isAdmin == true}" th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 
-                <td th:if="${isAdmin == true}">
+                <td th:if="${isAdmin == true}" style="width:10%">
   					<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
   						<a th:href="@{/product/showformedit/{id}(id=${product.id})}" style="text-decoration: none;color:black">Chỉnh sửa</a>
   					</button>
@@ -101,14 +111,14 @@
                 </td>
                  
             </tr>
-            <tr th:if = "${productList.size() == 0}"> 
+            <tr th:if = "${productList.size() == 0 }">
             	<!-- <td th:if="${isAdmin == true}" colspan="8">Không tìm thấy sản phẩm</td>
             	<td th:if="${isAdmin != true}" colspan="5">Không tìm thấy sản phẩm</td> -->
             	<td th:colspan ="${isAdmin ? 8 : 5}">Không tìm thấy sản phẩm</td>
             </tr>
         </table>
         
-        <div th:if="${productList.size() > 0}">
+        <div th:if="${productList.size() > 0 }">
             <nav aria-label="Page navigation example" > 
 	            <ul class="pagination" style="display: flex;justify-content: center">
 	            	<li th:if="${page > 0}" class="page-item" >

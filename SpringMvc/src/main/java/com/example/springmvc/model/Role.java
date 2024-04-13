@@ -1,8 +1,11 @@
 package com.example.springmvc.model;
 
 public class Role {
+	
     private int id;
+    
     private String name;
+    
     private boolean flag;
 
     public Role() {
@@ -31,4 +34,10 @@ public class Role {
     public void setFlag(boolean flag) {
         this.flag = flag;
     }
+
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", name=" + name + ", flag=" + flag + "]";
+	}
+    
 }

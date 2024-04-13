@@ -19,6 +19,7 @@ public class Product {
     private int inventory;
 
     private int version;
+    
     public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,
                    int version,int inventory) {
         this.id = id;

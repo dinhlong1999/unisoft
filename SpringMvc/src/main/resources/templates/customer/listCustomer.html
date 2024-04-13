@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Danh sách khách hàng</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+	<style>
+		h1,td,th {
+            text-align: center;
+        }
+        input{
+            border-radius: 5px;
+        }
+        table{
+            background-color: white;
+        }
+        body {
+            background-color: #EAE9E5;
+        }
+        .createform {
+        	margin-bottom:5px;
+        }
+        .createform button {
+        	background-color:white;
+        	border-radius:5px;
+        }
+       #btn{
+       		margin-left: auto;
+       }
+	</style>  
+</head>
+<body>
+	<div th:insert = "header :: nav"></div>
+	<div class="container-fluid">
+		<h1>Danh sách khách hàng</h1>
+		
+		  <div style="color: red" th:if="${message}">
+        <span th:text="${message}"></span>
+        <script th:inline="javascript">           
+            function myJavaScriptFunction() {
+                var message = /*[[${message}]]*/ '';
+                alert(message);
+                
+            }
+                myJavaScriptFunction();
+           
+
+        </script>
+    </div>
+      	 
+      	 <div class="createform">
+  		 	<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${customerName}','${customerPhoneNumber}')|">
+  				<a th:href="@{/customer/showformcreatecustomer}" style="text-decoration: none;color:black">Thêm mới khách hàng</a>
+  		 	</button>
+  	  	 </div>
+  	  	 
+  	  	 <div class="form-search">
+        	<form th:action="@{/customer/list}" method="get" >
+            	<div>
+            		<span>
+                		Tên khách hàng : <input type="text"  name="customerName" style="width:15%;" th:value="${customerName}" placeholder="Vui lòng nhập tên khách hàng">
+            		</span>
+            	</div>
+            	<div style="margin-top: 5px">
+            		<span>
+                		Số điện thoại : <input type="text"  name="customerPhoneNumber" style="width:15%;margin-left: 9px" th:value="${customerPhoneNumber}" placeholder="Vui lòng nhập số điện thoại">
+            		</span>
+            	</div>
+            	<div style="margin-top: 5px;">
+                	<input style="margin-bottom: 5px" type="submit" value="Search">
+                	<input style="margin-bottom: 5px" type="reset" value="Clear" >
+            	</div>
+        	</form>
+      	</div>
+  	  	 
+  	  	 <div>
+			<table class="table table-hover table-bordered">
+				<tr style ="background: grey;color: white">
+					<th>STT</th>
+					<th>TÊN KHÁCH HÀNG</th>
+					<th>SỐ ĐIỆN THOẠI</th>
+					<th>ĐỊA CHỈ</th>
+					<th>NHÂN VIÊN</th>
+					<th colspan="2">HÀNH ĐỘNG</th>
+				</tr>
+				<tr th:if="${customerList.size() > 0}" th:each ="customer,status:${customerList}">
+					<td th:text="${status.count + page *limit}"></td>
+					<td th:text="${customer['name']}"></td>
+					<td th:text="${customer['phoneNumber']}"></td>
+					<td th:text="${customer['address']}"></td>
+					<td th:text="${customer['employeeName']}"></td>
+					<td th:if="${isAdmin == true || customer['accountId'] == accountId}" style="width:10%">
+						<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage(${page},'${customerName}','${customerPhoneNumber}')|" >
+  							<a th:href="@{/customer/showformeditcustomer/{idUpdate}(idUpdate=${customer['id']})}"  style="text-decoration: none;color:black">Chỉnh sửa</a>
+  						</button>
+					</td>
+		
+					<td th:if="${isAdmin == true || customer['accountId'] == accountId}">
+						<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr="onclick=|sendData(${customer['id']},'${customer['name']}')|">
+  							Xóa
+						</button>
+					</td>
+				</tr>
+				<tr th:if = "${customerList.size() == 0}"> 
+            		<td colspan ="6">Không tìm thấy khách hàng</td>
+           		</tr>
+			</table>  	
+			
+			<div th:if="${customerList.size() > 0}">
+           		 <nav aria-label="Page navigation example" > 
+	            	<ul class="pagination" style="display: flex;justify-content: center">
+	            		<li th:if="${page > 0}" class="page-item" >
+	            			<a class="page-link" th:href="@{/customer/list(page=${page},customerName=${customerName},customerPhoneNumber=${customerPhoneNumber})}">Previous</a>
+	            		</li>
+	            		<li class="page-item"  th:if="${showStartEllipsis}">
+	            			<span class="page-link">...</span >
+	            		</li>
+	            	<th:block th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}">
+	            		<li class="page-item active" th:if="${pageNumber -1 == page}">
+	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
+	            		</li>
+	            		<li class="page-item" th:if="${pageNumber -1 != page}">
+	            			<a class="page-link " th:href="@{/customer/list(page=${pageNumber},customerName=${customerName},customerPhoneNumber=${customerPhoneNumber})}" th:text="${pageNumber}" ></a>
+	            		</li>
+	            	</th:block>
+	            		<li class="page-item"  th:if="${showEndEllipsis}">
+	            			<span  class="page-link">...</span>
+	            		</li>
+	            		<li class="page-item" th:if="${page + 1 != totalPage }">
+	            			<a class="page-link" th:href="@{/customer/list(page=${page + 2},customerName=${customerName},customerPhoneNumber=${customerPhoneNumber})}" >Next</a>
+	            		</li>
+	            </ul>
+   
+            </nav> 
+          
+           
+        </div>	  	 
+  	  	 </div>
+  	  	 
+	</div>
+
+	<!-- modal xóa	 -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa</h5>
+        				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      			</div>
+      			<form th:action ="@{/customer/delete}" method= "post">
+       				<div class="modal-body">
+	      				Bạn có muốn xóa khách hàng  : <span id="name" style="color:red"></span>?
+	   					<input type="hidden" id="id" name="idDelete">
+      				</div>
+      				<div class="modal-footer">
+        				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+        				<button type="submit" class="btn btn-outline-danger">Xóa</button>
+      				</div>
+       			</form>
+    		</div>
+  		</div>
+	</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+</script>
+<script>
+	function saveDataInLocalStorage(page,customerName,customerPhoneNumber) {
+    localStorage.setItem("page",page+1);
+    localStorage.setItem("customerName",customerName);
+    localStorage.setItem("customerPhoneNumber",customerPhoneNumber);
+	}
+
+	window.onload=function (){
+    	localStorage.clear();
+	}
+	
+	function sendData(id,name){
+		document.getElementById("id").value = id;
+		document.getElementById("name").innerText=name;
+	}
+
+</script>
+</html>

@@ -10,8 +10,7 @@
         FROM
             product
         WHERE
-            1=1
-        AND flag = 0
+       		flag = 0
         AND
             (CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
             THEN  codeProduct LIKE concat('%', #{arg0},'%')
@@ -35,8 +34,6 @@
             FROM
                 product
             WHERE
-              1=1
-        	AND
         	  flag = 0
             
             AND

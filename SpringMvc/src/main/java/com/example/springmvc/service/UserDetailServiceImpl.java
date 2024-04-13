@@ -13,39 +13,27 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.springmvc.model.Account;
-import com.example.springmvc.model.Role;
-import com.example.springmvc.repository.AccountMapper;
-import com.example.springmvc.repository.RoleMapper;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService{
 	
 	@Autowired
-	private AccountMapper accountMapper;
+	private IAccountService accountService;
 	
-	@Autowired
-	private RoleMapper roleMapper;
-	
-	
-
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		//Check account exists in database ?
-		Account accountCheckExists = accountMapper.getAccountByUsername(username);
+		// Check account exists in database ?
+		Account accountCheckExists = accountService.getAccountByUsername(username);
 		
 		if (accountCheckExists == null) {
 			throw new UsernameNotFoundException("User" + username + " khong ton tai trong he thong");
 		}
 		
-
-		
-		Role role = roleMapper.getRoleById(accountCheckExists.getRoleId());
-		String roleOwn = role.getName();
-		
+		System.out.println(accountCheckExists.toString());
 		Set<GrantedAuthority> grantList = new HashSet<>();
-		GrantedAuthority authority = new SimpleGrantedAuthority(roleOwn);
+		GrantedAuthority authority = new SimpleGrantedAuthority(accountCheckExists.getRole().getName());
 		grantList.add(authority);
 		
 		UserDetails userDetails = (UserDetails) new User(accountCheckExists.getUsername(),

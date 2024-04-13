@@ -11,8 +11,6 @@
 			JOIN
 				account a ON a.id = e.accountId
 			WHERE
-				1 = 1
-			AND
 				e.flag = 0
 			AND
 				(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
@@ -26,7 +24,7 @@
             	END)
             AND
             	(CASE WHEN #{arg2} IS NOT NULL OR #{arg2 } != ''
-            		  THEN  e.phoneNumber LIKE concat('0', #{arg2},'%')
+            		  THEN  e.phoneNumber LIKE concat('%',#{arg2},'%')
             		  ELSE 1=1 
             	END)
             ORDER BY
@@ -69,8 +67,6 @@
 			JOIN
 				account on account.id = employee.accountId
 			WHERE
-				1 = 1
-			AND
 				employee.flag = 0
 			AND
 				(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
@@ -84,7 +80,7 @@
             	END)
             AND
             	(CASE WHEN #{arg2} IS NOT NULL OR #{arg2 } != ''
-            		  THEN  employee.phoneNumber LIKE concat('0', #{arg2},'%')
+            		  THEN  employee.phoneNumber LIKE concat('%',#{arg2},'%')
             		  ELSE 1=1 
             	END)	
 		]]>
@@ -101,4 +97,49 @@
 		]]>
 	</update>
 	
+	
+	<insert id="insertEmployee">
+		<![CDATA[
+			INSERT INTO employee(
+				name,phoneNumber,accountId
+			)
+			VALUES(
+				#{arg0},#{arg1},#{arg2}
+			)
+		]]>
+	</insert>
+	
+	<select id="getEmployeeById" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				e.id,
+				e.name,
+				e.phoneNumber,
+				e.version,
+				a.username,
+				a.id AS accountId,
+				a.version as accountVersion
+			FROM
+				employee e
+			JOIN
+				account a on e.accountId = a.id
+			WHERE
+				e.id = #{id}
+		]]>
+	</select>
+	
+	<update id="updateEmployee">
+		<![CDATA[
+			UPDATE
+				employee
+			SET
+				phoneNumber = #{arg0},
+				version = #{arg1} + 1,
+				name = #{arg2}
+			WHERE
+				version = #{arg1}
+			AND
+				id = #{arg3}
+		]]>
+	</update>
 </mapper>

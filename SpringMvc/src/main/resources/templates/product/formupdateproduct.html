@@ -71,7 +71,7 @@
   			 </div>
   			 <div class="mb-3">
   	 			  <label for="inventory" class="form-label">Số lượng tồn kho</label>
-   			     <input type="number" th:field="*{inventory}" class="form-control" id="inventory" aria-describedby="emailHelp">
+   			     <input type="number" readonly="readonly" th:field="*{inventory}" class="form-control" id="inventory" aria-describedby="emailHelp">
     			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{inventory}"></div>
   			 </div>
 			<input type ="hidden" th:field ="*{id}" class="form-control" >

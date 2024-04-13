@@ -19,4 +19,10 @@ public interface EmployeeMapper {
 	int updateStatusEmployee(int status, int version,int id);
 	
 	int deleteEmployeeById (int id);
+	
+	int insertEmployee(String name, String phoneNumber, int accountId);
+	
+	Map<String, Object> getEmployeeById (int id);
+	
+	int updateEmployee(String phoneNumber, int version, String name, int id);
 }
