@@ -1,6 +1,5 @@
 package com.example.springmvc.dto;
 
-import com.example.springmvc.model.Customer;
 import com.example.springmvc.model.Employee;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

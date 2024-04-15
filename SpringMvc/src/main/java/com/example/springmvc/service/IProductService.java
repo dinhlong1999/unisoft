@@ -24,4 +24,8 @@ public interface IProductService {
     boolean isNameProductExistsToUpdate(String nameProduct, int id);
     
     boolean isCodeProductExistsToUpdate(String codeProduct, int id);
+    
+    String getCodeProductByNameProduct(String nameProduct);
+    
+    String getNameProductByCodeProduct (String codeProduct);
 }
