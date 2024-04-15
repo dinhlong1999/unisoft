@@ -5,11 +5,9 @@ import com.example.springmvc.model.Account;
 import com.example.springmvc.model.Product;
 import com.example.springmvc.service.IAccountService;
 import com.example.springmvc.service.IProductService;
-import com.example.springmvc.service.IRoleService;
 
 import javax.validation.Valid;
 
-import org.apache.ibatis.javassist.expr.NewArray;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -22,7 +20,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 

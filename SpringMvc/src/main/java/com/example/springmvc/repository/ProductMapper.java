@@ -37,4 +37,7 @@ public interface ProductMapper {
     
     int getCodeProductExistsToUpdate(String codeProduct,int id);
     
+    String getCodeProductByNameProduct(String nameProduct);
+    
+    String getNameProductByCodeProduct (String codeProduct);
 }

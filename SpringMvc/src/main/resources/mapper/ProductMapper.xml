@@ -158,5 +158,27 @@
     			version     = #{version}
     	]]>
     </update>
+    
+    <select id="getCodeProductByNameProduct" resultType="String">
+    	<![CDATA[
+    		SELECT
+    			codeProduct
+    		FROM
+    			product
+    		WHERE
+    			nameProduct = #{nameProduct}
+    	]]>
+    </select>
+    
+    <select id="getNameProductByCodeProduct" resultType="String">
+    	<![CDATA[
+    		SELECT 
+    			nameProduct
+    		FROM
+    			product
+    		WHERE
+    			codeProduct = #{codeProduct}
+    	]]>
+    </select>
 
 </mapper>

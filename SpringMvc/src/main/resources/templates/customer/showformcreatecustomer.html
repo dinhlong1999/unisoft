@@ -55,7 +55,7 @@
             <div class="mb-3">
                 <label for="customerPhoneNumber" class="form-label">Số điện thoại <span style="color:red">*</span>:</label>
                 <input type="text" class="form-control"  id="customerPhoneNumber" th:field ="*{phoneNumber}" aria-describedby="emailHelp">
-                <div class="form-xtte" th:if="${#fields.hasErrors()}" th:errors="*{phoneNumber}"></div>
+                <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{phoneNumber}"></div>
             </div>
             <div class="mb-3">
                 <label for="address" class="form-label">Địa chỉ <span style="color:red">*</span>:</label>

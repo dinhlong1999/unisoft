@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvc.repository.OrderMapper">
+	<select id="getListOrder" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				o.dateStart,
+    			p.nameProduct,
+    			p.codeProduct,
+    			o.price,
+    			o.quantityBook,
+    			c.name AS customerName,
+    			c.phoneNumber,
+    			c.address,
+    			o.dateAllocation,
+    			s.`name` AS statusName,
+   				a.username,
+    			e.`name` AS employeeName
+			FROM
+				orders o 
+			JOIN 
+				product p ON p.id = o.productId
+			JOIN 
+				customer c on c.id = o.customerId
+			JOIN 
+				status s on s.id = o.statusId
+			JOIN
+				employee e on e.id = o.employeeId
+			JOIN
+				account a on a.id = e.accountId
+			WHERE 
+				1 = 1
+			AND 
+				(CASE WHEN #{arg0} is not null or #{arg0} != ''
+		 				THEN a.username LIKE CONCAT("%",#{arg0},"%")
+         				ELSE 1 = 1
+	 			END)
+			AND 
+				(CASE WHEN #{arg1} is not null or #{arg1} != ''
+		 				THEN e.name LIKE CONCAT("%",#{arg1},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND 
+				(CASE WHEN #{arg2} is not null or #{arg2} != ''
+		 				THEN p.codeProduct LIKE CONCAT("%",#{arg2},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND 
+				(CASE WHEN #{arg3} is not null or #{arg3} != ''
+		 				THEN p.nameProduct LIKE CONCAT("%",#{arg3},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND 
+				(CASE WHEN #{arg4} is not null or #{arg4} != ''
+		 				THEN c.name LIKE CONCAT("%",#{arg4},"%")
+         				ELSE 1 = 1
+	 			END)
+			AND 
+				(CASE WHEN #{arg5} is not null or #{arg5} != ''
+		 				THEN c.phoneNumber LIKE CONCAT("%",#{arg5},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND
+	 			o.dateStart BETWEEN #{arg6} AND #{arg7}
+	 		AND
+	 			o.statusId IN (#{arg8},#{arg9})
+
+	 		ORDER BY
+	 			o.dateStart DESC
+	 		LIMIT
+	 			#{arg10} OFFSET #{arg11}
+		]]>
+	</select>
+	
+	<select id="getTotalRecordByOrder" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(*)
+			FROM 
+				orders o 
+			JOIN 
+				product p ON p.id = o.productId
+			JOIN 
+				customer c on c.id = o.customerId
+			JOIN 
+				status s on s.id = o.statusId
+			JOIN
+				employee e on e.id = o.employeeId
+			JOIN
+				account a on a.id = e.accountId
+			WHERE 
+				1 = 1
+			AND 
+				(CASE WHEN #{arg0} is not null or #{arg0} != ''
+		 				THEN a.username LIKE CONCAT("%",#{arg0},"%")
+         				ELSE 1 = 1
+	 			END)
+			AND 
+				(CASE WHEN #{arg1} is not null or #{arg1} != ''
+		 				THEN e.name LIKE CONCAT("%",#{arg1},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND 
+				(CASE WHEN #{arg2} is not null or #{arg2} != ''
+		 				THEN p.codeProduct LIKE CONCAT("%",#{arg2},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND 
+				(CASE WHEN #{arg3} is not null or #{arg3} != ''
+		 				THEN p.nameProduct LIKE CONCAT("%",#{arg3},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND 
+				(CASE WHEN #{arg4} is not null or #{arg4} != ''
+		 				THEN c.name LIKE CONCAT("%",#{arg4},"%")
+         				ELSE 1 = 1
+	 			END)
+			AND 
+				(CASE WHEN #{arg5} is not null or #{arg5} != ''
+		 				THEN c.phoneNumber LIKE CONCAT("%",#{arg5},"%")
+         				ELSE 1 = 1
+	 			END)
+	 		AND
+	 			o.dateStart BETWEEN #{arg6} AND #{arg7}
+	 		AND
+				o.statusId IN (#{arg8},#{arg9})
+		]]>
+	
+	</select>
+</mapper>
