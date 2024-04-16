@@ -62,14 +62,16 @@
          				ELSE 1 = 1
 	 			END)
 	 		AND
-	 			o.dateStart BETWEEN #{arg6} AND #{arg7}
+	 			(#{arg6} = true or o.employeeId = #{arg7})
 	 		AND
-	 			o.statusId IN (#{arg8},#{arg9})
+	 			o.dateStart BETWEEN #{arg8} AND #{arg9}
+	 		AND
+	 			o.statusId IN (#{arg10},#{arg11})
 
 	 		ORDER BY
 	 			o.dateStart DESC
 	 		LIMIT
-	 			#{arg10} OFFSET #{arg11}
+	 			#{arg12} OFFSET #{arg13}
 		]]>
 	</select>
 	
@@ -122,9 +124,11 @@
          				ELSE 1 = 1
 	 			END)
 	 		AND
-	 			o.dateStart BETWEEN #{arg6} AND #{arg7}
+	 			(#{arg6} = true or o.employeeId = #{arg7})
 	 		AND
-				o.statusId IN (#{arg8},#{arg9})
+	 			o.dateStart BETWEEN #{arg8} AND #{arg9}
+	 		AND
+				o.statusId IN (#{arg10},#{arg11})
 		]]>
 	
 	</select>

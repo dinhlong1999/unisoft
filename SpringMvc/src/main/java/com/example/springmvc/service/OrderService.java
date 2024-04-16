@@ -17,18 +17,21 @@ public class OrderService implements IOrderService {
 
 	@Override
 	public List<Map<String, Object>> getListOrder(String username, String employeeName, String codeProduct,
-			String nameProduct, String customerName, String phoneNumber, LocalDate dateStart, LocalDate dateEnd,
-			int statusAllocation, int statusBooking, int limit, int offset) {
+			String nameProduct, String customerName, String phoneNumber, boolean isAdmin, int employeeId,
+			LocalDate dateStart, LocalDate dateEnd, int statusAllocation, int statusBooking, int limit, int offset) {
 		// TODO Auto-generated method stub
-		return orderMapper.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, dateStart, dateEnd, statusAllocation,statusBooking, limit, offset);
+		return orderMapper.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, isAdmin, employeeId, dateStart, dateEnd, statusAllocation, statusBooking, limit, offset);
 	}
 
 	@Override
 	public int getTotalRecordByOrder(String username, String employeeName, String codeProduct, String nameProduct,
-			String customerName, String phoneNumber, LocalDate dateStart, LocalDate dateEnd, int statusAllocation, int statusBooking) {
+			String customerName, String phoneNumber, boolean isAdmin, int employeeId, LocalDate dateStart,
+			LocalDate dateEnd, int statusAllocation, int statusBooking) {
 		// TODO Auto-generated method stub
-		return orderMapper.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, dateStart, dateEnd, statusAllocation,statusBooking);
+		return orderMapper.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, isAdmin, employeeId, dateStart, dateEnd, statusAllocation, statusBooking);
 	}
+
+	
 
 	
 

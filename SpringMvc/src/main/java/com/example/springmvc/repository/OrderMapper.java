@@ -10,10 +10,10 @@ import org.apache.ibatis.annotations.Mapper;
 public interface OrderMapper {
 	
 	List<Map<String, Object>> getListOrder(String username, String employeeName, String codeProduct, String nameProduct, String customerName,
-									 String phoneNumber, LocalDate dateStart, LocalDate  dateEnd, int statusAllocation, int statusBooking, int limit, int offset);
+									 String phoneNumber, boolean isAdmin, int employeeId, LocalDate dateStart, LocalDate  dateEnd, int statusAllocation, int statusBooking, int limit, int offset);
 	
 	int getTotalRecordByOrder(String username, String employeeName, String codeProduct, String nameProduct, String customerName,
-									 String phoneNumber, LocalDate dateStart, LocalDate dateEnd, int statusAllocation, int statusBooking);
+									 String phoneNumber,  boolean isAdmin, int employeeId, LocalDate dateStart, LocalDate dateEnd, int statusAllocation, int statusBooking);
 	
 
 }

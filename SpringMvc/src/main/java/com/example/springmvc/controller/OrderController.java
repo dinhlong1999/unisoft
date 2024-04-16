@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.example.springmvc.model.Employee;
+import com.example.springmvc.service.IEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,11 +29,12 @@ public class OrderController {
 	private IOrderService orderService;
 	
 	@Autowired
-	    private IAccountService accountService;
+	private IAccountService accountService;
+
+	@Autowired
+	private IEmployeeService employeeService;
 	    
-	    
-	    
-	    private Account getAccountLogin () {
+	private Account getAccountLogin () {
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	    	if (!(authentication instanceof AnonymousAuthenticationToken)) {
 				String usernameLogin = authentication.getName();
@@ -51,27 +54,31 @@ public class OrderController {
     							@RequestParam(required = false,defaultValue = "") String phoneNumber,
     							@RequestParam(required = false,defaultValue = "") String dateStart, 
     							@RequestParam(required = false,defaultValue = "") String dateEnd,
-    							@RequestParam(required = false) Integer statusAllocation,
-    							@RequestParam(required = false) Integer statusBooking,Model model){
+    							@RequestParam(required = false,defaultValue = "0") Integer statusAllocation,
+    							@RequestParam(required = false,defaultValue = "0") Integer statusBooking,Model model){
     	if (page != 0) {
     		page = page - 1;
 		}
-    	int limit = 4;
+    	int limit = 2;
     	if (dateStart.isEmpty()) {
     		dateStart = "2000-10-10";
     	}
     	if (dateEnd.isEmpty()) {
 			dateEnd = "9999-10-10";
 		}
-    	 if (statusAllocation == null && statusBooking == null ) {
+    	 if (statusAllocation == 0 && statusBooking == 0 ) {
             statusAllocation = 2;
             statusBooking = 1;
          }
+
     	
-    	
-    	Account accountLogin = getAccountLogin();
-    	List<Map<String, Object>> ordersMap = orderService.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking, limit, page);
-    	int totalRecordByListAccount = orderService.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking);
+		 Account accountLogin = getAccountLogin();
+		 String roleName = accountLogin.getRole().getName();
+		 Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
+		 int employeeId = employee.getId();
+
+    	List<Map<String, Object>> ordersMap = orderService.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking, limit, limit * page);
+    	int totalRecordByListAccount = orderService.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking);
     	double temp = (double) totalRecordByListAccount / limit;
     	int totalPage = (int) Math.ceil(temp);
     	
@@ -113,9 +120,18 @@ public class OrderController {
         
         model.addAttribute("ordersMap", ordersMap);
         model.addAttribute("nameLogin", accountLogin.getUsername());
-        model.addAttribute("roleName",accountLogin.getRole().getName());
+        model.addAttribute("roleName",roleName);
         
-        
+        model.addAttribute("username", username);
+        model.addAttribute("employeeName", employeeName);
+        model.addAttribute("codeProduct", codeProduct);
+        model.addAttribute("nameProduct", nameProduct);
+        model.addAttribute("customerName", customerName);
+        model.addAttribute("phoneNumber", phoneNumber);
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        model.addAttribute("statusAllocation", statusAllocation);
+        model.addAttribute("statusBooking", statusBooking);
         return "order/listOrder";
     }
 }

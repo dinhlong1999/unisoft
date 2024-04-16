@@ -11,9 +11,13 @@ public interface CustomerMapper {
 	List<Map<String, Object>> getListCustomer (String customerName, String customerPhoneNumber, int limit, int offset);
 	
 	int countRecordOfCustomer(String customerName, String customerPhoneNumber);
+	
 	int deleteCustomer(int id);
+	
 	int editCustomer(String name, String address, int version,String phoneNumber, int id);
+	
 	Map<String,Object> getCustomerById (int id);
+	
 	int checkPhoneNumberExists(String phoneNumber, int id);
 
 	int saveCustomer(String name, String address, String phoneNumber,int employeeId);
