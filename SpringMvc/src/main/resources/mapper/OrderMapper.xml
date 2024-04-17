@@ -5,6 +5,7 @@
 	<select id="getListOrder" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
+				o.id,
 				o.dateStart,
     			p.nameProduct,
     			p.codeProduct,

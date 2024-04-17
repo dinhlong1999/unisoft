@@ -129,13 +129,13 @@
    	     			<th th:if = "${roleName == 'ROLE_ADMIN'}">TÊN ĐĂNG NHẬP</th>
    	     			<th th:if = "${roleName == 'ROLE_ADMIN'}">TÊN NHÂN VIÊN </th>
    	     	</tr>
-   	     	<tr th:if="${ordersMap.size() > 0}" th:each="order,status:${ordersMap}">
+   	     	<tr th:if="${ordersMap.size() > 0}" th:each="order,status:${ordersMap}" th:id="${order['id']}">
                 <td th:text="${status.count + page * limit}"></td>
                 <td th:text="${#temporals.format(order['dateStart'], 'yyyy/MM/dd HH:mm:ss')}"></td>
                 <td class="codeProduct" contenteditable="true"  th:text="${order['codeProduct']}" ></td>
                 <td class="nameProduct" contenteditable="true" th:text="${order['nameProduct']}"></td>
                 <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                <td contenteditable="true" th:text="${order['quantityBook']}" ></td>
+                <td class="quantityBook"contenteditable="true" th:text="${order['quantityBook']}" ></td>
                 <td class="customerName" contenteditable="true" th:text="${order['customerName']}"></td>
                 <td class="phoneNumber" contenteditable="true" th:text="${order['phoneNumber']}" ></td>
                 <td th:text="${order['address']}"></td>
@@ -144,25 +144,11 @@
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['username']}"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
    	     	</tr>
-   	     	<tr th:if="${ordersMap.size() > 0}">
-                <td></td>
-                <td></td>
-                <td class="codeProduct" contenteditable="true" ></td>
-                <td class="nameProduct" contenteditable="true"></td>
-                <td></td>
-                <td contenteditable="true"></td>
-                <td class="customerName" contenteditable="true"></td>
-                <td class="phoneNumber" contenteditable="true"></td>
-                <td ></td>
-                <td></td>
-                <td></td>
-                <td th:if = "${roleName == 'ROLE_ADMIN'}"></td>
-                <td th:if = "${roleName == 'ROLE_ADMIN'}"></td>
-   	     	</tr>
             <tr th:if="${ordersMap.size() == 0}">
                 <td colspan="13">Không tìm thấy đơn hàng</td>
             </tr>
       	</table>
+      	<button id= "addRow" style="border-radius: 5px">Thêm dòng mới</button>
       	 <div th:if="${ordersMap.size() > 0}">
             <nav aria-label="Page navigation example" > 
 	            <ul class="pagination" style="display: flex;justify-content: center">
@@ -187,158 +173,119 @@
 	            		<a class="page-link" th:href="@{/orders/list(page=${page + 2},username=${username},employeeName=${employeeName},codeProduct=${codeProduct},nameProduct=${nameProduct},customerName=${customerName},phoneNumber=${phoneNumber},dateStart=${dateStart},dateEnd=${dateEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}">Next</a>
 	            	</li>
 	            </ul>
-   
             </nav> 
-          
-           
-        </div>	
+        </div>
+        
+        <div style="float:right">
+        	<button style="border-radius: 5px" id= "save">Lưu </button>
+        	<button style="border-radius: 5px" id= "reset" onclick="reset()">Reset</button>
+        </div>
       </div>
     </div>
 </body>
-<script>
-	let editTable  = document.querySelectorAll('#myTable [contenteditable=true]');
-	editTable.forEach(cell => {
-		cell.addEventListener('focusout',function () {
-			let row = this.closest('tr');
-			let data = {};
-            let str = [];
-			row.querySelectorAll('[contenteditable=true]').forEach(input => {
-				data[input.classList[0]] = input.textContent;
-			});
-            data = {...data};
-            str.push(data);
-            console.log(data);
-			console.log(str)
-		})
-	})
-</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
 </script>
 <script>
-       function addRowIfNeeded() {
-            let table = document.getElementById("myTable");
-        let lastRow = table.rows[table.rows.length - 1];
-        let rowCurrent = lastRow.querySelectorAll("td[contenteditable=true]");
-        let shouldAddRow = true;
-        console.log(lastRow);
-        console.log("size " + table.rows.length)
-         for (let i = 0; i < rowCurrent.length; i++) {
-            if (rowCurrent[i].innerHTML === "") {
-                shouldAddRow = false;
-                break;
-            }
-        }
-        console.log(shouldAddRow);
-        if (shouldAddRow) {
-            let newRow = table.insertRow(table.rows.length);
-            for (let i = 0; i < 13; i++) {
-                let cell = newRow.insertCell(i);
-                if ([2,3,5,6,7].includes(i)) {
-                    cell.contentEditable= true;
-                }
-                if ( i === 2){
-                    cell.classList.add("codeProduct");
-                }if (i === 3){
-                    cell.classList.add("nameProduct");
-                }if (i === 6){
-                    cell.classList.add("customerName")
-                }if (i === 7){
-                    cell.classList.add("phoneNumber");
-                }
-            }
-            $(newRow).find("td").on("focusout", function() {
-                addRowIfNeeded();
-            });
-            
-           
-            $(newRow).find("td.codeProduct[contenteditable=true]").focusout(function () {
-                // Thực hiện yêu cầu Ajax khi ô codeProduct mất focus
-                let codeProduct = $(this).text();
-                let row = $(this).closest("tr");
-                let nameProductCell = row.find("td:eq(3)");
-                let valueCodeProduct = $(this);
-                let table = document.getElementById("myTable");
-                let lastRow = table.rows[table.rows.length - 1];
-                console.log(lastRow)
-                console.log(table.rows.length)
-                $.ajax({
-                    contentType :"application/json",
-                    method : "GET",
-                    url : `http://localhost:8081/api/product/getNameProduct?codeProduct=`+encodeURIComponent(codeProduct),
-                    success : function(data) {
-                        console.log(data)
-                        if (data === "") {
-                            alert("Không tồn tại sản phẩm")
-                            nameProductCell.text('')
-                            valueCodeProduct.text('')
-                        }
-                        else {
-                            nameProductCell.text(data)
-                        }
-                    },
-                    error:function(xhr, textStatus, errorThrow){
-                        console.log("Error",errorThrow)
-                    }
-                })
-            });
+        $('#addRow').on('click',function () {
+        	  let newRowID = taoIDMoi();
+            $('#myTable').append('<tr class="newRow" id='+newRowID + ' >' +
+                '                     <td></td>\n' +
+                '                     <td></td>\n' +
+                '                     <td class="codeProduct" contenteditable="true" ></td>\n' +
+                '                     <td class="nameProduct" contenteditable="true"></td>\n' +
+                '                     <td></td>\n' +
+                '                     <td class ="quantityBook" contenteditable="true"></td>\n' +
+                '                     <td class="customerName" contenteditable="true"></td>\n' +
+                '                     <td class="phoneNumber" contenteditable="true"></td>\n' +
+                '                     <td ></td>\n' +
+                '                     <td></td>\n' +
+                '                     <td></td>\n' +
+                '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>\n' +
+                '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>' +
+                '                </tr>')
 
-            $(newRow).find("td.nameProduct[contenteditable=true]").focusout(function () {
-                // Thực hiện yêu cầu Ajax khi ô nameProduct mất focus
-                let nameProduct = $(this).text();
-                let row = $(this).closest("tr");
-                let codeProductCell = row.find("td:eq(2)");
-                let valueNameProduct = $(this);
+        });
 
-                $.ajax({
-                    contentType :"application/json",
-                    method : "GET",
-                    url : `http://localhost:8081/api/product/getCodeProduct?nameProduct=`+encodeURIComponent(nameProduct),
-                    success : function(data) {
-                        console.log(data)
-                        if (data === "") {
-                            alert("Không tồn tại sản phẩm")
-                            codeProductCell.text('')
-                            valueNameProduct.text('')
-                        }
-                        else {
-                            codeProductCell.text(data)
-                        }
-                    },
-                    error:function(xhr, textStatus, errorThrow){
-                        console.log("Error",errorThrow)
-                    }
-                })
-            });
+        $('#myTable').on('focusout','td.codeProduct[contenteditable="true"]',function () {
+        	   let codeProduct = $(this).text();
+               let row = $(this).closest("tr");
+               let nameProductCell = row.find("td:eq(3)");
+               let valueCodeProduct = $(this);
+               let table = document.getElementById("myTable");
+               let lastRow = table.rows[table.rows.length - 1];
+               console.log(lastRow)
+               console.log(table.rows.length)
+               $.ajax({
+                   contentType :"application/json",
+                   method : "GET",
+                   url : `http://localhost:8081/api/product/getNameProduct?codeProduct=`+encodeURIComponent(codeProduct),
+                   success : function(data) {
+                       if (data === "") {
+                           nameProductCell.text('')
+                           valueCodeProduct.text('')
+                       }
+                       else {
+                           nameProductCell.text(data)
+                       }
+                   },
+                   error:function(xhr, textStatus, errorThrow){
+                       console.log("Error",errorThrow)
+                   }
+               })
+        })
+        
+         $('#myTable').on('focusout','td.nameProduct[contenteditable="true"]',function () {
+        	  let nameProduct = $(this).text();
+              let row = $(this).closest("tr");
+              let codeProductCell = row.find("td:eq(2)");
+              let valueNameProduct = $(this);
 
-            $(newRow).find("td.customerName[contenteditable=true]").focusout(function () {
-                // Thực hiện yêu cầu Ajax khi ô customerName mất focus
-                let customerName = $(this).text();
-                let row = $(this).closest("tr");
-                let phoneNumberCell = row.find("td:eq(7)");
-                let valueCurrentCustomerName = $(this);
-                $.ajax({
-                    contentType :"application/json",
-                    method : "GET",
-                    url: `http://localhost:8081/api/customer/getPhoneNumber?customerName=`+encodeURIComponent(customerName),
-                    success:function (data) {
-                        console.log(data);
-                        if (data === ""){
-                            alert("Không tồn tại khách hàng");
-                            valueCurrentCustomerName.text('')
-                            phoneNumberCell.text('');
-                        }else {
-                            phoneNumberCell.text(data);
-                        }
-                    },
-                    error:function (xhr,textStatus,errorThrow) {
-                        console.log("Error",errorThrow)
-                    }
+              $.ajax({
+                  contentType :"application/json",
+                  method : "GET",
+                  url : `http://localhost:8081/api/product/getCodeProduct?nameProduct=`+encodeURIComponent(nameProduct),
+                  success : function(data) {
+                      if (data === "") {
+                          codeProductCell.text('')
+                          valueNameProduct.text('')
+                      }
+                      else {
+                          codeProductCell.text(data)
+                      }
+                  },
+                  error:function(xhr, textStatus, errorThrow){
+                      console.log("Error",errorThrow)
+                  }
+              })
+        })
+        
+         $('#myTable').on('focusout','td.customerName[contenteditable="true"]',function () {
+        	 // Thực hiện yêu cầu Ajax khi ô customerName mất focus
+             let customerName = $(this).text();
+             let row = $(this).closest("tr");
+             let phoneNumberCell = row.find("td:eq(7)");
+             let valueCurrentCustomerName = $(this);
+             $.ajax({
+                 contentType :"application/json",
+                 method : "GET",
+                 url: `http://localhost:8081/api/customer/getPhoneNumber?customerName=`+encodeURIComponent(customerName),
+                 success:function (data) {
+                     if (data === ""){
+                         valueCurrentCustomerName.text('')
+                         phoneNumberCell.text('');
+                     }else {
+                         phoneNumberCell.text(data);
+                     }
+                 },
+                 error:function (xhr,textStatus,errorThrow) {
+                     console.log("Error",errorThrow)
+                 }
 
-                })
-            });
-
-            $(newRow).find("td.phoneNumber[contenteditable=true]").focusout(function () {
+             })
+        })
+        
+        $('#myTable').on('focusout','td.phoneNumber[contenteditable="true"]',function () {
                 // Thực hiện yêu cầu Ajax khi ô phoneNumber mất focus
                 let phoneNumber = $(this).text();
                 let row = $(this).closest("tr");
@@ -349,9 +296,7 @@
                     method : "GET",
                     url : `http://localhost:8081/api/customer/getNameCustomer?phoneNumber=`+encodeURIComponent(phoneNumber),
                     success:function (data) {
-                        console.log(data);
                         if (data === ""){
-                            alert("Không tồn tại khách hàng");
                             valueCurrentPhoneNumber.text('')
                             customerName.text('');
                         }else {
@@ -364,19 +309,42 @@
 
                 })
             });
-
+        
+        function reset(){
+        	$('.newRow').remove();
         }
-    }
-       $(document).ready(function() {
-           $("#myTable").on("focusout", "tr:last-child ", function() {
-               addRowIfNeeded();
-           });
-       });
 
+		function taoIDMoi() {
+			return Math.random().toString(36).substr(2, 9); // Trả về một chuỗi ngẫu nhiên
+		}
+
+
+		/* $('#myTable').on('focusout','tr',function () {
+			//buoc 1: lấy mảng ra
+			let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+			let row = $(this);
+			console.log(row)
+			let id = row.attr('id');
+			let rowData = {
+				        id: id,
+				        codeProduct: row.find('td:eq(2)').text(),
+				        nameProduct: row.find('td:eq(3)').text(),
+				        quantityBook: row.find('td:eq(5)').text(),
+				        nameCustomer: row.find('td:eq(6)').text(),
+				        phoneNumber: row.find('td:eq(7)').text()
+				    };
+			let existingIndex = currentArray.findIndex(item => item.id === id);
+			console.log(existingIndex);
+		    if (existingIndex !== -1) {
+		        // Nếu đã tồn tại, cập nhật dữ liệu của dòng đó trong mảng
+		        currentArray[existingIndex] = rowData;
+		    } else {
+		        // Nếu chưa tồn tại, thêm dữ liệu của dòng đó vào mảng
+		        currentArray.push(rowData);
+		    }
+			localStorage.setItem('myArray', JSON.stringify(currentArray));
+		}) */
 </script>
-
-
-
 <script>
 
         $(document).ready(function () {
@@ -385,21 +353,38 @@
             let row = $(this).closest("tr");
             let nameProductCell = row.find("td:eq(3)");
             let valueCodeProduct = $(this);
-
+	
             $.ajax({
                 contentType :"application/json",
                 method : "GET",
                 url : `http://localhost:8081/api/product/getNameProduct?codeProduct=`+encodeURIComponent(codeProduct),
                 success : function(data) {
-                    console.log(data)
                     if (data === "") {
-                        alert("Không tồn tại sản phẩm")
                         nameProductCell.text('')
                        valueCodeProduct.text('')
                     }
                     else {
                         nameProductCell.text(data)
                     }
+                    let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+                    let id = row.attr('id');
+                    let rowData = {
+                        id: id,
+                        codeProduct: row.find('td:eq(2)').text(),
+                        nameProduct: row.find('td:eq(3)').text(),
+                        quantityBook: row.find('td:eq(5)').text(),
+                        nameCustomer: row.find('td:eq(6)').text(),
+                        phoneNumber: row.find('td:eq(7)').text()
+                    };
+
+                    let existingIndex = currentArray.findIndex(item => item.id === id);
+                    if (existingIndex !== -1) {
+                        currentArray[existingIndex] = rowData;
+                    } else {
+                        currentArray.push(rowData);
+                    }
+
+                    localStorage.setItem('myArray', JSON.stringify(currentArray));
                 },
                 error:function(xhr, textStatus, errorThrow){
                     console.log("Error",errorThrow)
@@ -421,9 +406,7 @@
                 method : "GET",
                 url : `http://localhost:8081/api/product/getCodeProduct?nameProduct=`+encodeURIComponent(nameProduct),
                 success : function(data) {
-                    console.log(data)
                     if (data === "") {
-                        alert("Không tồn tại sản phẩm")
                         codeProductCell.text('')
                         valueNameProduct.text('')
                     }
@@ -450,9 +433,7 @@
                 method : "GET",
                 url: `http://localhost:8081/api/customer/getPhoneNumber?customerName=`+encodeURIComponent(customerName),
                 success:function (data) {
-                    console.log(data);
                     if (data === ""){
-                        alert("Không tồn tại khách hàng");
                         valueCurrentCustomerName.text('')
                         phoneNumberCell.text('');
                     }else {
@@ -478,9 +459,7 @@
                 method : "GET",
                 url : `http://localhost:8081/api/customer/getNameCustomer?phoneNumber=`+encodeURIComponent(phoneNumber),
                 success:function (data) {
-                    console.log(data);
-                    if (data === ""){
-                        alert("Không tồn tại khách hàng");
+                    if (data === ""){s
                         valueCurrentPhoneNumber.text('')
                         customerName.text('');
                     }else {
@@ -494,7 +473,5 @@
             })
         })
     });
-
-
 </script>
 </html>
