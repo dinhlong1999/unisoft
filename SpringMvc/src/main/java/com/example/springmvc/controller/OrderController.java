@@ -134,4 +134,50 @@ public class OrderController {
         model.addAttribute("statusBooking", statusBooking);
         return "order/listOrder";
     }
+    
+    @GetMapping("/save")
+    public String saveOrders(@RequestParam List<Object> data,Model model ) {
+    	System.out.println(data.toString());
+    	return "orders/list";
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

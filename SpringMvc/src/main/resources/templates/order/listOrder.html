@@ -132,12 +132,12 @@
    	     	<tr th:if="${ordersMap.size() > 0}" th:each="order,status:${ordersMap}" th:id="${order['id']}">
                 <td th:text="${status.count + page * limit}"></td>
                 <td th:text="${#temporals.format(order['dateStart'], 'yyyy/MM/dd HH:mm:ss')}"></td>
-                <td class="codeProduct" contenteditable="true"  th:text="${order['codeProduct']}" ></td>
-                <td class="nameProduct" contenteditable="true" th:text="${order['nameProduct']}"></td>
+                <td class="codeProduct"  th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['codeProduct']}" ></td>
+                <td class="nameProduct"  th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['nameProduct']}"></td>
                 <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                <td class="quantityBook"contenteditable="true" th:text="${order['quantityBook']}" ></td>
-                <td class="customerName" contenteditable="true" th:text="${order['customerName']}"></td>
-                <td class="phoneNumber" contenteditable="true" th:text="${order['phoneNumber']}" ></td>
+                <td class="quantityBook" th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['quantityBook']}" ></td>
+                <td class="customerName" th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['customerName']}"></td>
+                <td class="phoneNumber"  th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['phoneNumber']}" ></td>
                 <td th:text="${order['address']}"></td>
                 <td th:text="${order['statusName']}"></td>
                 <td th:text="${order['dateAllocation'] != null ? #temporals.format(order['dateAllocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
@@ -177,8 +177,10 @@
         </div>
         
         <div style="float:right">
-        	<button style="border-radius: 5px" id= "save">Lưu </button>
-        	<button style="border-radius: 5px" id= "reset" onclick="reset()">Reset</button>
+        	<button style="border-radius: 5px" id="add"  >
+        		Lưu
+        	</button>
+        	<button style="border-radius: 5px" id= "reset" >Reset</button>
         </div>
       </div>
     </div>
@@ -187,25 +189,70 @@
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
 </script>
 <script>
+	$(document).ready(function () {
+		let data = JSON.parse(localStorage.getItem('myArray')) || [];
+		render(data);
+	});
+	
+	function taoIDMoi() {
+		return Math.random().toString(36).substr(2, 9); // Trả về một chuỗi ngẫu nhiên
+	}
+	 
+	 $('#reset').on('click',function () {
+		 localStorage.clear();
+		 location.reload();
+	 })
+	
+	
         $('#addRow').on('click',function () {
         	  let newRowID = taoIDMoi();
-            $('#myTable').append('<tr class="newRow" id='+newRowID + ' >' +
+            $('#myTable').append('<tr id='+newRowID + ' >' +
                 '                     <td></td>\n' +
                 '                     <td></td>\n' +
                 '                     <td class="codeProduct" contenteditable="true" ></td>\n' +
                 '                     <td class="nameProduct" contenteditable="true"></td>\n' +
                 '                     <td></td>\n' +
                 '                     <td class ="quantityBook" contenteditable="true"></td>\n' +
-                '                     <td class="customerName" contenteditable="true"></td>\n' +
+                '                     <td class= "customerName" contenteditable="true"></td>\n' +
                 '                     <td class="phoneNumber" contenteditable="true"></td>\n' +
                 '                     <td ></td>\n' +
                 '                     <td></td>\n' +
                 '                     <td></td>\n' +
-                '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>\n' +
-                '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>' +
+              /*   '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>\n' +
+                '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>' + */
                 '                </tr>')
 
         });
+        
+        $('#add').on('click',function (){
+        	let temp = localStorage.getItem('myArray') || [];
+        	if(temp.length === 0){
+        		alert ("Không có dữ liệu thay đổi");
+        	}else {
+        		$.ajax({
+					type: "POST",
+					contentType: "application/json",
+					url: "/api/orders/save",
+					data: temp,
+					success : function(response){
+						alert("Dữ liệu đã được gưi đi thành công")
+						localStorage.clear();
+						location.reload();
+						
+						
+					},
+					error:function(xhr, status, error) {
+						console.error("lỗi khi gửi dữ liệu :" + error);
+					}
+				})
+        	}
+        	
+        })
+
+       		
+        	
+ 		
+        
 
         $('#myTable').on('focusout','td.codeProduct[contenteditable="true"]',function () {
         	   let codeProduct = $(this).text();
@@ -228,13 +275,31 @@
                        else {
                            nameProductCell.text(data)
                        }
+                       let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+                       let id = row.attr('id');
+                       let rowData = {
+                           id: id,
+                           codeProduct: row.find('td:eq(2)').text(),
+                           nameProduct: row.find('td:eq(3)').text(),
+                           quantityBook: row.find('td:eq(5)').text(),
+                           nameCustomer: row.find('td:eq(6)').text(),
+                           phoneNumber: row.find('td:eq(7)').text()
+                       };
+
+                       let existingIndex = currentArray.findIndex(item => item.id === id);
+                       if (existingIndex !== -1) {
+                           currentArray[existingIndex] = rowData;
+                       } else {
+                           currentArray.push(rowData);
+                       }
+                       localStorage.setItem('myArray', JSON.stringify(currentArray));
                    },
                    error:function(xhr, textStatus, errorThrow){
                        console.log("Error",errorThrow)
                    }
                })
-        })
-        
+        });
+         
          $('#myTable').on('focusout','td.nameProduct[contenteditable="true"]',function () {
         	  let nameProduct = $(this).text();
               let row = $(this).closest("tr");
@@ -253,12 +318,30 @@
                       else {
                           codeProductCell.text(data)
                       }
+                      let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+                      let id = row.attr('id');
+                      let rowData = {
+                          id: id,
+                          codeProduct: row.find('td:eq(2)').text(),
+                          nameProduct: row.find('td:eq(3)').text(),
+                          quantityBook: row.find('td:eq(5)').text(),
+                          nameCustomer: row.find('td:eq(6)').text(),
+                          phoneNumber: row.find('td:eq(7)').text()
+                      };
+
+                      let existingIndex = currentArray.findIndex(item => item.id === id);
+                      if (existingIndex !== -1) {
+                          currentArray[existingIndex] = rowData;
+                      } else {
+                          currentArray.push(rowData);
+                      }
+                      localStorage.setItem('myArray', JSON.stringify(currentArray));
                   },
                   error:function(xhr, textStatus, errorThrow){
                       console.log("Error",errorThrow)
                   }
               })
-        })
+        });
         
          $('#myTable').on('focusout','td.customerName[contenteditable="true"]',function () {
         	 // Thực hiện yêu cầu Ajax khi ô customerName mất focus
@@ -277,13 +360,31 @@
                      }else {
                          phoneNumberCell.text(data);
                      }
+                     let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+                     let id = row.attr('id');
+                     let rowData = {
+                         id: id,
+                         codeProduct: row.find('td:eq(2)').text(),
+                         nameProduct: row.find('td:eq(3)').text(),
+                         quantityBook: row.find('td:eq(5)').text(),
+                         nameCustomer: row.find('td:eq(6)').text(),
+                         phoneNumber: row.find('td:eq(7)').text()
+                     };
+
+                     let existingIndex = currentArray.findIndex(item => item.id === id);
+                     if (existingIndex !== -1) {
+                         currentArray[existingIndex] = rowData;
+                     } else {
+                         currentArray.push(rowData);
+                     }
+                     localStorage.setItem('myArray', JSON.stringify(currentArray));
                  },
                  error:function (xhr,textStatus,errorThrow) {
                      console.log("Error",errorThrow)
                  }
 
              })
-        })
+        });
         
         $('#myTable').on('focusout','td.phoneNumber[contenteditable="true"]',function () {
                 // Thực hiện yêu cầu Ajax khi ô phoneNumber mất focus
@@ -302,6 +403,24 @@
                         }else {
                             customerName.text(data);
                         }
+                        let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+                        let id = row.attr('id');
+                        let rowData = {
+                            id: id,
+                            codeProduct: row.find('td:eq(2)').text(),
+                            nameProduct: row.find('td:eq(3)').text(),
+                            quantityBook: row.find('td:eq(5)').text(),
+                            nameCustomer: row.find('td:eq(6)').text(),
+                            phoneNumber: row.find('td:eq(7)').text()
+                        };
+
+                        let existingIndex = currentArray.findIndex(item => item.id === id);
+                        if (existingIndex !== -1) {
+                            currentArray[existingIndex] = rowData;
+                        } else {
+                            currentArray.push(rowData);
+                        }
+                        localStorage.setItem('myArray', JSON.stringify(currentArray));
                     },
                     error:function (xhr,textStatus,errorThrow) {
                         console.log("Error",errorThrow)
@@ -310,19 +429,9 @@
                 })
             });
         
-        function reset(){
-        	$('.newRow').remove();
-        }
-
-		function taoIDMoi() {
-			return Math.random().toString(36).substr(2, 9); // Trả về một chuỗi ngẫu nhiên
-		}
-
-
-		/* $('#myTable').on('focusout','tr',function () {
-			//buoc 1: lấy mảng ra
+        $('#myTable').on('focusout','td.quantityBook[contenteditable="true"]',function () {
 			let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
-			let row = $(this);
+			let row = $(this).closest("tr");
 			console.log(row)
 			let id = row.attr('id');
 			let rowData = {
@@ -343,135 +452,42 @@
 		        currentArray.push(rowData);
 		    }
 			localStorage.setItem('myArray', JSON.stringify(currentArray));
-		}) */
-</script>
-<script>
+		})  
+        
+      
+		function render(data){
+			let tbody = $('#myTable');
+			data.forEach(function(row) {
+				if(isNaN(Number(`${row.id}`))){
+					console.log(isNaN(Number(`${row.id}`)));
+					tbody.append(`<tr id=${row.id}>
+									<td></td>
+									<td></td>
+									<td class="codeProduct" contenteditable="true">${row.codeProduct}</td>
+									<td class="nameProduct" contenteditable="true">${row.nameProduct}</td>
+									<td></td>
+									<td class="quantityBook" contenteditable="true">${row.quantityBook}</td>
+									<td class="customerName" contenteditable="true">${row.nameCustomer}</td>
+									<td class="phoneNumber"  contenteditable="true">${row.phoneNumber}</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								  </tr>`)
+				}
+				else{
+					let id = `${row.id}`;
+					tbody.find('tr[id="' + id + '"]').find('.codeProduct').text(`${row.codeProduct}`);
+					tbody.find('tr[id="' + id + '"]').find('.nameProduct').text(`${row.nameProduct}`);
+					tbody.find('tr[id="' + id + '"]').find('.quantityBook').text(`${row.quantityBook}`);
+					tbody.find('tr[id="' + id + '"]').find('.customerName').text(`${row.nameCustomer}`);
+					tbody.find('tr[id="' + id + '"]').find('.phoneNumber').text(`${row.phoneNumber}`);
+				}
+			})
+		}
+		
+		
 
-        $(document).ready(function () {
-        $("td.codeProduct[contenteditable=true]").focusout(function () {
-            let codeProduct = $(this).text();
-            let row = $(this).closest("tr");
-            let nameProductCell = row.find("td:eq(3)");
-            let valueCodeProduct = $(this);
-	
-            $.ajax({
-                contentType :"application/json",
-                method : "GET",
-                url : `http://localhost:8081/api/product/getNameProduct?codeProduct=`+encodeURIComponent(codeProduct),
-                success : function(data) {
-                    if (data === "") {
-                        nameProductCell.text('')
-                       valueCodeProduct.text('')
-                    }
-                    else {
-                        nameProductCell.text(data)
-                    }
-                    let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
-                    let id = row.attr('id');
-                    let rowData = {
-                        id: id,
-                        codeProduct: row.find('td:eq(2)').text(),
-                        nameProduct: row.find('td:eq(3)').text(),
-                        quantityBook: row.find('td:eq(5)').text(),
-                        nameCustomer: row.find('td:eq(6)').text(),
-                        phoneNumber: row.find('td:eq(7)').text()
-                    };
-
-                    let existingIndex = currentArray.findIndex(item => item.id === id);
-                    if (existingIndex !== -1) {
-                        currentArray[existingIndex] = rowData;
-                    } else {
-                        currentArray.push(rowData);
-                    }
-
-                    localStorage.setItem('myArray', JSON.stringify(currentArray));
-                },
-                error:function(xhr, textStatus, errorThrow){
-                    console.log("Error",errorThrow)
-                }
-            })
-
-        })
-    });
-
-    $(document).ready(function () {
-        $("td.nameProduct[contenteditable=true]").focusout(function () {
-            let nameProduct = $(this).text();
-            let row = $(this).closest("tr");
-            let codeProductCell = row.find("td:eq(2)");
-            let valueNameProduct = $(this);
-
-            $.ajax({
-                contentType :"application/json",
-                method : "GET",
-                url : `http://localhost:8081/api/product/getCodeProduct?nameProduct=`+encodeURIComponent(nameProduct),
-                success : function(data) {
-                    if (data === "") {
-                        codeProductCell.text('')
-                        valueNameProduct.text('')
-                    }
-                    else {
-                        codeProductCell.text(data)
-                    }
-                },
-                error:function(xhr, textStatus, errorThrow){
-                    console.log("Error",errorThrow)
-                }
-            })
-
-        })
-    });
-    
-    $(document).ready(function () {
-    	$("td.customerName[contenteditable=true]").focusout(function () {
-            let customerName = $(this).text();
-            let row = $(this).closest("tr");
-            let phoneNumberCell = row.find("td:eq(7)");
-            let valueCurrentCustomerName = $(this);
-            $.ajax({
-                contentType :"application/json",
-                method : "GET",
-                url: `http://localhost:8081/api/customer/getPhoneNumber?customerName=`+encodeURIComponent(customerName),
-                success:function (data) {
-                    if (data === ""){
-                        valueCurrentCustomerName.text('')
-                        phoneNumberCell.text('');
-                    }else {
-                        phoneNumberCell.text(data);
-                    }
-                },
-                error:function (xhr,textStatus,errorThrow) {
-                    console.log("Error",errorThrow)
-                }
-
-            })
-        })
-    });
-
-    $(document).ready(function () {
-        $("td.phoneNumber[contenteditable=true]").focusout(function () {
-            let phoneNumber = $(this).text();
-            let row = $(this).closest("tr");
-            let customerName = row.find("td:eq(6)");
-            let valueCurrentPhoneNumber = $(this);
-            $.ajax({
-                contentType :"application/json",
-                method : "GET",
-                url : `http://localhost:8081/api/customer/getNameCustomer?phoneNumber=`+encodeURIComponent(phoneNumber),
-                success:function (data) {
-                    if (data === ""){s
-                        valueCurrentPhoneNumber.text('')
-                        customerName.text('');
-                    }else {
-                        customerName.text(data);
-                    }
-                },
-                error:function (xhr,textStatus,errorThrow) {
-                    console.log("Error",errorThrow)
-                }
-
-            })
-        })
-    });
 </script>
 </html>

@@ -1,6 +1,7 @@
 package com.example.springmvc.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,19 @@ public class OrderService implements IOrderService {
 			LocalDate dateEnd, int statusAllocation, int statusBooking) {
 		// TODO Auto-generated method stub
 		return orderMapper.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, isAdmin, employeeId, dateStart, dateEnd, statusAllocation, statusBooking);
+	}
+
+	@Override
+	public int insertOrders(int customerId, int employeeId, int productId, int statusId, LocalDateTime dateStart,
+			double price, int quantityBook) {
+		// TODO Auto-generated method stub
+		return orderMapper.insertOrders(customerId, employeeId, productId, statusId, dateStart, price, quantityBook);
+	}
+
+	@Override
+	public int updateOrder(int customerId, int productId, int quantitybook, int version, int id) {
+		// TODO Auto-generated method stub
+		return orderMapper.updateOrder(customerId, productId, quantitybook, version, id);
 	}
 
 	
