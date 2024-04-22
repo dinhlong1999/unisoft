@@ -133,6 +133,17 @@
 		]]>
 
 	</select>
+
+	<select id="getOrderVersionById" resultType="int">
+		<![CDATA[
+			SELECT
+			    version
+			FROM
+			    orders
+			WHERE
+			    id = #{id}}
+		]]>
+	</select>
 	
 	<insert id="insertOrders">
 		<![CDATA[

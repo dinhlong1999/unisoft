@@ -29,6 +29,9 @@
         #btn{
             margin-left: auto;
         }
+        .hidden {
+        	display:none;
+        }
     </style>
 </head>
 <body>
@@ -144,6 +147,21 @@
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['username']}"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
    	     	</tr>
+   	     	<tr th:each="order,status:${ordersMap}" th:id="${order['id']}" class="hidden">
+                <td th:text="${status.count + page * limit}"></td>
+                <td th:text="${#temporals.format(order['dateStart'], 'yyyy/MM/dd HH:mm:ss')}"></td>
+                <td class="codeProduct"  th:text="${order['codeProduct']}" ></td>
+                <td class="nameProduct"  th:text="${order['nameProduct']}"></td>
+                <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                <td class="quantityBook" th:text="${order['quantityBook']}" ></td>
+                <td class="customerName" th:text="${order['customerName']}"></td>
+                <td class="phoneNumber"  th:text="${order['phoneNumber']}" ></td>
+                <td th:text="${order['address']}"></td>
+                <td th:text="${order['statusName']}"></td>
+                <td th:text="${order['dateAllocation'] != null ? #temporals.format(order['dateAllocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
+                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['username']}"></td>
+                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
+   	     	</tr>
             <tr th:if="${ordersMap.size() == 0}">
                 <td colspan="13">Không tìm thấy đơn hàng</td>
             </tr>
@@ -192,10 +210,60 @@
 	$(document).ready(function () {
 		let data = JSON.parse(localStorage.getItem('myArray')) || [];
 		render(data);
+		let temp = JSON.parse(localStorage.getItem('cellErrors')) || [];
+		console.log(temp);
+		if (temp.length !== 0) {
+
+			handleCellErrors(temp);
+		}
+
 	});
-	
+
 	function taoIDMoi() {
 		return Math.random().toString(36).substr(2, 9); // Trả về một chuỗi ngẫu nhiên
+	}
+	
+	function compareObjectValue (oldObject, newObject){
+		return oldObject.id === newObject.id && oldObject.codeProduct === newObject.codeProduct
+				&& oldObject.nameProduct === newObject.nameProduct && oldObject.quantityBook === newObject.quantityBook
+				&& oldObject.phoneNumber === newObject.phoneNumber && oldObject.nameCustomer === newObject.nameCustomer;
+	}
+
+	function checkChangeValue(id, rowData){
+		let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+		console.log(currentArray);
+		let recordHidden = $('#myTable').find('tr.hidden[id="' + id + '"]');
+		let oldValue = {
+			id : id,
+			codeProduct: recordHidden.find('.codeProduct').text(),
+			nameProduct: recordHidden.find('.nameProduct').text(),
+			quantityBook: recordHidden.find('.quantityBook').text(),
+			nameCustomer: recordHidden.find('.customerName').text(),
+			phoneNumber: recordHidden.find('.phoneNumber').text()
+		};
+		console.log(oldValue);
+		if (!compareObjectValue(oldValue,rowData)){
+			let existingIndex = currentArray.findIndex(item => item.id === id);
+			if (existingIndex !== -1) {
+				currentArray[existingIndex] = rowData;
+			}else {
+				currentArray.push(rowData);
+			}
+		}else {
+			let existingIndex = currentArray.findIndex(item => item.id === id);
+			console.log(existingIndex);
+			if (existingIndex !== -1){
+				currentArray.splice(existingIndex,1)
+			}
+			
+		}
+		if (currentArray.length === 0){
+			localStorage.clear();
+		}else{
+			localStorage.setItem('myArray', JSON.stringify(currentArray));
+		}
+	
+		
 	}
 	 
 	 $('#reset').on('click',function () {
@@ -225,6 +293,7 @@
         });
         
         $('#add').on('click',function (){
+        	$('#myTable td').css('background-color','white')
         	let temp = localStorage.getItem('myArray') || [];
         	if(temp.length === 0){
         		alert ("Không có dữ liệu thay đổi");
@@ -235,11 +304,39 @@
 					url: "/api/orders/save",
 					data: temp,
 					success : function(response){
-						alert("Dữ liệu đã được gưi đi thành công")
-						localStorage.clear();
-						location.reload();
-						
-						
+						if (JSON.stringify(response) === "{}"){
+							alert("Không có lỗi xảy ra");
+							/* localStorage.clear();
+							location.reload(); */
+							localStorage.removeItem('cellErrors');
+						}else {
+							// for (let i = 0; i < response.length; i++) {
+							// 	localStorage.setItem('cellErrors',JSON.stringify(response));
+							// 	let map = response[i];
+							// 	for (let key in map) {
+							// 		let innerList = map[key];
+							// 		for (let j = 0; j < innerList.length; j++) {
+							// 			let value = innerList[j];
+							// 			let id = key
+							// 			let table = $('#myTable');
+							// 			table.find('tr[id="' + id + '"]').find('td.'+value).css('background-color','red');
+							// 		}
+							// 	}
+							//
+							// }
+							localStorage.setItem('cellErrors',JSON.stringify(response))
+							for (let key in response){
+								if (response.hasOwnProperty(key)){
+									let  valueList = response[key];
+									console.log(key);
+									console.log(valueList);
+									valueList.forEach(function (value) {
+										let table = $('#myTable');
+										table.find('tr[id="' + key + '"]').find('td.'+value).css('background-color','red');
+									})
+								}
+							}
+						}
 					},
 					error:function(xhr, status, error) {
 						console.error("lỗi khi gửi dữ liệu :" + error);
@@ -247,12 +344,7 @@
 				})
         	}
         	
-        })
-
-       		
-        	
- 		
-        
+        });
 
         $('#myTable').on('focusout','td.codeProduct[contenteditable="true"]',function () {
         	   let codeProduct = $(this).text();
@@ -275,7 +367,6 @@
                        else {
                            nameProductCell.text(data)
                        }
-                       let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
                        let id = row.attr('id');
                        let rowData = {
                            id: id,
@@ -285,14 +376,7 @@
                            nameCustomer: row.find('td:eq(6)').text(),
                            phoneNumber: row.find('td:eq(7)').text()
                        };
-
-                       let existingIndex = currentArray.findIndex(item => item.id === id);
-                       if (existingIndex !== -1) {
-                           currentArray[existingIndex] = rowData;
-                       } else {
-                           currentArray.push(rowData);
-                       }
-                       localStorage.setItem('myArray', JSON.stringify(currentArray));
+						checkChangeValue(id,rowData);
                    },
                    error:function(xhr, textStatus, errorThrow){
                        console.log("Error",errorThrow)
@@ -318,7 +402,6 @@
                       else {
                           codeProductCell.text(data)
                       }
-                      let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
                       let id = row.attr('id');
                       let rowData = {
                           id: id,
@@ -328,14 +411,7 @@
                           nameCustomer: row.find('td:eq(6)').text(),
                           phoneNumber: row.find('td:eq(7)').text()
                       };
-
-                      let existingIndex = currentArray.findIndex(item => item.id === id);
-                      if (existingIndex !== -1) {
-                          currentArray[existingIndex] = rowData;
-                      } else {
-                          currentArray.push(rowData);
-                      }
-                      localStorage.setItem('myArray', JSON.stringify(currentArray));
+					  checkChangeValue(id,rowData);
                   },
                   error:function(xhr, textStatus, errorThrow){
                       console.log("Error",errorThrow)
@@ -344,7 +420,6 @@
         });
         
          $('#myTable').on('focusout','td.customerName[contenteditable="true"]',function () {
-        	 // Thực hiện yêu cầu Ajax khi ô customerName mất focus
              let customerName = $(this).text();
              let row = $(this).closest("tr");
              let phoneNumberCell = row.find("td:eq(7)");
@@ -360,7 +435,6 @@
                      }else {
                          phoneNumberCell.text(data);
                      }
-                     let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
                      let id = row.attr('id');
                      let rowData = {
                          id: id,
@@ -370,14 +444,7 @@
                          nameCustomer: row.find('td:eq(6)').text(),
                          phoneNumber: row.find('td:eq(7)').text()
                      };
-
-                     let existingIndex = currentArray.findIndex(item => item.id === id);
-                     if (existingIndex !== -1) {
-                         currentArray[existingIndex] = rowData;
-                     } else {
-                         currentArray.push(rowData);
-                     }
-                     localStorage.setItem('myArray', JSON.stringify(currentArray));
+					 checkChangeValue(id,rowData)
                  },
                  error:function (xhr,textStatus,errorThrow) {
                      console.log("Error",errorThrow)
@@ -401,9 +468,8 @@
                             valueCurrentPhoneNumber.text('')
                             customerName.text('');
                         }else {
-                            customerName.text(data);
-                        }
-                        let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
+							customerName.text(data);
+						}
                         let id = row.attr('id');
                         let rowData = {
                             id: id,
@@ -413,14 +479,7 @@
                             nameCustomer: row.find('td:eq(6)').text(),
                             phoneNumber: row.find('td:eq(7)').text()
                         };
-
-                        let existingIndex = currentArray.findIndex(item => item.id === id);
-                        if (existingIndex !== -1) {
-                            currentArray[existingIndex] = rowData;
-                        } else {
-                            currentArray.push(rowData);
-                        }
-                        localStorage.setItem('myArray', JSON.stringify(currentArray));
+						checkChangeValue(id,rowData);
                     },
                     error:function (xhr,textStatus,errorThrow) {
                         console.log("Error",errorThrow)
@@ -430,7 +489,6 @@
             });
         
         $('#myTable').on('focusout','td.quantityBook[contenteditable="true"]',function () {
-			let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
 			let row = $(this).closest("tr");
 			console.log(row)
 			let id = row.attr('id');
@@ -442,23 +500,14 @@
 				        nameCustomer: row.find('td:eq(6)').text(),
 				        phoneNumber: row.find('td:eq(7)').text()
 				    };
-			let existingIndex = currentArray.findIndex(item => item.id === id);
-			console.log(existingIndex);
-		    if (existingIndex !== -1) {
-		        // Nếu đã tồn tại, cập nhật dữ liệu của dòng đó trong mảng
-		        currentArray[existingIndex] = rowData;
-		    } else {
-		        // Nếu chưa tồn tại, thêm dữ liệu của dòng đó vào mảng
-		        currentArray.push(rowData);
-		    }
-			localStorage.setItem('myArray', JSON.stringify(currentArray));
+			checkChangeValue(id,rowData);
 		})  
         
       
-		function render(data){
+		function render(data) {
 			let tbody = $('#myTable');
-			data.forEach(function(row) {
-				if(isNaN(Number(`${row.id}`))){
+			data.forEach(function (row) {
+				if (isNaN(Number(`${row.id}`))) {
 					console.log(isNaN(Number(`${row.id}`)));
 					tbody.append(`<tr id=${row.id}>
 									<td></td>
@@ -475,8 +524,7 @@
 									<td></td>
 									<td></td>
 								  </tr>`)
-				}
-				else{
+				} else {
 					let id = `${row.id}`;
 					tbody.find('tr[id="' + id + '"]').find('.codeProduct').text(`${row.codeProduct}`);
 					tbody.find('tr[id="' + id + '"]').find('.nameProduct').text(`${row.nameProduct}`);
@@ -486,8 +534,34 @@
 				}
 			})
 		}
-		
-		
 
+		function handleCellErrors(response) {
+			// for (let i = 0; i < response.length; i++) {
+			// 	let map = response[i];
+			// 	for (let key in map) {
+			// 		let innerList = map[key];
+			// 		console.log(key);
+			// 		for (let j = 0; j < innerList.length; j++) {
+			// 			let value = innerList[j];
+			// 			console.log(value)
+			// 			let id = key
+			// 			let table = $('#myTable');
+			// 			table.find('tr[id="' + id + '"]').find('td.'+value).css('background-color','red');
+			// 		}
+			// 	}
+			//
+			// }
+			for (let key in response){
+				if (response.hasOwnProperty(key)){
+					let  valueList = response[key];
+					console.log(key);
+					console.log(valueList);
+					valueList.forEach(function (value) {
+						let table = $('#myTable');
+						table.find('tr[id="' + key + '"]').find('td.'+value).css('background-color','red');
+					})
+				}
+			}
+		}
 </script>
 </html>

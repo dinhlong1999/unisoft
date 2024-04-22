@@ -21,4 +21,6 @@ public interface OrderMapper {
 	
 	
 	int updateOrder(int customerId, int productId, int quantitybook, int version, int id);
+
+	int getOrderVersionById(int id);
 }

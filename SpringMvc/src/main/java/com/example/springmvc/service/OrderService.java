@@ -45,10 +45,10 @@ public class OrderService implements IOrderService {
 		return orderMapper.updateOrder(customerId, productId, quantitybook, version, id);
 	}
 
-	
+	@Override
+	public int getOrderVersionById(int id) {
+		return orderMapper.getOrderVersionById(id);
+	}
 
-	
-
-	
 
 }

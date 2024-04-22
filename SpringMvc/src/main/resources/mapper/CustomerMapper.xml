@@ -154,6 +154,19 @@
 			phoneNumber = #{phoneNumber}
 		]]>
 	</select>
+
+	<select id="getIdCustomerByPhoneNumber" resultType="int">
+		<![CDATA[
+			SELECT
+			    id
+			FROM
+			    customer
+			WHERE
+			    phoneNumber = #{phoneNumber}
+			AND
+			    flag = 0;
+		]]>
+	</select>
 	
 	
 

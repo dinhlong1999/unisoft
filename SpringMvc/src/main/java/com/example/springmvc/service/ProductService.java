@@ -15,9 +15,15 @@ import java.util.Map;
 @Service
 public class ProductService implements IProductService {
 
-    @Autowired
+
+
+	@Autowired
     private ProductMapper productMapper;
 
+	@Override
+	public Product getProductByCodeProduct(String codeProduct) {
+		return productMapper.getProductByCodeProduct(codeProduct);
+	}
     
     @Override
     public List<Product> getListProduct(String codeProduct, String nameProduct, int limit, int offset) {

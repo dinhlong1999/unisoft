@@ -81,5 +81,10 @@ public class CustomerService implements ICustomerService {
 		return customerMapper.getNameByPhoneNumberCustomer(phoneNumber);
 	}
 
+	@Override
+	public int getIdCustomerByPhoneNumber(String phoneNumber) {
+		return customerMapper.getIdCustomerByPhoneNumber(phoneNumber);
+	}
+
 
 }
