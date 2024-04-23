@@ -20,7 +20,9 @@ public interface OrderMapper {
 	int insertOrders(int customerId, int employeeId, int productId, int statusId, LocalDateTime dateStart,double price, int quantityBook );
 	
 	
-	int updateOrder(int customerId, int productId, int quantitybook, int version, int id);
+	int updateOrder(int customerId, int productId, int quantitybook, int version, double price ,int id);
 
 	int getOrderVersionById(int id);
+	
+	String goodsAllocation(int productId, int quantityBook);
 }

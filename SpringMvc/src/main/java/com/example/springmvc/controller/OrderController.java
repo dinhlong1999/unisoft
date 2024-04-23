@@ -59,7 +59,7 @@ public class OrderController {
     	if (page != 0) {
     		page = page - 1;
 		}
-    	int limit = 2;
+    	int limit = 4;
     	if (dateStart.isEmpty()) {
     		dateStart = "2000-10-10";
     	}

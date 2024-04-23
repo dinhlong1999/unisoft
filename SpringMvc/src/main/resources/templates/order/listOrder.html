@@ -60,42 +60,42 @@
         <form th:action="@{/orders/list}" method="get" >
             <div th:if = "${roleName == 'ROLE_ADMIN'}">
             	<span>
-                	Tên đăng nhập : <input type="text"  name="username" style="width:15%;margin-left: 11px" th:value="${username}" placeholder="Vui lòng nhập tên đăng nhập">
+                	Tên đăng nhập : <input class="input" type="text"  name="username" style="width:15%;margin-left: 11px" th:value="${username}" placeholder="Vui lòng nhập tên đăng nhập">
             	</span>
             </div>
             <div style="margin-top: 5px" th:if = "${roleName == 'ROLE_ADMIN'}">
             	<span>
-                	Tên nhân viên : <input type="text"  name="employeeName" style="width:15%;margin-left: 18px" th:value="${employeeName}" placeholder="Vui lòng nhập tên nhân viên">
+                	Tên nhân viên : <input type="text" class="input"  name="employeeName" style="width:15%;margin-left: 18px" th:value="${employeeName}" placeholder="Vui lòng nhập tên nhân viên">
             	</span>
             </div>
              <div style="margin-top: 5px">
             	<span>
-                	Mã sản phẩm  : <input type="text"  name="codeProduct" style="width:15%;margin-left: 19px" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
+                	Mã sản phẩm  : <input type="text" class="input"  name="codeProduct" style="width:15%;margin-left: 19px" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
             	</span>
              </div>
             <div style="margin-top: 5px">
             	<span>
-                	Tên sản phẩm  : <input type="text"  name="nameProduct" style="width:15%;margin-left: 18px" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
+                	Tên sản phẩm  : <input type="text" class="input"  name="nameProduct" style="width:15%;margin-left: 18px" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
             	</span>
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Tên khách hàng  : <input type="text"  name="customerName" style="width:15%;margin-left: 5px" th:value="${customerName}" placeholder="Vui lòng nhập tên khách hàng">
+                	Tên khách hàng  : <input type="text" class="input"  name="customerName" style="width:15%;margin-left: 5px" th:value="${customerName}" placeholder="Vui lòng nhập tên khách hàng">
             	</span>
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Số điện thoại : <input type="text"  name="phoneNumber" style="width:15%;margin-left: 13px" th:value="${phoneNumber}" placeholder="Vui lòng nhập số điện thoại">
+                	Số điện thoại : <input type="text" class="input" name="phoneNumber" style="width:15%;margin-left: 13px" th:value="${phoneNumber}" placeholder="Vui lòng nhập số điện thoại">
             	</span>
             </div>
              <div style="margin-top: 5px">
             	<span>
-                	Ngày bắt đầu  : <input type="date"  name="dateStart" style="width:8%;margin-left: 2px" th:value="${dateStart}">
+                	Ngày bắt đầu  : <input type="date" class="input"  name="dateStart" style="width:8%;margin-left: 2px" th:value="${dateStart}">
             	</span>
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Ngày kết thúc  : <input type="date"  name="dateEnd" style="width:8%;margin-left: 7px" th:value="${dateEnd}">
+                	Ngày kết thúc  : <input type="date" class="input" name="dateEnd" style="width:8%;margin-left: 7px" th:value="${dateEnd}">
             	</span>
             </div>
            <div style="margin-top: 5px">
@@ -109,7 +109,7 @@
             </div>
             <div style="margin-top: 5px;">
                 <input style="margin-bottom: 5px" type="submit" value="Search">
-                <input style="margin-bottom: 5px" type="reset" value="Clear" >
+                <input style="margin-bottom: 5px" type="button" value="Clear" id="clear">
             </div>
         </form>
       </div> 
@@ -265,16 +265,22 @@
 	
 		
 	}
+	
+	$(document).ready(function () {
+	
+		$('#clear').on('click',function () {
+			$('.input').val(null);
+		});
 	 
-	 $('#reset').on('click',function () {
-		 localStorage.clear();
-		 location.reload();
-	 })
+	 	$('#reset').on('click',function () {
+		 	localStorage.clear();
+		 	location.reload();
+	 	});
 	
 	
-        $('#addRow').on('click',function () {
-        	  let newRowID = taoIDMoi();
-            $('#myTable').append('<tr id='+newRowID + ' >' +
+     	$('#addRow').on('click',function () {
+        	let newRowID = taoIDMoi();
+        	$('#myTable').append('<tr id='+newRowID + ' >' +
                 '                     <td></td>\n' +
                 '                     <td></td>\n' +
                 '                     <td class="codeProduct" contenteditable="true" ></td>\n' +
@@ -305,41 +311,30 @@
 					data: temp,
 					success : function(response){
 						if (JSON.stringify(response) === "{}"){
-							alert("Không có lỗi xảy ra");
-							/* localStorage.clear();
-							location.reload(); */
-							localStorage.removeItem('cellErrors');
+							alert("Cập nhật dữ liệu thành công");
+							localStorage.clear();
+							location.reload();
 						}else {
-							// for (let i = 0; i < response.length; i++) {
-							// 	localStorage.setItem('cellErrors',JSON.stringify(response));
-							// 	let map = response[i];
-							// 	for (let key in map) {
-							// 		let innerList = map[key];
-							// 		for (let j = 0; j < innerList.length; j++) {
-							// 			let value = innerList[j];
-							// 			let id = key
-							// 			let table = $('#myTable');
-							// 			table.find('tr[id="' + id + '"]').find('td.'+value).css('background-color','red');
-							// 		}
-							// 	}
-							//
-							// }
 							localStorage.setItem('cellErrors',JSON.stringify(response))
 							for (let key in response){
 								if (response.hasOwnProperty(key)){
-									let  valueList = response[key];
+									let valueList = response[key];
 									console.log(key);
 									console.log(valueList);
 									valueList.forEach(function (value) {
 										let table = $('#myTable');
 										table.find('tr[id="' + key + '"]').find('td.'+value).css('background-color','red');
-									})
+										})
+									}
 								}
+							alert("Dữ liệu không hợp lệ, vui lòng kiểm tra dữ liệu ở những ô màu đỏ.")
 							}
-						}
-					},
+						},
 					error:function(xhr, status, error) {
 						console.error("lỗi khi gửi dữ liệu :" + error);
+						alert ("Dữ liệu chưa được cập nhật. Vui lòng nhập lại")
+						localStorage.clear();
+						location.reload();
 					}
 				})
         	}
@@ -351,10 +346,10 @@
                let row = $(this).closest("tr");
                let nameProductCell = row.find("td:eq(3)");
                let valueCodeProduct = $(this);
-               let table = document.getElementById("myTable");
+               /* let table = document.getElementById("myTable");
                let lastRow = table.rows[table.rows.length - 1];
                console.log(lastRow)
-               console.log(table.rows.length)
+               console.log(table.rows.length) */
                $.ajax({
                    contentType :"application/json",
                    method : "GET",
@@ -384,7 +379,7 @@
                })
         });
          
-         $('#myTable').on('focusout','td.nameProduct[contenteditable="true"]',function () {
+        $('#myTable').on('focusout','td.nameProduct[contenteditable="true"]',function () {
         	  let nameProduct = $(this).text();
               let row = $(this).closest("tr");
               let codeProductCell = row.find("td:eq(2)");
@@ -503,6 +498,7 @@
 			checkChangeValue(id,rowData);
 		})  
         
+	});
       
 		function render(data) {
 			let tbody = $('#myTable');
@@ -536,21 +532,6 @@
 		}
 
 		function handleCellErrors(response) {
-			// for (let i = 0; i < response.length; i++) {
-			// 	let map = response[i];
-			// 	for (let key in map) {
-			// 		let innerList = map[key];
-			// 		console.log(key);
-			// 		for (let j = 0; j < innerList.length; j++) {
-			// 			let value = innerList[j];
-			// 			console.log(value)
-			// 			let id = key
-			// 			let table = $('#myTable');
-			// 			table.find('tr[id="' + id + '"]').find('td.'+value).css('background-color','red');
-			// 		}
-			// 	}
-			//
-			// }
 			for (let key in response){
 				if (response.hasOwnProperty(key)){
 					let  valueList = response[key];

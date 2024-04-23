@@ -184,13 +184,13 @@
 	<select id="getProductByCodeProduct" resultType="com.example.springmvc.model.Product">
 		<![CDATA[
 			SELECT
-			    id,priceSell,
+			    id,priceSell
 			FROM
 			    product
 			WHERE
 			    codeProduct = #{codeProduct}
 			AND
-			    flag = 0;
+			    flag = 0
 		]]>
 	</select>
 

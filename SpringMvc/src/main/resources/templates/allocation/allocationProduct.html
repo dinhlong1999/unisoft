@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Phân bổ hàng hóa</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<style>
+		h1,td,th {
+            text-align: center;
+        }
+        input{
+            border-radius: 5px;
+        }
+        table{
+            background-color: white;
+            counter-reset: rowNumber ;
+        }
+        body {
+            background-color: #EAE9E5;
+        }
+        .createform {
+        	margin-bottom:5px;
+        }
+        .createform button {
+        	background-color:white;
+        	border-radius:5px;
+        }
+        #btn{
+        	margin-left: auto;
+        }
+       #bt{
+       		float:right;
+       		border-radius:5px;
+        }
+      
+
+		/* Tăng giá trị counter mỗi khi hiển thị một hàng */
+		tbody tr {
+ 			 counter-increment: rowNumber;
+		}
+
+		/* Hiển thị giá trị counter trong cột số thứ tự */
+		tbody tr td:first-child::before {
+  			content: counter(rowNumber);
+		}
+	</style>
+</head>
+<body>
+	<div th:insert = "header :: nav"></div>
+	<div class="container-fluid">
+		 <h1>Phân bổ - nhập hàng</h1>
+	 	 <div style="color: red" th:if="${message}">
+            <span  th:text="${message}"></span>
+            <script th:inline="javascript">           
+            function myJavaScriptFunction() {
+                var message = /*[[${message}]]*/ '';
+                alert(message);
+                
+            }
+                myJavaScriptFunction();
+            </script>
+    	 </div>
+    	 
+    	 <div style="margin-left: 15%;margin-right: 15%">
+    	   <form th:object="${allocationDTO}" method="post" th:action="@{/allocation}">
+    	 	<table id="myTable" class="table table-hover">
+    	 	<thead>
+    	 		<tr style="background-color: grey;color: white">
+    	 			<th>STT</th>
+    	 			<th style="width: 22%">Mã sản phẩm</th>
+    	 			<th>Tên sản phẩm</th>
+    	 			<th style="width: 20%">Số lượng nhập hàng</th>
+    	 		</tr>
+    	 	</thead>
+    	 	
+    	 	<tbody>
+    	 		<tr th:each="item : ${allocationDTO.allocationList}">
+    	 			<td></td>
+    	 			<td>
+    	 				<input class="codeProduct" th:value="${item.codeProduct}" type="text" placeholder="Mã sản phẩm" >
+    	 			</td>
+    	 			<td>
+    	 				<input class="nameProduct" th:value="${item.nameProduct}" type="text" placeholder="Tên sản phẩm" style="width: 70%">
+    	 			</td>
+    	 			<td>
+    	 				<input type="number" th:value="${item.quantity}" placeholder="Số lượng" style="width: 38%">
+    	 			</td>
+    	 		</tr>
+    	 	</tbody>
+    	 		
+    	 		
+    	 	</table>
+    	 	<button id= "addRow" type="button" style="border-radius: 5px">Thêm dòng mới</button>
+    	 	<button id="bt" type="submit">Phân bổ</button>
+    	 	</form>
+    	 	
+    	 </div>
+    	 
+    	 
+    	 
+    	 
+	</div>
+</body>
+<script>
+	$(document).ready(function () {
+		
+		$('#addRow').on('click',function () {
+	        $('#myTable tbody').append('<tr> ' +
+	    	 			'                <td></td>  ' +
+	    	 			'                <td>   '+
+	    	 			'                   <input class="codeProduct" type="text" placeholder="Mã sản phẩm" > ' +
+	    	 			'                </td> '+	
+	    	 			'                <td> ' +
+	    	 			'                   <input class="nameProduct" type="text" placeholder="Tên sản phẩm" style="width: 70%"> ' +
+	    	 			'                </td> '	+
+	    	 			'                <td> ' +
+	    	 			'                <input type="number" placeholder="Số lượng" style="width: 38%"> ' +
+	    	 			'                </td>'	+
+	    	 			'               </tr>')
+	       });
+		
+
+		$('#myTable tbody').on('focusout','td input.codeProduct',function () {
+			let codeProduct = $(this).val();
+			console.log(codeProduct);
+			let row = $(this).closest("tr");
+			let nameProduct = row.find("input.nameProduct");
+			let valueCodeProduct = $(this);
+			  $.ajax({
+                  contentType :"application/json",
+                  method : "GET",
+                  url : `http://localhost:8081/api/product/getNameProduct?codeProduct=`+encodeURIComponent(codeProduct),
+                  success : function(data) {
+                	  console.log(data);
+                      if (data === "") {
+                    	  nameProduct.val('')
+                          valueCodeProduct.val('')
+                      }
+                      else {
+                    	  nameProduct.val(data)
+                      }
+                  },
+                  error:function(xhr, textStatus, errorThrow){
+                      console.log("Error",errorThrow)
+                  }
+              })
+		});
+		
+		 $('#myTable tbody').on('focusout','input.nameProduct',function () {
+       	  	 let nameProduct = $(this).val();
+             let row = $(this).closest("tr");
+             let codeProductCell = row.find("input.codeProduct");
+             let valueNameProduct = $(this);
+             $.ajax({
+                 contentType :"application/json",
+                 method : "GET",
+                 url : `http://localhost:8081/api/product/getCodeProduct?nameProduct=`+encodeURIComponent(nameProduct),
+                 success : function(data) {
+                	 console.log(data)
+                     if (data === "") {
+                         codeProductCell.val('')
+                         valueNameProduct.val('')
+                     }
+                     else {
+                         codeProductCell.val(data)
+                     }                
+                 },
+                 error:function(xhr, textStatus, errorThrow){
+                     console.log("Error",errorThrow)
+                 }
+             })
+       });
+		
+		});
+	
+	
+			 
+		
+	
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+</script>
+</html>
