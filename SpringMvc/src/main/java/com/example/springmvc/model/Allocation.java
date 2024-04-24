@@ -2,6 +2,7 @@ package com.example.springmvc.model;
 
 public class Allocation {
 	
+	
 	private String codeProduct;
 	
 	private String nameProduct;
@@ -11,6 +12,15 @@ public class Allocation {
 	public Allocation() {
 		
 	}
+	
+
+	public Allocation(String codeProduct, String nameProduct, int quantity) {
+		super();
+		this.codeProduct = codeProduct;
+		this.nameProduct = nameProduct;
+		this.quantity = quantity;
+	}
+
 
 	public String getCodeProduct() {
 		return codeProduct;

@@ -51,20 +51,14 @@
 	<div th:insert = "header :: nav"></div>
 	<div class="container-fluid">
 		 <h1>Phân bổ - nhập hàng</h1>
-	 	 <div style="color: red" th:if="${message}">
-            <span  th:text="${message}"></span>
-            <script th:inline="javascript">           
-            function myJavaScriptFunction() {
-                var message = /*[[${message}]]*/ '';
-                alert(message);
-                
-            }
-                myJavaScriptFunction();
-            </script>
-    	 </div>
+		<div style="color: red;margin-left: 15%" th:if="${message}">
+    		<div th:each="item : ${message}">
+        	<span th:text="${item}"></span><br>
+    		</div>
+		</div>
     	 
     	 <div style="margin-left: 15%;margin-right: 15%">
-    	   <form th:object="${allocationDTO}" method="post" th:action="@{/allocation}">
+    	   <form th:object="${allocationDTO}" method="post" th:action="@{/allocation}" >
     	 	<table id="myTable" class="table table-hover">
     	 	<thead>
     	 		<tr style="background-color: grey;color: white">
@@ -76,19 +70,21 @@
     	 	</thead>
     	 	
     	 	<tbody>
-    	 		<tr th:each="item : ${allocationDTO.allocationList}">
+    	 		<tr th:each="allocation,rowStat : ${allocationDTO.allocationList}">
     	 			<td></td>
     	 			<td>
-    	 				<input class="codeProduct" th:value="${item.codeProduct}" type="text" placeholder="Mã sản phẩm" >
+    	 				<input class="codeProduct" th:field="*{allocationList[__${rowStat.index}__].codeProduct}" type="text" placeholder="Mã sản phẩm" >
     	 			</td>
     	 			<td>
-    	 				<input class="nameProduct" th:value="${item.nameProduct}" type="text" placeholder="Tên sản phẩm" style="width: 70%">
+    	 				<input class="nameProduct" th:field="*{allocationList[__${rowStat.index}__].nameProduct}" type="text" placeholder="Tên sản phẩm" style="width: 70%">
     	 			</td>
     	 			<td>
-    	 				<input type="number" th:value="${item.quantity}" placeholder="Số lượng" style="width: 38%">
+    	 				<input type="number" th:field="*{allocationList[__${rowStat.index}__].quantity}" placeholder="Số lượng" style="width: 38%">
     	 			</td>
     	 		</tr>
     	 	</tbody>
+    	 	
+    	 		
     	 		
     	 		
     	 	</table>
@@ -97,6 +93,8 @@
     	 	</form>
     	 	
     	 </div>
+
+    	 	
     	 
     	 
     	 
@@ -106,21 +104,26 @@
 <script>
 	$(document).ready(function () {
 		
-		$('#addRow').on('click',function () {
-	        $('#myTable tbody').append('<tr> ' +
+		 $('#addRow').on('click',function () {
+			let newIndex = $('#myTable tbody tr').length;
+			console.log(newIndex);
+	         $('#myTable tbody').append('<tr> ' +
 	    	 			'                <td></td>  ' +
 	    	 			'                <td>   '+
-	    	 			'                   <input class="codeProduct" type="text" placeholder="Mã sản phẩm" > ' +
-	    	 			'                </td> '+	
+	    	 			'                   <input name="allocationList['+newIndex +'].codeProduct" class="codeProduct" type="text" placeholder="Mã sản phẩm" > ' +
+	    	 			'                </td> '+
 	    	 			'                <td> ' +
-	    	 			'                   <input class="nameProduct" type="text" placeholder="Tên sản phẩm" style="width: 70%"> ' +
+	    	 			'                   <input name="allocationList['+newIndex +'].nameProduct" class="nameProduct" type="text" placeholder="Tên sản phẩm" style="width: 70%"> ' +
 	    	 			'                </td> '	+
 	    	 			'                <td> ' +
-	    	 			'                <input type="number" placeholder="Số lượng" style="width: 38%"> ' +
+	    	 			'                	<input name="allocationList['+newIndex +'].quantity" type="number" value="0" placeholder="Số lượng"  style="width: 38%"> ' +
 	    	 			'                </td>'	+
 	    	 			'               </tr>')
-	       });
+
+	       }); 
 		
+	      
+
 
 		$('#myTable tbody').on('focusout','td input.codeProduct',function () {
 			let codeProduct = $(this).val();
@@ -173,9 +176,10 @@
              })
        });
 		
-		});
+	});
 	
-	
+
+
 			 
 		
 	

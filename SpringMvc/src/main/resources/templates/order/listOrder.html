@@ -35,12 +35,14 @@
     </style>
 </head>
 <body>
-
-
     <div th:insert = "header :: nav"></div>
-    
     <div class="container-fluid">
         <h1>Danh sách đơn hàng</h1>
+        <div style="color: red;" th:if="${statusList}">
+    		<div th:each="item : ${statusList}">
+        	<span th:text="${item}"></span><br>
+    		</div>
+		</div>
         
         <div style="color: red" th:if="${message}">
         <span  th:text="${message}"></span>
@@ -51,7 +53,6 @@
                 
             }
                 myJavaScriptFunction();
-           
 
         </script>
     </div>
@@ -133,6 +134,7 @@
    	     			<th th:if = "${roleName == 'ROLE_ADMIN'}">TÊN NHÂN VIÊN </th>
    	     	</tr>
    	     	<tr th:if="${ordersMap.size() > 0}" th:each="order,status:${ordersMap}" th:id="${order['id']}">
+   	     		<td class="hidden" th:value="${order['id']}"></td>
                 <td th:text="${status.count + page * limit}"></td>
                 <td th:text="${#temporals.format(order['dateStart'], 'yyyy/MM/dd HH:mm:ss')}"></td>
                 <td class="codeProduct"  th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['codeProduct']}" ></td>
