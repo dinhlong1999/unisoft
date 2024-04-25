@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvc.repository.AnalystMapper">
+	<select id="getCustomerNoOrders" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				c.id,
+    			c.`name`,
+    			c.address,
+    			c.phoneNumber
+			FROM
+				customer c
+			LEFT JOIN
+				(SELECT
+					c.id as customerId,
+					c.`name`,
+					c.address,
+					c.phoneNumber
+				FROM
+					customer c
+				JOIN
+					orders o on o.customerId = c.id
+				WHERE
+					o.dateStart BETWEEN #{arg0} AND #{arg1} ) as tableTemp ON c.id = tableTemp.customerId
+			WHERE 
+				customerId is null
+			ORDER BY
+				c.name
+			LIMIT 
+				#{arg2} OFFSET #{arg3};
+		]]>
+	</select>
+	
+	<select id="getTotalRowByCustomerNoOrders" resultType="int">
+		<![CDATA[
+			SELECT
+				count(*)
+			FROM
+				customer c
+			LEFT JOIN
+				(SELECT
+					c.id as customerId,
+					c.`name`,
+					c.address,
+					c.phoneNumber
+				FROM
+					customer c
+				JOIN
+					orders o on o.customerId = c.id
+				WHERE
+					o.dateStart BETWEEN #{arg0} AND #{arg1} ) as tableTemp ON c.id = tableTemp.customerId
+			WHERE 
+				customerId is null	
+		]]>
+	</select>
+	<select id="getProductBestSeller" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				p.id,
+    			p.codeProduct,
+    			p.nameProduct,
+    			SUM(o.quantityBook) as quantity
+			FROM
+				product p
+			JOIN
+				orders o ON o.productId = p.id
+			WHERE
+				o.dateStart BETWEEN #{arg0} AND #{arg1}
+			GROUP BY
+				p.id, p.codeProduct
+			ORDER BY
+				quantity DESC
+			LIMIT 
+				#{arg2} OFFSET #{arg3};
+		]]>
+	</select>
+	<select id="getTotalRowByProductBestSeller" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(*)
+			FROM 
+				(SELECT
+					p.id,
+   					p.codeProduct,
+    				p.nameProduct,
+    				sum(o.quantityBook) as quantity
+				FROM
+					product p
+				JOIN
+					orders o ON o.productId = p.id
+				WHERE
+					o.dateStart BETWEEN #{arg0} AND #{arg1}
+				GROUP BY
+					p.id, p.codeProduct) AS tableTemp;
+		]]>
+	</select>
+	<select id="getProductNoSeller" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				p.id,
+    			p.codeProduct,
+    			p.nameProduct
+			FROM
+				product p
+			LEFT JOIN
+				(SELECT
+					p.id as productId, 
+					p.codeProduct,
+					p.nameProduct
+				FROM
+					product p
+				JOIN
+					orders o ON o.productId = p.id
+				WHERE
+					o.dateStart BETWEEN #{arg0} AND #{arg1}
+				GROUP BY
+					p.id, p.codeProduct) as tableTemp ON tableTemp.productId = p.id
+				WHERE
+					productId is null
+				LIMIT
+					#{arg2} OFFSET #{arg3};
+		]]>
+	</select>
+	<select id="getTotalRowByProductNoSeller" resultType="int">
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				product p
+			LEFT JOIN
+				(SELECT
+					p.id as productId, 
+					p.codeProduct,
+					p.nameProduct
+				FROM
+					product p
+				JOIN
+					orders o ON o.productId = p.id
+				WHERE
+					o.dateStart BETWEEN #{arg0} AND #{arg1}
+				GROUP BY
+					p.id, p.codeProduct) as tableTemp ON tableTemp.productId = p.id
+			WHERE
+				productId is null;
+		]]>
+	</select>
+</mapper>

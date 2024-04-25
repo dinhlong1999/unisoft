@@ -63,24 +63,30 @@ public class AllocationController {
 	
 	@PostMapping("/allocation")
 	public String allocation(@ModelAttribute AllocationDTO allocationDTO, Model model,RedirectAttributes redirectAttributes ) {
+		Account account = getAccountLogin();
 		List<String> error = new ArrayList<>();
 		List<Allocation> allocations = allocationDTO.getAllocationList();
-		Account account = getAccountLogin();
-		for (int i = 0; i < allocations.size(); i++) {
-			if (allocations.get(i).getCodeProduct().isEmpty() || allocations.get(i).getNameProduct().isEmpty()) {
+		Map<String,Integer> allocationsMap = new TreeMap<>();
+		for (Allocation allocationTemp: allocations) {
+			if (allocationTemp.getCodeProduct().isEmpty() || allocationTemp.getNameProduct().isEmpty()) {
 				if (!error.contains("Mã sản phẩm và tên sản phẩm không được để trống")) {
-					error.add("Mã sản phẩm và tên sản phẩm không được để trống");	
+					error.add("Mã sản phẩm và tên sản phẩm không được để trống");
 				}
-				
 			}
-			
-			if (allocations.get(i).getQuantity() <= 0) {
+			if (allocationTemp.getQuantity() <= 0) {
 				if (!error.contains("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0")) {
 					error.add("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0");
 				}
+				continue;
+			}
 			
+			if (!allocationsMap.containsKey(allocationTemp.getCodeProduct())) {
+				allocationsMap.put(allocationTemp.getCodeProduct(), allocationTemp.getQuantity());
+			}else {
+				allocationsMap.put(allocationTemp.getCodeProduct(), allocationsMap.get(allocationTemp.getCodeProduct()) + allocationTemp.getQuantity());
 			}
 		}
+		
 		
 		if (error.size() != 0) {
 			model.addAttribute("message", error);
@@ -89,15 +95,15 @@ public class AllocationController {
 			return "allocation/allocationProduct";
 		}else {
 			Map<String,String> statusMap = new TreeMap<>();
-			for(Allocation allocation : allocationDTO.getAllocationList()) {
-				Product product = productService.getProductByCodeProduct(allocation.getCodeProduct());
-				String result = orderService.goodsAllocation(product.getId(), allocation.getQuantity());
+			for(String key : allocationsMap.keySet()) {
+				Product product = productService.getProductByCodeProduct(key);
+				String result = orderService.goodsAllocation(product.getId(), allocationsMap.get(key));
 				if (result.equals("ERROR")) {
-					statusMap.put(allocation.getCodeProduct(), "ERROR");
+					statusMap.put(key, "ERROR");
 				}else if (result.equals("TRUE")) {
-					statusMap.put(allocation.getCodeProduct(), "SUCCESS");
+					statusMap.put(key, "SUCCESS");
 				}else {
-					statusMap.put(allocation.getCodeProduct(), "UPDATE");
+					statusMap.put(key, "UPDATE");
 				}
 			}
 			for(String map: statusMap.keySet()) {
@@ -110,7 +116,7 @@ public class AllocationController {
 				}
 			}
 			model.addAttribute("nameLogin", account.getUsername());
-			if (allocations.size() == 0) {
+		 	if (allocations.size() == 0) {
 				List<String> statusList = new ArrayList<>();
 				for(String map: statusMap.keySet()) {
 					if(statusMap.get(map).equals("UPDATE")) {
@@ -128,6 +134,5 @@ public class AllocationController {
 				return "allocation/allocationProduct";
 			}
 		}
-	
 	}
 }
