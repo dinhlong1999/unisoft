@@ -143,7 +143,7 @@ public class AnaLystRestController {
 		analystDTO.setShowStartEllipsis((boolean) handlePagingProductNoSell.get("showStartEllipsis"));
 		analystDTO.setShowEndEllipsis((boolean) handlePagingProductNoSell.get("showEndEllipsis"));
 		analystDTO.setPage(page);
-		analystDTO.setTotalPage(totalRecordByProductNoSell);
+		analystDTO.setTotalPage(totalPageByProductNoSell);
 		analystDTO.setLimit(limit);
 		return analystDTO;
 		

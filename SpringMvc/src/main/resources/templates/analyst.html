@@ -202,7 +202,7 @@
 	            				<span  class="page-link">...</span>
 	            			</li>
 	            			<li class="page-item" th:if="${page + 1 != totalPageByProductNoSell }">
-	            				<button id="productNoSell" class="page-link" th:attr="data-pages='/api/analyst/productNoSell?page=' + ${pageNumber} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Next</button>
+	            				<button id="productNoSell" class="page-link" th:attr="data-pages='/api/analyst/productNoSell?page=' + ${page + 2} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Next</button>
 	            			</li>
 	            		</ul>
             	  </nav> 
