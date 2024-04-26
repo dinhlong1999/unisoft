@@ -26,4 +26,5 @@ public class ProductRestController {
 		String codeProduct = productService.getCodeProductByNameProduct(nameProduct);
 		return codeProduct;
 	}
+
 }

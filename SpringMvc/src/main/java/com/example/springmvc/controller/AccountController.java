@@ -36,6 +36,10 @@ public class AccountController {
 
 	@GetMapping(value={"/login","/logoutSuccessful"})
 	public String loginForm() {
+		Account account = getAccountLogin();
+		if (account != null) {
+			return "redirect:/product/list";
+		}
 		return "account/formlogin";
 	}
 	@GetMapping("/login/success")

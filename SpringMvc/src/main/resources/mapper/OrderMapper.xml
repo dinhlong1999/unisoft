@@ -5,6 +5,7 @@
 	<select id="getListOrder" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
+				o.id,
 				o.dateStart,
     			p.nameProduct,
     			p.codeProduct,
@@ -62,14 +63,16 @@
          				ELSE 1 = 1
 	 			END)
 	 		AND
-	 			o.dateStart BETWEEN #{arg6} AND #{arg7}
+	 			(#{arg6} = true or o.employeeId = #{arg7})
 	 		AND
-	 			o.statusId IN (#{arg8},#{arg9})
+	 			o.dateStart BETWEEN #{arg8} AND #{arg9}
+	 		AND
+	 			o.statusId IN (#{arg10},#{arg11})
 
 	 		ORDER BY
 	 			o.dateStart DESC
 	 		LIMIT
-	 			#{arg10} OFFSET #{arg11}
+	 			#{arg12} OFFSET #{arg13}
 		]]>
 	</select>
 	
@@ -122,10 +125,65 @@
          				ELSE 1 = 1
 	 			END)
 	 		AND
-	 			o.dateStart BETWEEN #{arg6} AND #{arg7}
+	 			(#{arg6} = true or o.employeeId = #{arg7})
 	 		AND
-				o.statusId IN (#{arg8},#{arg9})
+	 			o.dateStart BETWEEN #{arg8} AND #{arg9}
+	 		AND
+				o.statusId IN (#{arg10},#{arg11})
 		]]>
-	
+
 	</select>
+	
+	<insert id="insertOrders">
+		<![CDATA[
+			INSERT INTO orders (customerId,employeeId,productId,statusId,dateStart,price,quantityBook)
+			VALUES (#{arg0},#{arg1},#{arg2},#{arg3},#{arg4},#{arg5},#{arg6})
+		]]>
+	</insert>
+	
+	<update id="updateOrder">
+		<![CDATA[
+			UPDATE
+				orders
+			SET
+				customerId = #{arg0},
+				productId = #{arg1},
+				quantityBook = #{arg2},
+				version = #{arg3} + 1
+			WHERE
+				id = #{arg4}
+			AND
+				version = #{arg3}
+				
+		]]>
+	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </mapper>
