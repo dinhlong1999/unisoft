@@ -1,14 +1,16 @@
 package com.example.springmvc.dto;
 
 import java.util.List;
+import java.util.Map;
 
 import com.example.springmvc.model.Customer;
 import com.example.springmvc.model.Product;
 
 public class AnalystDTO {
-	private List<Customer> customerList;
 	
-	private List<Product> productList;
+	private List<Map<String,Object>> customerList;
+	
+	private List<Map<String,Object>> productList;
 	
 	private int totalPage;
 	
@@ -26,24 +28,34 @@ public class AnalystDTO {
 	
 	private boolean showEndEllipsis;
 	
+	private int page;
+	
 	public AnalystDTO() {
 		
 	}
 
-	public List<Customer> getCustomerList() {
+	public List<Map<String, Object>> getCustomerList() {
 		return customerList;
 	}
 
-	public void setCustomerList(List<Customer> customerList) {
+	public void setCustomerList(List<Map<String, Object>> customerList) {
 		this.customerList = customerList;
 	}
 
-	public List<Product> getProductList() {
+	public List<Map<String, Object>> getProductList() {
 		return productList;
 	}
 
-	public void setProductList(List<Product> productList) {
+	public void setProductList(List<Map<String, Object>> productList) {
 		this.productList = productList;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
 	}
 
 	public int getTotalPage() {

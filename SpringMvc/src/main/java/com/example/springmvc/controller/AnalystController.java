@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import com.example.springmvc.common.Paging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -49,10 +50,12 @@ public class AnalystController {
 
 		if (dateStart.isEmpty()) {
 			dateStart = "2000-01-01";
+			model.addAttribute("dateStart", "");
 		}else {
 			model.addAttribute("dateStart", dateStart);
 		};
 		if (dateEnd.isEmpty()) {
+			model.addAttribute("dateEnd","");
 			dateEnd = "9999-01-01";
 		}else {
 			model.addAttribute("dateEnd",dateEnd);
@@ -64,33 +67,13 @@ public class AnalystController {
 		int totalRowByCustomerNoOrder = analystService.getTotalRowByCustomerNoOrders(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
 		double temp = (double)  totalRowByCustomerNoOrder / limit ;
 		int totalPageByCustomerNoOrder = (int) Math.ceil(temp);
-		
-		int maxVisitablePages = 10; // Số trang tối đa hiển thị
-		int adjacentPages = 2; // số trang bên cạnh trang hiện tại
-		int startPage;
-		int endPage;
-		boolean showStartEllipsis = false; // Dấu ... đầu
-		boolean showEndEllipsis = false; // Dấu ... cuối
-		if (totalPageByCustomerNoOrder <= maxVisitablePages) {
-			startPage = 1;
-			endPage = totalPageByCustomerNoOrder;
-		} else {
-			if (page <= maxVisitablePages - adjacentPages) {
-				startPage = 1;
-				endPage = maxVisitablePages;
-				showEndEllipsis = true;
-			} else if (page >= totalPageByCustomerNoOrder - adjacentPages) {
-				startPage = totalPageByCustomerNoOrder - maxVisitablePages + 1;
-				endPage = totalPageByCustomerNoOrder;
-				showStartEllipsis = true;
-			} else {
-				startPage = page - adjacentPages;
-				endPage = page + adjacentPages;
-				showStartEllipsis = true;
-				showEndEllipsis = true;
-			}
-		}
-		
+
+		Map<String,Object> pagination = Paging.handlePaging(page,totalPageByCustomerNoOrder);
+		int startPage = (int) pagination.get("startPage");
+		int endPage = (int) pagination.get("endPage");
+		boolean showStartEllipsis = (boolean) pagination.get("showStartEllipsis");
+		boolean showEndEllipsis = (boolean) pagination.get("showEndEllipsis");
+
 		model.addAttribute("totalPageByCustomerNoOrder", totalPageByCustomerNoOrder);
 		model.addAttribute("page", page);
 		model.addAttribute("limit", limit);
@@ -109,30 +92,11 @@ public class AnalystController {
 		double rowProductTemp = (double) totalRowByProductBestSeller / limit;
 		int totalPageByProductBestSeller = (int) Math.ceil(rowProductTemp);
 		
-		
-		int startPageProductBestSeller;
-		int endPageProductBestSeller;
-		boolean showStartEllipsisProductBestSeller = false; // Dấu ... đầu
-		boolean showEndEllipsisProductBestSeller = false; // Dấu ... cuối
-		if (totalPageByProductBestSeller <= maxVisitablePages) {
-			startPageProductBestSeller = 1;
-			endPageProductBestSeller = totalPageByProductBestSeller;
-		} else {
-			if (page <= maxVisitablePages - adjacentPages) {
-				startPageProductBestSeller = 1;
-				endPageProductBestSeller = maxVisitablePages;
-				showEndEllipsisProductBestSeller = true;
-			} else if (page >= totalPageByProductBestSeller - adjacentPages) {
-				startPageProductBestSeller = totalPageByProductBestSeller - maxVisitablePages + 1;
-				endPageProductBestSeller = totalPageByProductBestSeller;
-				showStartEllipsisProductBestSeller = true;
-			} else {
-				startPageProductBestSeller = page - adjacentPages;
-				endPageProductBestSeller = page + adjacentPages;
-				showStartEllipsisProductBestSeller = true;
-				showEndEllipsisProductBestSeller = true;
-			}
-		}
+		Map<String,Object> pagingProductBestSeller = Paging.handlePaging(page,totalPageByProductBestSeller);
+		int startPageProductBestSeller = (int) pagingProductBestSeller.get("startPage");
+		int endPageProductBestSeller = (int) pagingProductBestSeller.get("endPage");
+		boolean showStartEllipsisProductBestSeller = (boolean) pagingProductBestSeller.get("showStartEllipsis");
+		boolean showEndEllipsisProductBestSeller = (boolean) pagingProductBestSeller.get("showEndEllipsis");
 		model.addAttribute("totalPageByProductBestSeller", totalPageByProductBestSeller);
 		model.addAttribute("startPageProductBestSeller", startPageProductBestSeller);
 		model.addAttribute("endPageProductBestSeller", endPageProductBestSeller);
@@ -146,31 +110,12 @@ public class AnalystController {
 		int getTotalRowByProductNoSell = analystService.getTotalRowByProductNoSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
 		double rowProductNoSellTemp = (double) getTotalRowByProductNoSell / limit;
 		int totalPageByProductNoSell = (int) Math.ceil(rowProductNoSellTemp);
-		
-		int startPageProductNoSeller;
-		int endPageProductNoSeller;
-		boolean showStartEllipsisProductNoSeller = false; // Dấu ... đầu
-		boolean showEndEllipsisProductNoSeller = false; // Dấu ... cuối
-		
-		if (totalPageByProductNoSell <= maxVisitablePages) {
-			startPageProductNoSeller = 1;
-			endPageProductNoSeller = totalPageByProductNoSell;
-		} else {
-			if (page <= maxVisitablePages - adjacentPages) {
-				startPageProductNoSeller = 1;
-				endPageProductNoSeller = maxVisitablePages;
-				showEndEllipsisProductNoSeller = true;
-			} else if (page >= totalPageByProductNoSell - adjacentPages) {
-				startPageProductNoSeller = totalPageByProductNoSell - maxVisitablePages + 1;
-				endPageProductNoSeller = totalPageByProductNoSell;
-				showStartEllipsisProductNoSeller = true;
-			} else {
-				startPageProductNoSeller = page - adjacentPages;
-				endPageProductNoSeller = page + adjacentPages;
-				showStartEllipsisProductNoSeller = true;
-				showEndEllipsisProductNoSeller = true;
-			}
-		}
+
+		Map<String,Object> pagingProductNoSell = Paging.handlePaging(page,totalPageByProductNoSell);
+		int startPageProductNoSeller = (int) pagingProductNoSell.get("startPage");
+		int endPageProductNoSeller = (int) pagingProductNoSell.get("endPage");
+		boolean showStartEllipsisProductNoSeller = (boolean) pagingProductNoSell.get("showStartEllipsis");
+		boolean showEndEllipsisProductNoSeller = (boolean) pagingProductNoSell.get("showEndEllipsis");
 		
 		model.addAttribute("totalPageByProductNoSell", totalPageByProductNoSell);
 		model.addAttribute("startPageProductNoSeller", startPageProductNoSeller);
