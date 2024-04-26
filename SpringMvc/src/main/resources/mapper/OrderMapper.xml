@@ -133,6 +133,17 @@
 		]]>
 
 	</select>
+
+	<select id="getOrderVersionById" resultType="int">
+		<![CDATA[
+			SELECT
+			    version
+			FROM
+			    orders
+			WHERE
+			    id = #{id}
+		]]>
+	</select>
 	
 	<insert id="insertOrders">
 		<![CDATA[
@@ -149,41 +160,20 @@
 				customerId = #{arg0},
 				productId = #{arg1},
 				quantityBook = #{arg2},
-				version = #{arg3} + 1
+				version = #{arg3} + 1,
+				price = #{arg4}
 			WHERE
-				id = #{arg4}
+				id = #{arg5}
 			AND
 				version = #{arg3}
 				
 		]]>
 	</update>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	<select id="goodsAllocation" resultType="String">
+		<![CDATA[
+			{call spring_mvc_unisoft.import_product(#{arg0},#{arg1})}
+		]]>
+	</select>
+
 </mapper>

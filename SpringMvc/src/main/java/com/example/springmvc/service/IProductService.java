@@ -28,4 +28,6 @@ public interface IProductService {
     String getCodeProductByNameProduct(String nameProduct);
     
     String getNameProductByCodeProduct (String codeProduct);
+
+    Product getProductByCodeProduct(String codeProduct);
 }

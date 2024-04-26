@@ -59,17 +59,21 @@ public class OrderController {
     	if (page != 0) {
     		page = page - 1;
 		}
-    	int limit = 2;
+    	int limit = 4;
     	if (dateStart.isEmpty()) {
     		dateStart = "2000-10-10";
-    	}
+    	}else {
+    		model.addAttribute("dateStart", dateStart);
+    	};
     	if (dateEnd.isEmpty()) {
 			dateEnd = "9999-10-10";
+		}else {
+			model.addAttribute("dateEnd", dateEnd);
 		}
     	 if (statusAllocation == 0 && statusBooking == 0 ) {
             statusAllocation = 2;
             statusBooking = 1;
-         }
+         };
 
     	
 		 Account accountLogin = getAccountLogin();
@@ -128,8 +132,8 @@ public class OrderController {
         model.addAttribute("nameProduct", nameProduct);
         model.addAttribute("customerName", customerName);
         model.addAttribute("phoneNumber", phoneNumber);
-        model.addAttribute("dateStart", dateStart);
-        model.addAttribute("dateEnd", dateEnd);
+        
+      
         model.addAttribute("statusAllocation", statusAllocation);
         model.addAttribute("statusBooking", statusBooking);
         return "order/listOrder";
@@ -137,7 +141,8 @@ public class OrderController {
     
     @GetMapping("/save")
     public String saveOrders(@RequestParam List<Object> data,Model model ) {
-    	System.out.println(data.toString());
+    	
+    	
     	return "orders/list";
     }
     

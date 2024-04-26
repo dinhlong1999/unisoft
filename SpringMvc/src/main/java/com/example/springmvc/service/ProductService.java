@@ -1,9 +1,7 @@
 package com.example.springmvc.service;
 
 import com.example.springmvc.model.Product;
-
 import com.example.springmvc.repository.ProductMapper;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +13,15 @@ import java.util.Map;
 @Service
 public class ProductService implements IProductService {
 
-    @Autowired
+
+
+	@Autowired
     private ProductMapper productMapper;
 
+	@Override
+	public Product getProductByCodeProduct(String codeProduct) {
+		return productMapper.getProductByCodeProduct(codeProduct);
+	}
     
     @Override
     public List<Product> getListProduct(String codeProduct, String nameProduct, int limit, int offset) {
@@ -42,12 +46,12 @@ public class ProductService implements IProductService {
         return productMapper.totalCountGetListProduct(codeProduct,nameProduct);
     }
     
-    @Transactional
+    
 	@Override
 	public int deleteProductById(int id) {
-		  productMapper.deleteProduct(id);
-	 int result = productMapper.getDeleteProductCount(id);
-	 return result;
+		productMapper.deleteProduct(id);
+		int result = productMapper.getDeleteProductCount(id);
+		return result;
 	}
 
 	@Override
