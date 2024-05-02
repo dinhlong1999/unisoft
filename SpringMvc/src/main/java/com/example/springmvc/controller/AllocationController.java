@@ -2,7 +2,6 @@ package com.example.springmvc.controller;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -57,6 +56,7 @@ public class AllocationController {
 		AllocationDTO allocationDTO = new AllocationDTO();
 		allocationDTO.setAllocationList(allocationList);
 		model.addAttribute("nameLogin",account.getUsername());
+		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		model.addAttribute("allocationDTO", allocationDTO);
 		return "allocation/allocationProduct";
 	}
@@ -91,6 +91,7 @@ public class AllocationController {
 		if (error.size() != 0) {
 			model.addAttribute("message", error);
 			model.addAttribute("nameLogin", account.getUsername());
+			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 			model.addAttribute("allocationDTO", allocationDTO);
 			return "allocation/allocationProduct";
 		}else {

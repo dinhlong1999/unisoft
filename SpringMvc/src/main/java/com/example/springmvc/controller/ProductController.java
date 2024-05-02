@@ -1,5 +1,6 @@
 package com.example.springmvc.controller;
 
+import com.example.springmvc.common.Paging;
 import com.example.springmvc.dto.ProductDTO;
 import com.example.springmvc.model.Account;
 import com.example.springmvc.model.Product;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -69,33 +71,13 @@ public class ProductController {
              double temp = (double) totalRow / limit ;
              int totalPage = (int) Math.ceil(temp);
              
-             //logic phân trang
-             int maxVisitablePages = 10; //Số trang tối đa hiển thị
-             int adjacentPages = 2;  //số trang bên cạnh trang hiện tại
-             int startPage;
-             int endPage;
-             boolean showStartEllipsis = false; // Dấu ... đầu
-             boolean showEndEllipsis = false;  // Dấu ... cuối
-             if (totalPage <= maxVisitablePages) {
-            	    startPage = 1;
-            	    endPage = totalPage;
-            	} else {
-            	    if (page <= maxVisitablePages - adjacentPages) {
-            	        startPage = 1;
-            	        endPage = maxVisitablePages;
-            	        showEndEllipsis = true;
-            	    } else if (page >= totalPage - adjacentPages) {
-            	        startPage = totalPage - maxVisitablePages + 1;
-            	        endPage = totalPage;
-            	        showStartEllipsis = true;
-            	    } else {
-            	        startPage = page - adjacentPages;
-            	        endPage = page + adjacentPages;
-            	        showStartEllipsis = true;
-            	        showEndEllipsis = true;
-            	    }
-            	}
-             
+             //handle Phân trang
+             Map<String,Object> pagination = Paging.handlePaging(page, totalPage);
+             int startPage = (int) pagination.get("startPage");
+             int endPage = (int) pagination.get("endPage");
+     		 boolean showStartEllipsis = (boolean) pagination.get("showStartEllipsis");
+     		 boolean showEndEllipsis = (boolean) pagination.get("showEndEllipsis");
+
              model.addAttribute("startPage",startPage);
              model.addAttribute("endPage", endPage);
              model.addAttribute("page",page);
@@ -110,6 +92,7 @@ public class ProductController {
              model.addAttribute("codeProduct",codeProduct);
              model.addAttribute("nameProduct",nameProduct);
              model.addAttribute("nameLogin",accountLogin.getUsername());
+            
 		} catch (Exception  e) {
 		System.out.println(e.getMessage());	
 		
@@ -139,6 +122,7 @@ public class ProductController {
     	Account account = getAccountLogin();
     	model.addAttribute("productDTO",new ProductDTO());
     	model.addAttribute("nameLogin",account.getUsername());
+    	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
     	return "product/formcreateproduct";	
     }
     
@@ -148,6 +132,7 @@ public class ProductController {
     												 BindingResult bindingResult,Errors errors, 
     												 RedirectAttributes redirectAttributes, Model model) {
         new ProductDTO().validate(productDTO,bindingResult);
+        Account account = getAccountLogin();
         if (!productService.isCodeProductExists(productDTO.getCodeProduct())){
         	errors.rejectValue("codeProduct", null, "Mã sản phẩm không được trùng");
 
@@ -157,6 +142,8 @@ public class ProductController {
         }
     	if(bindingResult.hasFieldErrors()) {
     		model.addAttribute("productDTO",productDTO);
+    		model.addAttribute("nameLogin",account.getUsername());
+        	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
     		return "product/formcreateproduct";
     	}
     	Product product = new Product();
@@ -189,6 +176,7 @@ public class ProductController {
         	BeanUtils.copyProperties(product, productDTO);
         	model.addAttribute("productDTO",productDTO);
         	model.addAttribute("nameLogin",account.getUsername());
+        	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		} catch (Throwable e) {
 			System.out.println(e.getMessage());
 		}
@@ -201,6 +189,7 @@ public class ProductController {
     								@RequestParam int page,@RequestParam String nameSearch,
     								@RequestParam String codeSearch , BindingResult bindingResult,Errors errors, 
     								RedirectAttributes redirectAttributes, Model model) {
+    	Account account = getAccountLogin();
     	if (!productService.isCodeProductExistsToUpdate(productDTO.getCodeProduct(),productDTO.getId())) {
     		errors.rejectValue("codeProduct", null,"Mã sản phẩm không được trùng");
     	}
@@ -209,6 +198,8 @@ public class ProductController {
     	}
     	new ProductDTO().validate(productDTO, bindingResult);
     	if (bindingResult.hasErrors()) {
+    		model.addAttribute("nameLogin",account.getUsername());
+        	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 			model.addAttribute("productDTO",productDTO);
 			return "product/formupdateproduct";
 		}

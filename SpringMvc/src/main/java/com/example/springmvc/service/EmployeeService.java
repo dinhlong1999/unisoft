@@ -61,9 +61,13 @@ public class EmployeeService implements IEmployeeService {
 			int rowEffectByInsertEmployee = employeeMapper.insertEmployee(employee.getName(),employee.getPhoneNumber(),accountId);
 			if (rowEffectByInsertEmployee == 1) {
 				return 1;
+			}else {
+				throw new RuntimeException("Không thể thêm được nhân viên");
 			}
+		}else {
+			
 		}
-		return 0;
+		throw new RuntimeException("Không thể thêm được tài khoản");
 	}
 
 	@Override
@@ -94,9 +98,13 @@ public class EmployeeService implements IEmployeeService {
 			int rowEffectByEditEmployee = employeeMapper.updateEmployee(employee.getPhoneNumber(), employee.getVersion(), employee.getName(),employee.getId());
 			if (rowEffectByEditEmployee == 1) {
 				return 1;
+			}else {
+				throw new RuntimeException("Không thể cập nhật nhân viên");
 			}
+		}else {
+			throw new RuntimeException("Không thể cập nhật tài khoản");
 		}
-		return 0;
+		
 	}
 
 	

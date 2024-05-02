@@ -84,7 +84,7 @@ public class AnalystController {
 		
 		model.addAttribute("customerNoOrder", customerNoOrder);
 		model.addAttribute("nameLogin", account.getUsername());
-		
+		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		
 		//Danh sách sản phẩm bán chạy
 		List<Map<String,Object>> productsBestSeller = analystService.getProductBestSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);

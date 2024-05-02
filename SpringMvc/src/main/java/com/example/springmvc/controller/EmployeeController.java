@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.springmvc.common.Paging;
 import com.example.springmvc.dto.EmployeeDTO;
 import com.example.springmvc.model.Account;
 import com.example.springmvc.model.Employee;
@@ -64,33 +65,15 @@ public class EmployeeController {
 				phoneNumberSearch, limit, limit * page);
 		int totalRow = employeeService.countTotalRow(username, employeeName, phoneNumberSearch);
 		double temp = (double) totalRow / limit;
-
 		int totalPage = (int) Math.ceil(temp);
-		int maxVisitablePages = 10; // Số trang tối đa hiển thị
-		int adjacentPages = 2; // số trang bên cạnh trang hiện tại
-		int startPage;
-		int endPage;
-		boolean showStartEllipsis = false; // Dấu ... đầu
-		boolean showEndEllipsis = false; // Dấu ... cuối
-		if (totalPage <= maxVisitablePages) {
-			startPage = 1;
-			endPage = totalPage;
-		} else {
-			if (page <= maxVisitablePages - adjacentPages) {
-				startPage = 1;
-				endPage = maxVisitablePages;
-				showEndEllipsis = true;
-			} else if (page >= totalPage - adjacentPages) {
-				startPage = totalPage - maxVisitablePages + 1;
-				endPage = totalPage;
-				showStartEllipsis = true;
-			} else {
-				startPage = page - adjacentPages;
-				endPage = page + adjacentPages;
-				showStartEllipsis = true;
-				showEndEllipsis = true;
-			}
-		}
+		
+		 //handle Phân trang
+        Map<String,Object> pagination = Paging.handlePaging(page, totalPage);
+        int startPage = (int) pagination.get("startPage");
+        int endPage = (int) pagination.get("endPage");
+		boolean showStartEllipsis = (boolean) pagination.get("showStartEllipsis");
+		boolean showEndEllipsis = (boolean) pagination.get("showEndEllipsis");
+		
 		model.addAttribute("totalPage", totalPage);
 		model.addAttribute("page", page);
 		model.addAttribute("limit", limit);
@@ -103,7 +86,7 @@ public class EmployeeController {
 		model.addAttribute("username", username);
 		model.addAttribute("employeeName", employeeName);
 		model.addAttribute("phoneNumberSearch", phoneNumberSearch);
-
+		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		model.addAttribute("nameLogin", account.getUsername());
 		return "employee/listEmployee";
 	}
@@ -130,6 +113,7 @@ public class EmployeeController {
 	public String showFormCreate(Model model) {
 		Account account = getAccountLogin();
 		model.addAttribute("nameLogin", account.getUsername());
+		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		model.addAttribute("employeeDTO", new EmployeeDTO());
 		return "employee/formcreateemployee";
 	}
@@ -138,13 +122,15 @@ public class EmployeeController {
 	public String insertEmployee(@ModelAttribute("employeeDTO") EmployeeDTO employeeDTO, @RequestParam int page,
 			@RequestParam String username, @RequestParam String employeeName, @RequestParam String phoneNumberSearch,
 			BindingResult bindingResult, Errors errors, Model model, RedirectAttributes redirectAttributes) {
-
+		Account account = getAccountLogin();
 		int checkUsernameExists = accountService.checkUsernameOfAccount(employeeDTO.getAccount().getUsername());
 		if (checkUsernameExists == 1) {
 			errors.rejectValue("account.username", null, "Tên đăng nhập đã bị trùng");
 		}
 		new EmployeeDTO().validate(employeeDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
+			model.addAttribute("nameLogin", account.getUsername());
+			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 			model.addAttribute("employeeDTO", employeeDTO);
 			return "employee/formcreateemployee";
 		}
@@ -152,16 +138,23 @@ public class EmployeeController {
 		Employee employee = new Employee();
 		BeanUtils.copyProperties(employeeDTO, employee);
 		employee.setAccount(employeeDTO.getAccount());
-		int rowEffectByInsertEmployee = employeeService.insertEmployee(employeeDTO.getAccount(), employee);
-		if (rowEffectByInsertEmployee == 1) {
-			redirectAttributes.addFlashAttribute("message", "Thêm mới thành công");
-			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
-					+ "&phoneNumberSearch=" + phoneNumberSearch;
-		} else {
+		try {
+			int rowEffectByInsertEmployee = employeeService.insertEmployee(employeeDTO.getAccount(), employee);
+			if (rowEffectByInsertEmployee == 1) {
+				redirectAttributes.addFlashAttribute("message", "Thêm mới thành công");
+				return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
+						+ "&phoneNumberSearch=" + phoneNumberSearch;
+			} else {
+				redirectAttributes.addFlashAttribute("message", "Thêm mới thất bại");
+				return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
+						+ "&phoneNumberSearch=" + phoneNumberSearch;
+			}
+		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("message", "Thêm mới thất bại");
 			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
 					+ "&phoneNumberSearch=" + phoneNumberSearch;
 		}
+		
 	}
 
 	 @GetMapping("/showformedit/{id}")
@@ -177,6 +170,7 @@ public class EmployeeController {
 		 employeeDTO.setAccount(employee.getAccount());
 		 model.addAttribute("employeeDTO",employeeDTO);
 		 model.addAttribute("nameLogin",account.getUsername());
+		 model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		 return "employee/showformupdateempl";
 	 }
 	 
@@ -190,25 +184,37 @@ public class EmployeeController {
 			errors.rejectValue("account.username", null, "Tên tài khoản đã bị trùng, vui lòng nhập lại");
 			
 		}
+		 Account account = getAccountLogin();
 		new EmployeeDTO().validate(employeeDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("employeeDTO", employeeDTO);
+			model.addAttribute("nameLogin",account.getUsername());
+			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 			return "employee/showformupdateempl";
 		}
-		Account account = employeeDTO.getAccount();
+		
 		Employee employee = new Employee();
 		BeanUtils.copyProperties(employeeDTO, employee);
-		employee.setAccount(account);
-		int rowEffectByEditEmployee = employeeService.updateEmployee(employee);
-		if (rowEffectByEditEmployee == 1) {
-			redirectAttributes.addFlashAttribute("message", "Chỉnh sửa thành công");
-			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
-					+ "&phoneNumberSearch=" + phoneNumberSearch;
-		} else {
+		employee.setAccount(employeeDTO.getAccount());
+		try {
+			int rowEffectByEditEmployee = employeeService.updateEmployee(employee);
+			if (rowEffectByEditEmployee == 1) {
+				redirectAttributes.addFlashAttribute("message", "Chỉnh sửa thành công");
+				return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
+						+ "&phoneNumberSearch=" + phoneNumberSearch;
+			} else {
+				redirectAttributes.addFlashAttribute("message", "Chỉnh sửa thất bại");
+				return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
+						+ "&phoneNumberSearch=" + phoneNumberSearch;
+			
+			}
+		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("message", "Chỉnh sửa thất bại");
 			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
 					+ "&phoneNumberSearch=" + phoneNumberSearch;
+		
 		}
+		
 		
 	 }
 

@@ -498,7 +498,13 @@
 				    };
 			checkChangeValue(id,rowData);
 		})  
-        
+       window.addEventListener('storage',function (event) {
+		   if(event.key === "myArray"){
+			   localStorage.removeItem('myArray');
+			   location.reload();
+			   console.log("Đã chỉnh sửa local storage ")
+		   }
+	   })
 	});
       
 		function render(data) {

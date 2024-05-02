@@ -3,6 +3,7 @@ package com.example.springmvc.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.example.springmvc.common.Paging;
 import com.example.springmvc.dto.CustomerDTO;
 import com.example.springmvc.model.Customer;
 import com.example.springmvc.model.Employee;
@@ -67,32 +68,14 @@ public class CustomerController {
 		int totalRecordOfCustomer = customerService.countRecordOfCustomer(customerName, customerPhoneNumber);
 		double temp = (double) totalRecordOfCustomer / limit;
 		int totalPage = (int) Math.ceil(temp);
-		//logic phân trang
-		int maxVisitablePages = 10; //Số trang tối đa hiển thị
-        int adjacentPages = 2;  //số trang bên cạnh trang hiện tại
-        int startPage;
-        int endPage;
-        boolean showStartEllipsis = false; // Dấu ... đầu
-        boolean showEndEllipsis = false;  // Dấu ... cuối 
-        if (totalPage <= maxVisitablePages) {
-    	    startPage = 1;
-    	    endPage = totalPage;
-    	} else {
-    	    if (page <= maxVisitablePages - adjacentPages) {
-    	        startPage = 1;
-    	        endPage = maxVisitablePages;
-    	        showEndEllipsis = true;
-    	    } else if (page >= totalPage - adjacentPages) {
-    	        startPage = totalPage - maxVisitablePages + 1;
-    	        endPage = totalPage;
-    	        showStartEllipsis = true;
-    	    } else {
-    	        startPage = page - adjacentPages;
-    	        endPage = page + adjacentPages;
-    	        showStartEllipsis = true;
-    	        showEndEllipsis = true;
-    	    }
-    	}
+		
+		 //handle Phân trang
+        Map<String,Object> pagination = Paging.handlePaging(page, totalPage);
+        int startPage = (int) pagination.get("startPage");
+        int endPage = (int) pagination.get("endPage");
+		boolean showStartEllipsis = (boolean) pagination.get("showStartEllipsis");
+		boolean showEndEllipsis = (boolean) pagination.get("showEndEllipsis");
+		
         model.addAttribute("startPage",startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("page",page);
@@ -105,6 +88,7 @@ public class CustomerController {
         model.addAttribute("customerName",customerName);
         model.addAttribute("customerPhoneNumber", customerPhoneNumber);
         model.addAttribute("nameLogin", account.getUsername());
+        model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
         return "customer/listCustomer";
 	}
 	
@@ -138,6 +122,7 @@ public class CustomerController {
 				BeanUtils.copyProperties(customer,customerDTO);
 				model.addAttribute("customerDTO",customerDTO);
 				model.addAttribute("nameLogin",accountLogin.getUsername());
+				model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
 			}
 		}
 		return "customer/showformeditcustomer";
@@ -157,6 +142,7 @@ public class CustomerController {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("customerDTO",customerDTO);
 			model.addAttribute("nameLogin",accountLogin.getUsername());
+			model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
 			return "customer/showformeditcustomer";
 		}
 		Customer customer = new Customer();
@@ -181,6 +167,7 @@ public class CustomerController {
 		Account accountLogin = getAccountLogin();
 		model.addAttribute("customerDTO",new CustomerDTO());
 		model.addAttribute("nameLogin",accountLogin.getUsername());
+		model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
 		return "customer/showformcreatecustomer";
 	}
 
@@ -199,6 +186,7 @@ public class CustomerController {
 		if (bindingResult.hasErrors()){
 			model.addAttribute("customerDTO",customerDTO);
 			model.addAttribute("nameLogin",accountLogin.getUsername());
+			model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
 			return "customer/showformcreatecustomer";
 		}
 		Customer customer = new Customer();

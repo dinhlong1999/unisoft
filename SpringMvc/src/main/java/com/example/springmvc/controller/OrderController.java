@@ -124,6 +124,7 @@ public class OrderController {
         
         model.addAttribute("ordersMap", ordersMap);
         model.addAttribute("nameLogin", accountLogin.getUsername());
+		model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
         model.addAttribute("roleName",roleName);
         
         model.addAttribute("username", username);
