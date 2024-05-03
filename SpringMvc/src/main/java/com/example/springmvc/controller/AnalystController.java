@@ -1,6 +1,7 @@
 package com.example.springmvc.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,11 +61,30 @@ public class AnalystController {
 		}else {
 			model.addAttribute("dateEnd",dateEnd);
 		}
+		
+		if (dateStart.length() > 10) {
+	        dateStart = "9999-10-10";
+	    }else if (dateStart.length() < 10) {
+			dateStart = "1000-10-10";
+	    }
+	    if (dateEnd.length() > 10) {
+	        dateEnd = "9999-10-10";
+	    }else if (dateEnd.length() < 10) {
+	        dateEnd = "1000-10-10";
+		}
 		Account account = getAccountLogin();
 		
 		//Danh sách khách hàng không mua sản phẩm nào
-		List<Map<String, Object>> customerNoOrder = analystService.getCustomerNoOrders(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
-		int totalRowByCustomerNoOrder = analystService.getTotalRowByCustomerNoOrders(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+		List<Map<String, Object>> customerNoOrder;
+		int totalRowByCustomerNoOrder;
+		try {
+			customerNoOrder = analystService.getCustomerNoOrders(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
+			totalRowByCustomerNoOrder = analystService.getTotalRowByCustomerNoOrders(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+		} catch (Throwable e) {
+			customerNoOrder = new ArrayList<>();
+			totalRowByCustomerNoOrder = 0;
+		}
+		
 		double temp = (double)  totalRowByCustomerNoOrder / limit ;
 		int totalPageByCustomerNoOrder = (int) Math.ceil(temp);
 
@@ -87,8 +107,16 @@ public class AnalystController {
 		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		
 		//Danh sách sản phẩm bán chạy
-		List<Map<String,Object>> productsBestSeller = analystService.getProductBestSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
-		int totalRowByProductBestSeller = analystService.getTotalRowByProductBestSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+		List<Map<String,Object>> productsBestSeller;
+		int totalRowByProductBestSeller;
+		try {
+			productsBestSeller = analystService.getProductBestSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
+			totalRowByProductBestSeller = analystService.getTotalRowByProductBestSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+		} catch (Throwable e) {
+			productsBestSeller = new ArrayList<>();
+			totalRowByProductBestSeller = 0;
+		}
+	    
 		double rowProductTemp = (double) totalRowByProductBestSeller / limit;
 		int totalPageByProductBestSeller = (int) Math.ceil(rowProductTemp);
 		
@@ -106,8 +134,16 @@ public class AnalystController {
 		model.addAttribute("productsBestSeller", productsBestSeller);
 		
 		// Danh sách sản phẩm không có đơn đặt hàng
-		List<Map<String, Object>> productsNoSell = analystService.getProductNoSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
-		int getTotalRowByProductNoSell = analystService.getTotalRowByProductNoSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+		List<Map<String, Object>> productsNoSell ;
+		int getTotalRowByProductNoSell;
+		try {
+			productsNoSell = analystService.getProductNoSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
+			getTotalRowByProductNoSell = analystService.getTotalRowByProductNoSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+		} catch (Exception e) {
+			productsNoSell = new ArrayList<>();
+			getTotalRowByProductNoSell = 0;
+		}
+		
 		double rowProductNoSellTemp = (double) getTotalRowByProductNoSell / limit;
 		int totalPageByProductNoSell = (int) Math.ceil(rowProductNoSellTemp);
 

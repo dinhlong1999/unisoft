@@ -62,7 +62,7 @@
   			 </div>
   			 <div class="mb-3">
   	 			  <label for="priceBuy" class="form-label">Giá mua</label>
-   			     <input type="number" th:field="*{priceBuy}" th:value="${productDTO.priceBuy}" class="form-control" id="priceBuy" value= 0 aria-describedby="emailHelp">
+   			     <input type="number"  th:field="*{priceBuy}" th:value="${productDTO.priceBuy}" class="form-control" id="priceBuy" value= 0 aria-describedby="emailHelp">
     			 <div  class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{priceBuy}" ></div>
   			 </div>
   			 <div class="mb-3">

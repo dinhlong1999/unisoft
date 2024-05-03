@@ -1,6 +1,7 @@
 package com.example.springmvc.controller;
 
 import com.example.springmvc.service.ICustomerService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,7 @@ public class CustomerRestController {
 
     @GetMapping("/getPhoneNumber")
     public String getPhoneNumber(@RequestParam String customerName ){
-        String phoneNumber = customerService.getPhoneNumberByNameCustomer(customerName);
+    	String phoneNumber = customerService.getPhoneNumberByNameCustomer(customerName);
         return phoneNumber;
     }
     

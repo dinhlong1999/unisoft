@@ -92,7 +92,12 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/delete")
-	public String deleteEmployee(@RequestParam int idDelete, RedirectAttributes redirectAttributes) {
+	public String deleteEmployee(@RequestParam int idDelete, 
+								 @RequestParam int page,
+								 @RequestParam String username,
+								 @RequestParam String employeeName,
+								 @RequestParam String phoneNumberSearch,
+								 RedirectAttributes redirectAttributes) {
 		int rowEffect = 0;
 		try {
 			rowEffect = employeeService.deleteEmployeeById(idDelete);
@@ -102,10 +107,12 @@ public class EmployeeController {
 		}
 		if (rowEffect == 1) {
 			redirectAttributes.addFlashAttribute("message", "Xóa thành công");
-			return "redirect:/employee/list";
+			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
+					+ "&phoneNumberSearch=" + phoneNumberSearch;
 		} else {
 			redirectAttributes.addFlashAttribute("message", "Xóa thất bại ");
-			return "redirect:/employee/list";
+			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
+					+ "&phoneNumberSearch=" + phoneNumberSearch;
 		}
 	}
 
@@ -137,7 +144,10 @@ public class EmployeeController {
 
 		Employee employee = new Employee();
 		BeanUtils.copyProperties(employeeDTO, employee);
-		employee.setAccount(employeeDTO.getAccount());
+		Account accountSave = employeeDTO.getAccount();
+		accountSave.setUsername(accountSave.getUsername().trim());
+		employee.setAccount(accountSave);
+		employee.setName(employee.getName().trim());
 		try {
 			int rowEffectByInsertEmployee = employeeService.insertEmployee(employeeDTO.getAccount(), employee);
 			if (rowEffectByInsertEmployee == 1) {
@@ -195,7 +205,10 @@ public class EmployeeController {
 		
 		Employee employee = new Employee();
 		BeanUtils.copyProperties(employeeDTO, employee);
+		Account accountUpdate = employeeDTO.getAccount();
+		accountUpdate.setUsername(accountUpdate.getUsername().trim());
 		employee.setAccount(employeeDTO.getAccount());
+		employee.setName(employee.getName().trim());
 		try {
 			int rowEffectByEditEmployee = employeeService.updateEmployee(employee);
 			if (rowEffectByEditEmployee == 1) {

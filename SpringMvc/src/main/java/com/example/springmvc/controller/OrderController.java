@@ -1,6 +1,7 @@
 package com.example.springmvc.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -74,15 +75,34 @@ public class OrderController {
             statusAllocation = 2;
             statusBooking = 1;
          };
-
-    	
+         
+         if (dateStart.length() > 10) {
+        	 dateStart = "9999-10-10";
+         }else if (dateStart.length() < 10) {
+			dateStart = "1000-10-10";
+         }
+         if (dateEnd.length() > 10) {
+        	 dateEnd = "9999-10-10";
+         }else if (dateEnd.length() < 10) {
+        	 dateEnd = "1000-10-10";
+		}
+        
+         
 		 Account accountLogin = getAccountLogin();
 		 String roleName = accountLogin.getRole().getName();
 		 Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
 		 int employeeId = employee.getId();
-
-    	List<Map<String, Object>> ordersMap = orderService.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking, limit, limit * page);
-    	int totalRecordByListAccount = orderService.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking);
+		 List<Map<String, Object>> ordersMap;
+		 int totalRecordByListAccount;
+    	try {
+    		ordersMap = orderService.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking, limit, limit * page);
+        	totalRecordByListAccount = orderService.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking);
+		} catch (Throwable e) {
+			ordersMap = new ArrayList<>();
+			totalRecordByListAccount = 0;
+		}
+//		}List<Map<String, Object>> ordersMap = orderService.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking, limit, limit * page);
+//    	int totalRecordByListAccount = orderService.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking);
     	double temp = (double) totalRecordByListAccount / limit;
     	int totalPage = (int) Math.ceil(temp);
     	

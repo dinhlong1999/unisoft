@@ -154,6 +154,9 @@
        				<div class="modal-body">
 	      				Bạn có muốn xóa khách hàng  : <span id="name" style="color:red"></span>?
 	   					<input type="hidden" id="id" name="idDelete">
+	   					<input type="hidden" name="page" th:value="${page +1 }">
+	   					<input type="hidden" name="customerName" th:value="${customerName}">
+	   					<input type="hidden" name="customerPhoneNumber" th:value="${customerPhoneNumber}">
       				</div>
       				<div class="modal-footer">
         				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>

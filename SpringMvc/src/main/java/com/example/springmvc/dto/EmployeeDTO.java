@@ -118,17 +118,19 @@ public class EmployeeDTO implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		EmployeeDTO employeeDTO = (EmployeeDTO) target;
-		if (employeeDTO.getAccount().getUsername().isEmpty()) {
+		String username= employeeDTO.getAccount().getUsername().trim();
+		String employeeName = employeeDTO.getName().trim();
+		if (username.isEmpty()) {
 			errors.rejectValue("account.username",null,"Tên đăng nhập không được để trống");
 		}
 		if (!employeeDTO.getAccount().getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")) {
 			errors.rejectValue("account.password",null,"Mật khẩu không hợp lệ, Mật khẩu phải có ít nhất một chữ in hoa, và một kí tự số. Mật khẩu phải từ 8 kí tự trở lên");
 		}
-		if (employeeDTO.getName().isEmpty()) {
+		if (employeeName.isEmpty()) {
 			errors.rejectValue("name",null ,"Tên nhân viên không được để trống");
 		}
 		if (!employeeDTO.getPhoneNumber().matches("^0[\\d]{9}$")){
-			errors.rejectValue("phoneNumber",null,"Số điện thoại không được để trống");
+			errors.rejectValue("phoneNumber",null,"Số điện thoại không hợp lệ");
 		}
 		if(!employeeDTO.getConfirmPassword().equals(employeeDTO.getAccount().getPassword())) {
 			errors.rejectValue("confirmPassword",null, "Xác nhận mật khẩu không trùng khớp.");

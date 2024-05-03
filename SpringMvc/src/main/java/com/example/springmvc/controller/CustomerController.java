@@ -93,14 +93,18 @@ public class CustomerController {
 	}
 	
 	@PostMapping("/delete")
-	public String deleteCustomer(@RequestParam int idDelete,RedirectAttributes redirectAttributes) {
+	public String deleteCustomer(@RequestParam int idDelete,
+								 @RequestParam int page,
+								 @RequestParam String customerName,
+								 @RequestParam String customerPhoneNumber,
+								 RedirectAttributes redirectAttributes) {
 		int rowEffectByDeleteCustomer = customerService.deleteCustomer(idDelete);
 		if (rowEffectByDeleteCustomer == 1) {
 			redirectAttributes.addFlashAttribute("message", "Xóa khách hàng thành công");
-			return "redirect:/customer/list";
+			return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhoneNumber=" + customerPhoneNumber;
 		}else {
 			redirectAttributes.addFlashAttribute("message", "Xóa khách hàng thất bại ");
-			return "redirect:/customer/list";
+			return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhoneNumber=" + customerPhoneNumber;
 		}
 	}
 
@@ -147,6 +151,8 @@ public class CustomerController {
 		}
 		Customer customer = new Customer();
 		BeanUtils.copyProperties(customerDTO, customer);
+		customer.setName(customer.getName().trim());
+		customer.setAddress(customer.getAddress().trim());
 		int rowEffectByEditCustomer = customerService.editCustomer(customer.getName(), customer.getAddress(), customer.getVersion(), customer.getPhoneNumber(), customer.getId());
 		if (rowEffectByEditCustomer == 1) {
 			model.addAttribute("customerName", nameCustomer);
@@ -191,6 +197,8 @@ public class CustomerController {
 		}
 		Customer customer = new Customer();
 		BeanUtils.copyProperties(customerDTO,customer);
+		customer.setName(customer.getName().trim());
+		customer.setAddress(customer.getAddress().trim());
 		Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
 		int rowEffectByInsertCustomer = customerService.saveCustomer(customer.getName(),customer.getAddress(),customer.getPhoneNumber(),employee.getId());
 		if (rowEffectByInsertCustomer == 1){

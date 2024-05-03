@@ -13,13 +13,14 @@ public class ProductDTO	implements  Validator {
 
 	private String nameProduct;
 	
-	private double priceSell;
 	
-	private double priceBuy;
+	private Double priceSell;
+	
+	private Double priceBuy;
 	
 	private boolean flag;
 
-	private int inventory;
+	private Integer inventory;
 	
 	private int version;
 
@@ -63,7 +64,7 @@ public class ProductDTO	implements  Validator {
 	}
 
 
-	public void setPriceSell(double priceSell) {
+	public void setPriceSell(Double priceSell) {
 		this.priceSell = priceSell;
 	}
 
@@ -73,7 +74,7 @@ public class ProductDTO	implements  Validator {
 	}
 
 
-	public void setPriceBuy(double priceBuy) {
+	public void setPriceBuy(Double priceBuy) {
 		this.priceBuy = priceBuy;
 	}
 
@@ -88,12 +89,12 @@ public class ProductDTO	implements  Validator {
 	}
 
 
-	public int getInventory() {
+	public Integer getInventory() {
 		return inventory;
 	}
 
 
-	public void setInventory(int inventory) {
+	public void setInventory(Integer inventory) {
 		this.inventory = inventory;
 	}
 
@@ -117,22 +118,37 @@ public class ProductDTO	implements  Validator {
 	public void validate(Object target, Errors errors) {
 		// TODO Auto-generated method stub
 		ProductDTO productDTO = (ProductDTO) target;
+		String nameProduct = productDTO.getNameProduct().trim();
 		if (productDTO.getCodeProduct().isEmpty()) {
 			errors.rejectValue("codeProduct", null, "Mã sản phẩm không được để trống");
 		}else if (!productDTO.getCodeProduct().matches("^PR-\\d{4}$")) {
 			errors.rejectValue("codeProduct", null, "Mã sản phẩm không đúng định dạng. Định dạng đúng: PR-XXXX(X: CHỮ SỐ) ");
 		}
-		if (productDTO.getNameProduct().isEmpty()) {
+		if (nameProduct.isEmpty()) {
 			errors.rejectValue("nameProduct", null, "Tên sản phẩm không được để trống");
 		}
-		if (productDTO.getPriceBuy() <= 0) {
-			errors.rejectValue("priceBuy", null, "Giá mua vào không hợp lệ");
+		if (productDTO.getPriceSell() != null) {
+			if (productDTO.getPriceSell() <= 0) {
+				errors.rejectValue("priceSell", null, "Giá bán không hợp lệ");
+			}
+		}else {
+			errors.rejectValue("priceSell", null, "Giá bán không hợp lệ");
 		}
-		if (productDTO.getPriceSell() <= 0) {
-			errors.rejectValue("priceSell", null, "Giá bán ra không hợp lệ");
+		if (productDTO.getPriceBuy() != null) {
+			if (productDTO.getPriceBuy() <= 0) {
+				errors.rejectValue("priceBuy", null, "Giá mua vào không hợp lệ");
+			}
+		}else {
+			errors.rejectValue("priceBuy", null, "Giá mua không hợp lệ");
 		}
-		if (productDTO.getInventory() < 0) {
+		if (productDTO.getInventory() != null) {
+			if (productDTO.getInventory() < 0) {
+				errors.rejectValue("inventory", null, "Số lượng tồn kho nhập vào không hợp lệ");
+			}
+		}else {
 			errors.rejectValue("inventory", null, "Số lượng tồn kho nhập vào không hợp lệ");
 		}
+		
+		
 	}
 }

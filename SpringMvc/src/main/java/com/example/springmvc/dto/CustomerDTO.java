@@ -72,15 +72,17 @@ public class CustomerDTO implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         CustomerDTO customerDTO = (CustomerDTO) target;
+        String customerName = customerDTO.getName().trim();
+        String customerAddress = customerDTO.getAddress().trim();
         if (customerDTO.getPhoneNumber().isEmpty()){
             errors.rejectValue("phoneNumber",null,"Số điện thooại không được để trống");
         }else if (!customerDTO.getPhoneNumber().matches("^0[\\d]{9}$")){
             errors.rejectValue("phoneNumber",null,"Số điện thoại không đúng định dạng.");
         }
-        if (customerDTO.getName().isEmpty()){
+        if (customerName.isEmpty()){
             errors.rejectValue("name",null,"Tên khách hàng không được để trống");
         }
-        if (customerDTO.getAddress().isEmpty()){
+        if (customerAddress.isEmpty()){
             errors.rejectValue("address",null,"Địa chỉ không được để trống");
         }
     }

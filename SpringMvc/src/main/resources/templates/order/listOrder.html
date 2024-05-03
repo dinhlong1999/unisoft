@@ -212,9 +212,7 @@
 		let data = JSON.parse(localStorage.getItem('myArray')) || [];
 		render(data);
 		let temp = JSON.parse(localStorage.getItem('cellErrors')) || [];
-		console.log(temp);
 		if (temp.length !== 0) {
-
 			handleCellErrors(temp);
 		}
 
@@ -232,7 +230,6 @@
 
 	function checkChangeValue(id, rowData){
 		let currentArray = JSON.parse(localStorage.getItem('myArray')) || [];
-		console.log(currentArray);
 		let recordHidden = $('#myTable').find('tr.hidden[id="' + id + '"]');
 		let oldValue = {
 			id : id,
@@ -242,7 +239,6 @@
 			nameCustomer: recordHidden.find('.customerName').text(),
 			phoneNumber: recordHidden.find('.phoneNumber').text()
 		};
-		console.log(oldValue);
 		if (!compareObjectValue(oldValue,rowData)){
 			let existingIndex = currentArray.findIndex(item => item.id === id);
 			if (existingIndex !== -1) {
@@ -252,14 +248,15 @@
 			}
 		}else {
 			let existingIndex = currentArray.findIndex(item => item.id === id);
-			console.log(existingIndex);
 			if (existingIndex !== -1){
 				currentArray.splice(existingIndex,1)
 			}
 			
 		}
+		
 		if (currentArray.length === 0){
-			localStorage.clear();
+			localStorage.removeItem('myArray');
+			localStorage.removeItem('cellErrors');
 		}else{
 			localStorage.setItem('myArray', JSON.stringify(currentArray));
 		}
@@ -347,10 +344,6 @@
                let row = $(this).closest("tr");
                let nameProductCell = row.find("td:eq(3)");
                let valueCodeProduct = $(this);
-               /* let table = document.getElementById("myTable");
-               let lastRow = table.rows[table.rows.length - 1];
-               console.log(lastRow)
-               console.log(table.rows.length) */
                $.ajax({
                    contentType :"application/json",
                    method : "GET",
@@ -372,6 +365,7 @@
                            nameCustomer: row.find('td:eq(6)').text(),
                            phoneNumber: row.find('td:eq(7)').text()
                        };
+                       console.log(rowData);
 						checkChangeValue(id,rowData);
                    },
                    error:function(xhr, textStatus, errorThrow){
@@ -425,7 +419,8 @@
                  method : "GET",
                  url: `http://localhost:8081/api/customer/getPhoneNumber?customerName=`+encodeURIComponent(customerName),
                  success:function (data) {
-                     if (data === ""){
+                	
+                	 if (data === ""){
                          valueCurrentCustomerName.text('')
                          phoneNumberCell.text('');
                      }else {
@@ -440,6 +435,7 @@
                          nameCustomer: row.find('td:eq(6)').text(),
                          phoneNumber: row.find('td:eq(7)').text()
                      };
+                     console.log(rowData);
 					 checkChangeValue(id,rowData)
                  },
                  error:function (xhr,textStatus,errorThrow) {

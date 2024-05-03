@@ -61,12 +61,12 @@
   			 </div>
   			 <div class="mb-3">
   	 			  <label for="priceSell" class="form-label">Giá bán</label>
-   			     <input type="number" th:field="*{priceSell}" class="form-control" id="priceSell"  aria-describedby="emailHelp">
+   			     <input type="number"    th:field="*{priceSell}" class="form-control" id="priceSell"  aria-describedby="emailHelp">
     			 <div  class="form-text" th:if="${#fields.hasErrors()}"  th:errors="*{priceSell}"></div>
   			 </div>
   			 <div class="mb-3">
   	 			  <label for="priceBuy" class="form-label">Giá mua</label>
-   			     <input type="number" th:field="*{priceBuy}" class="form-control" id="priceBuy"  aria-describedby="emailHelp">
+   			     <input type="number"   th:field="*{priceBuy}" class="form-control" id="priceBuy"  aria-describedby="emailHelp">
     			 <div  class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{priceBuy}" ></div>
   			 </div>
   			 <div class="mb-3">
@@ -106,7 +106,9 @@
 		document.getElementById("nameSearch").value = nameProduct;
 		document.getElementById("codeSearch").value = codeProduct;
 } 
+
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
 </script>

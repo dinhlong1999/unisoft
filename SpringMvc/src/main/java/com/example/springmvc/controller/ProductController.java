@@ -101,7 +101,10 @@ public class ProductController {
     }
     
     @PostMapping("/delete")
-    public String deleteProduct(@RequestParam int idDelete, RedirectAttributes redirectAttributes) {
+    public String deleteProduct(@RequestParam int idDelete,
+    							@RequestParam int page,
+    							@RequestParam String nameProduct,
+    							@RequestParam String codeProduct, RedirectAttributes redirectAttributes) {
     	int rowEffect = 0;
     	try {
     		 rowEffect = productService.deleteProductById(idDelete);
@@ -110,10 +113,10 @@ public class ProductController {
 		}
     	if (rowEffect == 1) {
     		redirectAttributes.addFlashAttribute("message","Xóa thành công.");
-    		return "redirect:/product/list";
+    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeProduct + "&nameProduct=" +nameProduct;
     	}else {
     		redirectAttributes.addFlashAttribute("message","Xóa thất bại.");
-    		return "redirect:/product/list";
+    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeProduct + "&nameProduct=" +nameProduct;
     	}
     }
     
@@ -131,6 +134,7 @@ public class ProductController {
     												 @RequestParam String nameSearch,@RequestParam String codeSearch , 
     												 BindingResult bindingResult,Errors errors, 
     												 RedirectAttributes redirectAttributes, Model model) {
+    
         new ProductDTO().validate(productDTO,bindingResult);
         Account account = getAccountLogin();
         if (!productService.isCodeProductExists(productDTO.getCodeProduct())){
@@ -148,6 +152,7 @@ public class ProductController {
     	}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);
+    	product.setNameProduct(product.getNameProduct().trim());
     	int result = 0;
     	try {
     		 result = productService.insertProduct(product);
@@ -196,6 +201,7 @@ public class ProductController {
     	if (!productService.isNameProductExistsToUpdate(productDTO.getNameProduct(), productDTO.getId())) {
     		errors.rejectValue("nameProduct", null,"Tên sản phẩm không được trùng");
     	}
+    	
     	new ProductDTO().validate(productDTO, bindingResult);
     	if (bindingResult.hasErrors()) {
     		model.addAttribute("nameLogin",account.getUsername());
@@ -205,6 +211,7 @@ public class ProductController {
 		}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);
+    	product.setNameProduct(product.getNameProduct().trim());
     	int result = 0;
     	try {
     		 result = productService.updateProduct(product);
