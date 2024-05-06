@@ -73,17 +73,23 @@ public class AllocationController {
 					error.add("Mã sản phẩm và tên sản phẩm không được để trống");
 				}
 			}
-			if (allocationTemp.getQuantity() <= 0) {
-				if (!error.contains("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0")) {
-					error.add("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0");
+			if (allocationTemp.getQuantity() != null) {
+				if (allocationTemp.getQuantity() <= 0) {
+					if (!error.contains("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0")) {
+						error.add("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0");
+					}
+					continue;
 				}
-				continue;
-			}
-			
-			if (!allocationsMap.containsKey(allocationTemp.getCodeProduct())) {
-				allocationsMap.put(allocationTemp.getCodeProduct(), allocationTemp.getQuantity());
+				if (!allocationsMap.containsKey(allocationTemp.getCodeProduct())) {
+					allocationsMap.put(allocationTemp.getCodeProduct(), allocationTemp.getQuantity());
+				}else {
+					allocationsMap.put(allocationTemp.getCodeProduct(), allocationsMap.get(allocationTemp.getCodeProduct()) + allocationTemp.getQuantity());
+				}
 			}else {
-				allocationsMap.put(allocationTemp.getCodeProduct(), allocationsMap.get(allocationTemp.getCodeProduct()) + allocationTemp.getQuantity());
+				if (!error.contains("Số lượng nhập hàng không hợp lệ, vui lòng nhập lại")) {
+					error.add("Số lượng nhập hàng không hợp lệ, vui lòng nhập lại");
+				}
+				
 			}
 		}
 		
@@ -112,6 +118,7 @@ public class AllocationController {
 					for(int i = 0; i < allocations.size(); i++ ) {
 						if (allocations.get(i).getCodeProduct().equals(map)) {
 							allocations.remove(i);
+							i--;
 						}
 					}
 				}
@@ -121,7 +128,7 @@ public class AllocationController {
 				List<String> statusList = new ArrayList<>();
 				for(String map: statusMap.keySet()) {
 					if(statusMap.get(map).equals("UPDATE")) {
-						statusList.add("Sản phẩm có mã "+map + " đã cập nhật tồn kho do không đủ hàng để phân bổ " );
+						statusList.add("Sản phẩm có mã "+map + " đã phân bổ và cập nhật tồn kho thành công.  " );
 					}else {
 						statusList.add("Sản phẩm có mã "+map + " đã phân bổ hàng thành công ");
 					}

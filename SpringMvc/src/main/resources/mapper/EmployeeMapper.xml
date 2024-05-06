@@ -5,7 +5,7 @@
 	<select id="getAllEmployee" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
-				e.id,e.isOnline,e.name,e.phoneNumber,a.username
+				e.id,e.isOnline,e.name,e.phoneNumber,a.username,a.roleId
 			FROM
 				employee e
 			JOIN

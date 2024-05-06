@@ -17,7 +17,8 @@
     			o.dateAllocation,
     			s.`name` AS statusName,
    				a.username,
-    			e.`name` AS employeeName
+    			e.`name` AS employeeName,
+    			o.version
 			FROM
 				orders o 
 			JOIN 

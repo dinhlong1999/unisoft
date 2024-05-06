@@ -88,10 +88,10 @@ public class EmployeeController {
 		model.addAttribute("phoneNumberSearch", phoneNumberSearch);
 		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		model.addAttribute("nameLogin", account.getUsername());
-		return "employee/listEmployee";
+		return "employee/show";
 	}
 
-	@PostMapping("/delete")
+	@PostMapping("/destroy")
 	public String deleteEmployee(@RequestParam int idDelete, 
 								 @RequestParam int page,
 								 @RequestParam String username,
@@ -114,19 +114,20 @@ public class EmployeeController {
 			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
 					+ "&phoneNumberSearch=" + phoneNumberSearch;
 		}
+		
 	}
 
-	@GetMapping("/showform")
-	public String showFormCreate(Model model) {
+	@GetMapping("/create")
+	public String create(Model model) {
 		Account account = getAccountLogin();
 		model.addAttribute("nameLogin", account.getUsername());
 		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 		model.addAttribute("employeeDTO", new EmployeeDTO());
-		return "employee/formcreateemployee";
+		return "employee/create";
 	}
 
-	@PostMapping("/create")
-	public String insertEmployee(@ModelAttribute("employeeDTO") EmployeeDTO employeeDTO, @RequestParam int page,
+	@PostMapping("/store")
+	public String saveEmployee(@ModelAttribute("employeeDTO") EmployeeDTO employeeDTO, @RequestParam int page,
 			@RequestParam String username, @RequestParam String employeeName, @RequestParam String phoneNumberSearch,
 			BindingResult bindingResult, Errors errors, Model model, RedirectAttributes redirectAttributes) {
 		Account account = getAccountLogin();
@@ -139,7 +140,7 @@ public class EmployeeController {
 			model.addAttribute("nameLogin", account.getUsername());
 			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
 			model.addAttribute("employeeDTO", employeeDTO);
-			return "employee/formcreateemployee";
+			return "employee/create";
 		}
 
 		Employee employee = new Employee();
@@ -167,7 +168,7 @@ public class EmployeeController {
 		
 	}
 
-	 @GetMapping("/showformedit/{id}")
+	 @GetMapping("/edit/{id}")
 	 public String showfromEdit(@PathVariable("id") int id, Model model,RedirectAttributes redirectAttributes) {
 		 Account account = getAccountLogin();
 		 Employee employee = employeeService.getEmployeeById(id);
@@ -181,10 +182,10 @@ public class EmployeeController {
 		 model.addAttribute("employeeDTO",employeeDTO);
 		 model.addAttribute("nameLogin",account.getUsername());
 		 model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-		 return "employee/showformupdateempl";
+		 return "employee/edit";
 	 }
 	 
-	 @PostMapping("/edit")
+	 @PostMapping("/update")
 	 public String editEmployee(@ModelAttribute("employeeDTO") EmployeeDTO employeeDTO,
 			 					@RequestParam int page, @RequestParam String username,
 			 					@RequestParam String employeeName, @RequestParam String phoneNumberSearch,
@@ -200,15 +201,12 @@ public class EmployeeController {
 			model.addAttribute("employeeDTO", employeeDTO);
 			model.addAttribute("nameLogin",account.getUsername());
 			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-			return "employee/showformupdateempl";
+			return "employee/edit";
 		}
 		
 		Employee employee = new Employee();
 		BeanUtils.copyProperties(employeeDTO, employee);
-		Account accountUpdate = employeeDTO.getAccount();
-		accountUpdate.setUsername(accountUpdate.getUsername().trim());
 		employee.setAccount(employeeDTO.getAccount());
-		employee.setName(employee.getName().trim());
 		try {
 			int rowEffectByEditEmployee = employeeService.updateEmployee(employee);
 			if (rowEffectByEditEmployee == 1) {
@@ -222,7 +220,7 @@ public class EmployeeController {
 			
 			}
 		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("message", "Chỉnh sửa thất bại");
+			redirectAttributes.addFlashAttribute("message", e.getMessage());
 			return "redirect:/employee/list?page=" + page + "&username=" + username + "&employeeName=" + employeeName
 					+ "&phoneNumberSearch=" + phoneNumberSearch;
 		

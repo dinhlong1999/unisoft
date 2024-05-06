@@ -19,6 +19,8 @@ public class OrdersDTO {
 	private String phoneNumber;
 
 	private int quantityBook;
+	
+	private int version;
 
 	public OrdersDTO() {
 	}
@@ -69,6 +71,15 @@ public class OrdersDTO {
 
 	public void setQuantityBook(int quantityBook) {
 		this.quantityBook = quantityBook;
+	}
+	
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	@Override

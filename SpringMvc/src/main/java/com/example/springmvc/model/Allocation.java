@@ -7,14 +7,14 @@ public class Allocation {
 	
 	private String nameProduct;
 	
-	private int quantity;
+	private Integer quantity;
 
 	public Allocation() {
 		
 	}
 	
 
-	public Allocation(String codeProduct, String nameProduct, int quantity) {
+	public Allocation(String codeProduct, String nameProduct, Integer quantity) {
 		super();
 		this.codeProduct = codeProduct;
 		this.nameProduct = nameProduct;
@@ -38,11 +38,11 @@ public class Allocation {
 		this.nameProduct = nameProduct;
 	}
 
-	public int getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
 

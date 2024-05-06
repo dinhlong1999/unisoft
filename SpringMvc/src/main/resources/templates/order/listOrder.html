@@ -147,6 +147,7 @@
                 <td th:text="${order['dateAllocation'] != null ? #temporals.format(order['dateAllocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['username']}"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
+                <td class="hidden" th:text="${order['version']}" ></td>
    	     	</tr>
    	     	<tr th:each="order,status:${ordersMap}" th:id="${order['id']}" class="hidden">
                 <td th:text="${status.count + page * limit}"></td>
@@ -363,7 +364,8 @@
                            nameProduct: row.find('td:eq(3)').text(),
                            quantityBook: row.find('td:eq(5)').text(),
                            nameCustomer: row.find('td:eq(6)').text(),
-                           phoneNumber: row.find('td:eq(7)').text()
+                           phoneNumber: row.find('td:eq(7)').text(),
+                           version : row.find('td:eq(13)').text()
                        };
                        console.log(rowData);
 						checkChangeValue(id,rowData);
@@ -379,7 +381,6 @@
               let row = $(this).closest("tr");
               let codeProductCell = row.find("td:eq(2)");
               let valueNameProduct = $(this);
-
               $.ajax({
                   contentType :"application/json",
                   method : "GET",
@@ -399,7 +400,8 @@
                           nameProduct: row.find('td:eq(3)').text(),
                           quantityBook: row.find('td:eq(5)').text(),
                           nameCustomer: row.find('td:eq(6)').text(),
-                          phoneNumber: row.find('td:eq(7)').text()
+                          phoneNumber: row.find('td:eq(7)').text(),
+                          version : row.find('td:eq(13)').text()
                       };
 					  checkChangeValue(id,rowData);
                   },
@@ -433,7 +435,8 @@
                          nameProduct: row.find('td:eq(3)').text(),
                          quantityBook: row.find('td:eq(5)').text(),
                          nameCustomer: row.find('td:eq(6)').text(),
-                         phoneNumber: row.find('td:eq(7)').text()
+                         phoneNumber: row.find('td:eq(7)').text(),
+                         version : row.find('td:eq(13)').text()
                      };
                      console.log(rowData);
 					 checkChangeValue(id,rowData)
@@ -469,7 +472,8 @@
                             nameProduct: row.find('td:eq(3)').text(),
                             quantityBook: row.find('td:eq(5)').text(),
                             nameCustomer: row.find('td:eq(6)').text(),
-                            phoneNumber: row.find('td:eq(7)').text()
+                            phoneNumber: row.find('td:eq(7)').text(),
+                            version : row.find('td:eq(13)').text()
                         };
 						checkChangeValue(id,rowData);
                     },
@@ -490,7 +494,8 @@
 				        nameProduct: row.find('td:eq(3)').text(),
 				        quantityBook: row.find('td:eq(5)').text(),
 				        nameCustomer: row.find('td:eq(6)').text(),
-				        phoneNumber: row.find('td:eq(7)').text()
+				        phoneNumber: row.find('td:eq(7)').text(),
+				        version : row.find('td:eq(13)').text()
 				    };
 			checkChangeValue(id,rowData);
 		})  

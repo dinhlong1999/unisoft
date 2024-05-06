@@ -53,10 +53,9 @@ public class OrderService implements IOrderService {
               if (ordersDTO.getId().matches("^\\d+$")){
                   int orderId = Integer.parseInt(ordersDTO.getId());
                   Product product = productService.getProductByCodeProduct(ordersDTO.getCodeProduct());
-                  int customerId = customerService.getIdCustomerByPhoneNumber(ordersDTO.getPhoneNumber());
-                  int versionOrders = orderMapper.getOrderVersionById(orderId);
+                  int customerId = customerService.getIdCustomerByPhoneNumber(ordersDTO.getPhoneNumber());         
                   int quantityBook = ordersDTO.getQuantityBook();
-                  int updateOrders = orderMapper.updateOrder(customerId,product.getId(),quantityBook,versionOrders,product.getPriceSell(),orderId);
+                  int updateOrders = orderMapper.updateOrder(customerId,product.getId(),quantityBook,ordersDTO.getVersion(),product.getPriceSell(),orderId);
                   if (updateOrders != 1){
                       throw new RuntimeException("Không cap nhat được đơn hàng");
                   }else {

@@ -18,16 +18,20 @@ public class AccountService implements IAccountService {
 	@Override
 	public Account getAccountByUsername(String username) {
 		Map<String, Object> accountMap = accountMapper.getAccountByUsername(username);
+		if (accountMap == null) {
+			return null;
+		}else {
+			Account account = new Account();
+			account.setId((int) accountMap.get("id"));
+			account.setUsername((String) accountMap.get("username"));
+			account.setPassword((String) accountMap.get("password"));
+			Role role = new Role();
+			role.setId((int) accountMap.get("roleId"));
+			role.setName((String) accountMap.get("roleName"));
+			account.setRole(role);
+			return account;
+		}
 	
-		Account account = new Account();
-		account.setId((int) accountMap.get("id"));
-		account.setUsername((String) accountMap.get("username"));
-		account.setPassword((String) accountMap.get("password"));
-		Role role = new Role();
-		role.setId((int) accountMap.get("roleId"));
-		role.setName((String) accountMap.get("roleName"));
-		account.setRole(role);
-		return account;
 		
 	}
 
