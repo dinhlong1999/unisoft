@@ -6,9 +6,9 @@ public class Product {
 
     private int id;
 
-    private String codeProduct;
+    private String code;
 
-    private String nameProduct;
+    private String name;
 
     private Double priceSell;
 
@@ -23,8 +23,8 @@ public class Product {
     public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,
                    int version,int inventory) {
         this.id = id;
-        this.codeProduct = codeProduct;
-        this.nameProduct = nameProduct;
+        this.code = codeProduct;
+        this.name = nameProduct;
         this.priceSell = priceSell;
         this.priceBuy = priceBuy;
         this.flag = flag;
@@ -43,20 +43,20 @@ public class Product {
         this.id = id;
     }
 
-    public String getCodeProduct() {
-        return codeProduct;
+    public String getCode() {
+        return code;
     }
 
-    public void setCodeProduct(String codeProduct) {
-        this.codeProduct = codeProduct;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getNameProduct() {
-        return nameProduct;
+    public String getName() {
+        return name;
     }
 
-    public void setNameProduct(String nameProduct) {
-        this.nameProduct = nameProduct;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Double getPriceSell() {

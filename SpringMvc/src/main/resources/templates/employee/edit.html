@@ -69,17 +69,17 @@
   			 </div>
   			 <div class="mb-3">
   	 			 <label for="phoneNumberEmployee" class="form-label">Số điện thoại :<span style="color:red">*</span></label>
-   			     <input type="text" th:field="*{phoneNumber}"  class="form-control" id="phoneNumberEmployee" aria-describedby="emailHelp">
-    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{phoneNumber}"></div>
+   			     <input type="text" th:field="*{phone}" class="form-control" id="phoneNumberEmployee" aria-describedby="emailHelp">
+    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{phone}"></div>
   			 </div>
   			 <input type="hidden" th:field="*{id}">
   			<input type="hidden" th:field="*{version}">
 			<input type="hidden" th:field="*{account.id}" >
 			<input type="hidden" th:field="*{account.version}">
 			<input type="hidden" id="page" name="page"/>
-			<input type="hidden" id="username" name="username">
+			<input type="hidden" id="accountName" name="accountName">
 			<input type="hidden" id="employeeName" name="employeeName">
-			<input type="hidden" id="phoneNumberSearch" name="phoneNumberSearch" >
+			<input type="hidden" id="phoneSearch" name="phoneSearch" >
 
   			 <div class="mb-3" id="sub">
   			  	<button type="submit" th:attr="onclick=|sendDataSearch()|" class="btn btn-light" >Chỉnh sửa nhân viên</button>
@@ -91,17 +91,17 @@
 <script>
 	let link = document.getElementById("link");
 	let page = localStorage.getItem("page");
-	let username = localStorage.getItem("username");
+	let accountName = localStorage.getItem("accountName");
 	let employeeName = localStorage.getItem("employeeName");
-	let phoneNumberSearch = localStorage.getItem("phoneNumberSearch");
+	let phone = localStorage.getItem("phone");
 	
-	link.href = '/employee/list?page='+(page)+'&username='+username+'&employeeName='+employeeName+'&phoneNumberSearch='+phoneNumberSearch;
+	link.href = '/employee/list?page='+(page)+'&accountName='+accountName+'&employeeName='+employeeName+'&phone='+phone;
 	
 	function sendDataSearch(){
 		document.getElementById("page").value = page;
-		document.getElementById("username").innerText = username;
-		document.getElementById("employeeName").innerText = employeeName;
-		document.getElementById("phoneNumberSearch").innerText = phoneNumberSearch;
+		document.getElementById("accountName").value = accountName;
+		document.getElementById("employeeName").value = employeeName;
+		document.getElementById("phoneSearch").value = phone;
 	}
 	
 </script>

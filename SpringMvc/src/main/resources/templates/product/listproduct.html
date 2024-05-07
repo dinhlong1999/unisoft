@@ -94,8 +94,8 @@
             </tr>
             <tr th:if="${productList.size() > 0  }" th:each="product,status:${productList}">
                 <td th:text="${status.count  + page  * limit}"></td>
-                <td th:text="${product.codeProduct}"></td>
-                <td th:text="${product.nameProduct}"></td>
+                <td th:text="${product.code}"></td>
+                <td th:text="${product.name}"></td>
                 <td th:text="${product.inventory}"></td>
                 <td th:text="${#numbers.formatDecimal(product.priceSell, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 <td th:if="${isAdmin == true}" th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>

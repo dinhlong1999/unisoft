@@ -7,9 +7,9 @@
 			SELECT
 				name
 			from 
-				role
+				roles
 			where
-				id = #{id}
+				role_id = #{id}
 		]]>
 	</select>
 </mapper>

@@ -4,31 +4,16 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 public class ProductDTO	implements  Validator {
-
-	
 	private int id;
-	
-	private String codeProduct;
-
-
-	private String nameProduct;
-	
-	
+	private String code;
+	private String name;
 	private Double priceSell;
-	
 	private Double priceBuy;
-	
 	private boolean flag;
-
 	private Integer inventory;
-	
 	private int version;
-
-	
 	public ProductDTO() {
-		
 	}
-
 	public int getId() {
 		return id;
 	}
@@ -39,23 +24,23 @@ public class ProductDTO	implements  Validator {
 	}
 
 
-	public String getCodeProduct() {
-		return codeProduct;
+	public String getCode() {
+		return code;
 	}
 
 
-	public void setCodeProduct(String codeProduct) {
-		this.codeProduct = codeProduct;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 
-	public String getNameProduct() {
-		return nameProduct;
+	public String getName() {
+		return name;
 	}
 
 
-	public void setNameProduct(String nameProduct) {
-		this.nameProduct = nameProduct;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 
@@ -118,14 +103,14 @@ public class ProductDTO	implements  Validator {
 	public void validate(Object target, Errors errors) {
 		// TODO Auto-generated method stub
 		ProductDTO productDTO = (ProductDTO) target;
-		String nameProduct = productDTO.getNameProduct().trim();
-		if (productDTO.getCodeProduct().isEmpty()) {
-			errors.rejectValue("codeProduct", null, "Mã sản phẩm không được để trống");
-		}else if (!productDTO.getCodeProduct().matches("^PR-\\d{4}$")) {
-			errors.rejectValue("codeProduct", null, "Mã sản phẩm không đúng định dạng. Định dạng đúng: PR-XXXX(X: CHỮ SỐ) ");
+		String nameProduct = productDTO.getName().trim();
+		if (productDTO.getCode().isEmpty()) {
+			errors.rejectValue("code", null, "Mã sản phẩm không được để trống");
+		}else if (!productDTO.getCode().matches("^PR-\\d{4}$")) {
+			errors.rejectValue("code", null, "Mã sản phẩm không đúng định dạng. Định dạng đúng: PR-XXXX(X: CHỮ SỐ) ");
 		}
 		if (nameProduct.isEmpty()) {
-			errors.rejectValue("nameProduct", null, "Tên sản phẩm không được để trống");
+			errors.rejectValue("name", null, "Tên sản phẩm không được để trống");
 		}
 		if (productDTO.getPriceSell() != null) {
 			if (productDTO.getPriceSell() <= 0) {

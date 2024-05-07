@@ -17,23 +17,23 @@ public class CustomerService implements ICustomerService {
 	private CustomerMapper customerMapper;
 
 	@Override
-	public List<Map<String, Object>> getListCustomer(String customerName, String customerPhoneNumber, int limit, int offset) {
-		return customerMapper.getListCustomer(customerName, customerPhoneNumber, limit, offset) ;
+	public List<Map<String, Object>> getListCustomer(String customerName, String customerPhone, int limit, int offset) {
+		return customerMapper.getListCustomer(customerName, customerPhone, limit, offset) ;
 	}
 
 	@Override
-	public int countRecordOfCustomer(String customerName, String customerPhoneNumber) {
-		return customerMapper.countRecordOfCustomer(customerName, customerPhoneNumber);
+	public int countRecordOfCustomer(String customerName, String customerPhone) {
+		return customerMapper.countRecordOfCustomer(customerName, customerPhone);
 	}
 
 	@Override
-	public int deleteCustomer(int id) {
-		return customerMapper.deleteCustomer(id);
+	public int deleteCustomer(int customerId, int version) {
+		return customerMapper.deleteCustomer(customerId, version);
 	}
 
 	@Override
-	public int editCustomer(String name, String address, int version,String phoneNumber, int id) {
-		int rowEffectByEditCustomer = customerMapper.editCustomer(name,address,version,phoneNumber,id);
+	public int editCustomer(String customerName, String customerAddress, int version,String customerPhone, int customerId) {
+		int rowEffectByEditCustomer = customerMapper.editCustomer(customerName,customerAddress,version,customerPhone,customerId);
 		if (rowEffectByEditCustomer == 1){
 			return 1;
 		}else {
@@ -43,8 +43,8 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
-	public Customer getCustomerById(int id) {
-		Map<String,Object> customerMap = customerMapper.getCustomerById(id);
+	public Customer getCustomerById(int customerId) {
+		Map<String,Object> customerMap = customerMapper.getCustomerById(customerId);
 		if(customerMap == null) {
 			return null;
 		}
@@ -53,37 +53,37 @@ public class CustomerService implements ICustomerService {
 		customer.setId((int) customerMap.get("id"));
 		customer.setName((String) customerMap.get("name"));
 		customer.setAddress((String) customerMap.get("address"));
-		customer.setPhoneNumber((String) customerMap.get("phoneNumber"));
+		customer.setPhone((String) customerMap.get("phone"));
 		customer.setVersion((int) customerMap.get("version"));
 		employee.setId((int) customerMap.get("employeeId"));
 		employee.setName((String) customerMap.get("employeeName"));
-		customer.setEmployeeName(employee);
+		customer.setEmployee(employee);
 		return customer;
 	}
 
 	@Override
-	public int checkPhoneNumberExists(String phoneNumber, int id) {
-		return customerMapper.checkPhoneNumberExists(phoneNumber,id);
+	public int checkPhoneNumberExists(String customerPhone, int customerId) {
+		return customerMapper.checkPhoneNumberExists(customerPhone,customerId);
 	}
 
 	@Override
-	public int saveCustomer(String name, String address, String phoneNumber, int employeeId) {
-		return customerMapper.saveCustomer(name, address, phoneNumber, employeeId);
+	public int saveCustomer(String customerName, String customerAddress, String customerPhone, int employeeId) {
+		return customerMapper.saveCustomer(customerName, customerAddress, customerPhone, employeeId);
 	}
 
 	@Override
-	public String getPhoneNumberByNameCustomer(String nameCustomer) {
-		return customerMapper.getPhoneNumberByNameCustomer(nameCustomer);
+	public String getPhoneNumberByNameCustomer(String customerName) {
+		return customerMapper.getPhoneNumberByNameCustomer(customerName);
 	}
 
 	@Override
-	public String getNameByPhoneNumberCustomer(String phoneNumber) {
-		return customerMapper.getNameByPhoneNumberCustomer(phoneNumber);
+	public String getNameByPhoneNumberCustomer(String customerPhone) {
+		return customerMapper.getNameByPhoneNumberCustomer(customerPhone);
 	}
 
 	@Override
-	public int getIdCustomerByPhoneNumber(String phoneNumber) {
-		return customerMapper.getIdCustomerByPhoneNumber(phoneNumber);
+	public int getIdCustomerByPhoneNumber(String customerPhone) {
+		return customerMapper.getIdCustomerByPhoneNumber(customerPhone);
 	}
 
 

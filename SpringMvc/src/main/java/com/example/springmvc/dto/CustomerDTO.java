@@ -8,7 +8,7 @@ public class CustomerDTO implements Validator {
 
     private  int id;
     private String name;
-    private String phoneNumber;
+    private String phone;
     private String address;
     private int version;
     private Employee employee;
@@ -32,12 +32,12 @@ public class CustomerDTO implements Validator {
         this.name = name;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getAddress() {
@@ -74,10 +74,10 @@ public class CustomerDTO implements Validator {
         CustomerDTO customerDTO = (CustomerDTO) target;
         String customerName = customerDTO.getName().trim();
         String customerAddress = customerDTO.getAddress().trim();
-        if (customerDTO.getPhoneNumber().isEmpty()){
-            errors.rejectValue("phoneNumber",null,"Số điện thooại không được để trống");
-        }else if (!customerDTO.getPhoneNumber().matches("^0[\\d]{9}$")){
-            errors.rejectValue("phoneNumber",null,"Số điện thoại không đúng định dạng.");
+        if (customerDTO.getPhone().isEmpty()){
+            errors.rejectValue("phone",null,"Số điện thooại không được để trống");
+        }else if (!customerDTO.getPhone().matches("^0[\\d]{9}$")){
+            errors.rejectValue("phone",null,"Số điện thoại không đúng định dạng.");
         }
         if (customerName.isEmpty()){
             errors.rejectValue("name",null,"Tên khách hàng không được để trống");

@@ -11,7 +11,7 @@ public class EmployeeDTO implements Validator {
 	
 	private String name;
 	
-	private String phoneNumber;
+	private String phone;
 	
 	private Account account;
 	
@@ -48,13 +48,13 @@ public class EmployeeDTO implements Validator {
 	}
 
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getPhone() {
+		return phone;
 	}
 
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 
@@ -129,8 +129,8 @@ public class EmployeeDTO implements Validator {
 		if (employeeName.isEmpty()) {
 			errors.rejectValue("name",null ,"Tên nhân viên không được để trống");
 		}
-		if (!employeeDTO.getPhoneNumber().matches("^0[\\d]{9}$")){
-			errors.rejectValue("phoneNumber",null,"Số điện thoại không hợp lệ");
+		if (!employeeDTO.getPhone().matches("^0[\\d]{9}$")){
+			errors.rejectValue("phone",null,"Số điện thoại không hợp lệ");
 		}
 		if(!employeeDTO.getConfirmPassword().equals(employeeDTO.getAccount().getPassword())) {
 			errors.rejectValue("confirmPassword",null, "Xác nhận mật khẩu không trùng khớp.");

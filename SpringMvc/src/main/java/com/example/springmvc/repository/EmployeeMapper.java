@@ -4,25 +4,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.springmvc.model.Employee;
 
 @Mapper
 public interface EmployeeMapper {
 
-	List<Map<String,Object>> getAllEmployee(String username, String employeeName, String phoneNumber, int limit, int page);
+	List<Map<String,Object>> getAllEmployee(String accountName, String employeeName, String phone, int limit, int page);
 	
-	int countTotalRow(String username, String employeeName, String phoneNumber);
+	int countTotalRow(String accountName, String employeeName, String phone);
 	
 	Employee getEmployeeByAccountId(int accountId);
 	
-	int updateStatusEmployee(int status, int version,int id);
+	int updateStatusEmployee(int status, int version,int employeeId);
 	
-	int deleteEmployeeById (int id);
+	int deleteEmployeeById ( int employeeId,  int version);
 	
-	int insertEmployee(String name, String phoneNumber, int accountId);
+	int insertEmployee(String employeeName, String phone, int accountId);
 	
-	Map<String, Object> getEmployeeById (int id);
+	Map<String, Object> getEmployeeById (int employeeId);
 	
-	int updateEmployee(String phoneNumber, int version, String name, int id);
+	int updateEmployee(String phone, int version, String employeeName, int employeeId);
 }

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chỉnh sửa khách hàng</title>
+    <title>Thêm mới khách hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <style>
@@ -33,44 +33,42 @@
             margin-left: auto;
             margin-right:20px;
         }
-
-
     </style>
+</head>
 <body>
     <div th:insert = "header :: nav"></div>
     <div class="container-fluid">
-    <h1>Chỉnh sửa khách hàng</h1>
+       <h1>Thêm mới khách hàng</h1>
+
         <div class="list">
             <button type="button" class="btn btn-light">
                 <a id="link" th:href="@{/customer/list}" style="text-decoration: none;color:black">Quay về danh sách</a>
             </button>
         </div>
 
-        <form th:object="${customerDTO}" th:action ="@{/customer/edit}" method="post">
+        <form th:object="${customerDTO}" th:action ="@{/customer/store}" method="post">
             <div class="mb-3">
-                <label for="customerName" class="form-label">Tên khách hàng :<span style="color:red">*</span></label>
-                <input type="text"  class="form-control" id="customerName" th:field = "*{name}" aria-describedby="emailHelp">
+                <label for="customerName" class="form-label">Tên khách hàng <span style="color:red">* </span>:</label>
+                <input type="text"   class="form-control" id="customerName" th:field = "*{name}" aria-describedby="emailHelp">
                 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{name}"></div>
             </div>
             <div class="mb-3">
-                <label for="customerPhoneNumber" class="form-label">Số điện thoại :<span style="color:red">*</span></label>
-                <input type="text" class="form-control"  id="customerPhoneNumber" th:field ="*{phoneNumber}" aria-describedby="emailHelp">
-                <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{phoneNumber}"></div>
+                <label for="customerPhoneNumber" class="form-label">Số điện thoại <span style="color:red">*</span>:</label>
+                <input type="text" class="form-control" id="customerPhoneNumber" th:field ="*{phone}" aria-describedby="emailHelp">
+                <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{phone}"></div>
             </div>
             <div class="mb-3">
-                <label for="address" class="form-label">Địa chỉ :<span style="color:red">*</span></label>
+                <label for="address" class="form-label">Địa chỉ <span style="color:red">*</span>:</label>
                 <input type="text" th:field="*{address}"  class="form-control" id="address" aria-describedby="emailHelp">
                 <div  class="form-text" th:if="${#fields.hasErrors()}"  th:errors="*{address}"></div>
             </div>
-
-            <input type="hidden" th:field="*{id}">
             <input type="hidden" th:field="*{version}">
             <input type="hidden" id="page" name="page"/>
-            <input type="hidden" id="nameCustomer" name="nameCustomer">
-            <input type="hidden" id="phoneNumberCustomer" name="phoneNumberCustomer" >
+            <input type="hidden" id="nameCustomer" name="customerName">
+            <input type="hidden" id="customerPhone" name="customerPhone" >
 
             <div class="mb-3" id="sub">
-                <button type="submit" th:attr="onclick=|sendDataSearch()|" class="btn btn-light" >Chỉnh sửa nhân viên</button>
+                <button type="submit" th:attr="onclick=|sendDataSearch()|" class="btn btn-light" >Thêm mới khách hàng</button>
             </div>
 
         </form>
@@ -81,14 +79,14 @@
     let link = document.getElementById("link");
     let page = localStorage.getItem("page");
     let customerName= localStorage.getItem("customerName");
-    let customerPhoneNumber= localStorage.getItem("customerPhoneNumber");
+    let customerPhone= localStorage.getItem("customerPhone");
 
-    link.href = '/customer/list?page='+page+'&customerName='+customerName+'&customerPhoneNumber='+customerPhoneNumber;
+    link.href = '/customer/list?page='+page+'&customerName='+customerName+'&customerPhone='+customerPhone;
 
     function sendDataSearch(){
         document.getElementById("page").value = page;
         document.getElementById("nameCustomer").value = customerName;
-        document.getElementById("phoneNumberCustomer").value = customerPhoneNumber;
+        document.getElementById("customerPhone").value = customerPhone;
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"

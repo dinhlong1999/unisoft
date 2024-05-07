@@ -4,57 +4,52 @@
 
 <mapper namespace="com.example.springmvc.repository.ProductMapper">
     <select id="getListProduct" resultType="java.util.Map">
-        <![CDATA[
+       
         SELECT
-            id, codeProduct, flag, inventory, nameProduct, priceBuy, priceSell
+            id,
+            code, 
+            flag, 
+            inventory, 
+            name, 
+            price_buy AS priceBuy, 
+            price_sell AS priceSell 
         FROM
-            product
+            products
         WHERE
        		flag = 0
-        AND
-            (CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
-            THEN  codeProduct LIKE concat('%', #{arg0},'%')
-            ELSE 1=1 END)
-        AND
-            ( CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
-            THEN  nameProduct LIKE concat('%', #{arg1},'%')
-            ELSE 1=1 END)
-
+       	<if test="arg0 != null || arg0 != '' ">
+       	    AND code LIKE CONCAT('%', #{arg0},'%')
+       	</if>
+        <if test="arg1 != null || arg1 != '' ">
+            AND name LIKE CONCAT('%', #{arg1},'%')
+        </if>
         ORDER BY
-            nameProduct
+            name
         LIMIT
             #{arg2} OFFSET #{arg3}
-        ]]>
     </select>
 
     <select id="totalCountGetListProduct" resultType="int">
-        <![CDATA[
-            SELECT
-                count(*)
-            FROM
-                product
-            WHERE
-        	  flag = 0
-            
-            AND
-               (CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
-            		THEN  codeProduct LIKE concat('%', #{arg0},'%')
-            		ELSE 1=1 
-            	END)
-        	AND
-               (CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
-            		THEN  nameProduct LIKE concat('%', #{arg1},'%')
-            		ELSE 1=1 
-            	END)	
-        ]]>
+        SELECT
+            count(*)
+        FROM
+            products
+        WHERE
+        	flag = 0
+        <if test="arg0 != null || arg0 != '' ">
+            AND code LIKE CONCAT('%', #{arg0},'%')
+        </if>
+        <if test="arg1 != null || arg1 != '' ">
+            AND name LIKE CONCAT('%', #{arg1},'%')
+        </if>
     </select>
     
-    <insert id="insertProduct" parameterType="com.example.springmvc.model.Product" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertProduct" parameterType="com.example.springmvc.model.Product" >
     	<![CDATA[
-    		INSERT INTO product(codeProduct,nameProduct,inventory,priceBuy,priceSell)
+    		INSERT INTO products(code,name,inventory,price_buy,price_sell)
     		VALUES(
-    			#{codeProduct},
-    			#{nameProduct},
+    			#{code},
+    			#{name},
     			#{inventory},
     			#{priceBuy},
     			#{priceSell}
@@ -68,18 +63,18 @@
    		SELECT 
    			count(*) 
    		FROM 
-   			product 
+   			products
    		WHERE 
-   			nameProduct = #{nameProduct}
+   			name = #{nameProduct}
      </select>
      
      <select id="getCodeProductExists" resultType ="int">
      	SELECT 
      		count(*) 
      	FROM 
-     		product 
+     		products 
      	WHERE 
-     		codeProduct = #{codeProduct}
+     		code = #{codeProduct}
      </select>
      
      <select id="getNameProductExistsToUpdate" resultType="int">
@@ -87,11 +82,11 @@
      		SELECT 
    				count(*) 
    			FROM 
-   				product 
+   				products 
    			WHERE 
-   				nameProduct = #{arg0}
+   				name = #{arg0}
 			AND
-			id <> #{arg1};
+			    id <> #{arg1};
      	]]>
      </select>
      <select id="getCodeProductExistsToUpdate" resultType="int">
@@ -99,44 +94,41 @@
      		SELECT 
    				count(*) 
    			FROM 
-   				product 
+   				products 
    			WHERE 
-   				codeProduct = #{arg0}
+   				code = #{arg0}
 			AND
 			id <> #{arg1};
      	]]>
      </select>
     
-    <update id="deleteProduct"  parameterType="int">
+    <update id="deleteProduct">
     	<![CDATA[
     		UPDATE 
-    			product 
+    			products 
     		SET 
-    			flag = 1 
+    			flag = 1,
+    		    version = version + 1
     		WHERE 
-    			id = #{id};
+    			id = #{id}
+    		AND
+    		    version = #{version}
     	]]>
     </update>
     
-    <select id="getDeleteProductCount" parameterType="int" resultType="int">
-    	<![CDATA[
-       		SELECT 
-       			count(*) 
-       		FROM 
-       			product 
-       		WHERE 
-       			id = #{id} 
-       		AND 
-       			flag = 1;
-    	]]>
-    </select>
     
     <select id="getProductById" resultType="com.example.springmvc.model.Product">
     	<![CDATA[
     		SELECT 
-    			id,nameProduct,codeProduct,priceSell,priceBuy,inventory,version
+    			id,
+    			name,
+    			code,
+    			price_sell AS priceSell,
+    			priceBuy   AS priceSell,
+    			inventory,
+    			version
     		FROM 
-    			product 
+    			products 
     		WHERE 
     			id = #{id}
     		AND
@@ -147,28 +139,28 @@
     <update id="updateProduct" >
     	<![CDATA[
     		UPDATE
-    			product
+    			products
     		SET
-    			nameProduct = #{nameProduct},
-    			codeProduct = #{codeProduct},
-    			priceSell   = #{priceSell},
-    			priceBuy    = #{priceBuy},
-    			version     = (#{version} + 1 )
+    			name         = #{name},
+    			code         = #{code},
+    			price_sell   = #{priceSell},
+    			price_buy    = #{priceBuy},
+    			version      = version + 1
     		WHERE
-    			id          = #{id}
+    			id           = #{id}
     		AND
-    			version     = #{version}
+    			version      = #{version}
     	]]>
     </update>
     
     <select id="getCodeProductByNameProduct" resultType="String">
     	<![CDATA[
     		SELECT
-    			codeProduct
+    			code
     		FROM
-    			product
+    			products
     		WHERE
-    			nameProduct = #{nameProduct}
+    			name  = #{nameProduct}
     		AND
     			flag = 0
     	]]>
@@ -177,11 +169,11 @@
     <select id="getNameProductByCodeProduct" resultType="String">
     	<![CDATA[
     		SELECT 
-    			nameProduct
+    			name
     		FROM
-    			product
+    			products
     		WHERE
-    			codeProduct = #{codeProduct}
+    			code = #{codeProduct}
     		AND
     			flag = 0
     	]]>
@@ -190,11 +182,12 @@
 	<select id="getProductByCodeProduct" resultType="com.example.springmvc.model.Product">
 		<![CDATA[
 			SELECT
-			    id,priceSell
+			    id,
+			    price_sell AS priceSellS
 			FROM
-			    product
+			    products
 			WHERE
-			    codeProduct = #{codeProduct}
+			    code = #{codeProduct}
 			AND
 			    flag = 0
 		]]>

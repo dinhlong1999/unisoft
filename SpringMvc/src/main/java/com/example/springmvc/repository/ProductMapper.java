@@ -10,18 +10,11 @@ import java.util.Map;
 @Mapper
 public interface ProductMapper {
 
-    List<Map<String, Object>> getListProduct( String codeProduct,
-            								 String nameProduct,
-            								  int limit,
-            								  int page);
+    List<Map<String, Object>> getListProduct( String codeProduct,String nameProduct,int limit,int page);
 
+    int totalCountGetListProduct( String codeProduct, String nameProduct);
 
-    int totalCountGetListProduct( String codeProduct,
-                                  String nameProduct);
-
-    void deleteProduct(int id);
-    
-    int getDeleteProductCount(int id);
+    int deleteProduct(int id);
     
     int insertProduct(Product product);
     

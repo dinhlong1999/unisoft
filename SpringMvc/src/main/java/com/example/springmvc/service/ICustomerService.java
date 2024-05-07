@@ -7,23 +7,23 @@ import java.util.Map;
 
 public interface ICustomerService {
 	
-	List<Map<String, Object>> getListCustomer (String customerName, String customerPhoneNumber, int limit, int offset);
+	List<Map<String, Object>> getListCustomer (String customerName, String customerPhone, int limit, int offset);
 	
-	int countRecordOfCustomer(String customerName, String customerPhoneNumber);
+	int countRecordOfCustomer(String customerName, String customerPhone);
 	
-	int deleteCustomer(int id);
+	int deleteCustomer(int customerId, int version);
 	
-	int editCustomer(String name, String address, int version,String phoneNumber, int id);
+	int editCustomer(String customerName, String customerAddress, int version,String customerPhone, int customerId);
 
-	Customer getCustomerById (int id);
+	Customer getCustomerById (int customerId);
 	
-	int checkPhoneNumberExists(String phoneNumber, int id);
+	int checkPhoneNumberExists(String customerPhone, int customerId);
 	
-	int saveCustomer(String name, String address, String phoneNumber,int employeeId);
+	int saveCustomer(String customerName, String customerAddress, String customerPhone,int employeeId);
 
-	String getPhoneNumberByNameCustomer(String nameCustomer);
+	String getPhoneNumberByNameCustomer(String customerName);
 
-	String getNameByPhoneNumberCustomer(String phoneNumber);
+	String getNameByPhoneNumberCustomer(String customerPhone);
 
-	int getIdCustomerByPhoneNumber(String phoneNumber);
+	int getIdCustomerByPhoneNumber(String customerPhone);
 }

@@ -31,7 +31,7 @@ import java.util.Map;
 public class ProductController {
     @Autowired
     private IProductService productService;
-    
+   
     @Autowired
     private IAccountService accountService;
     
@@ -48,19 +48,19 @@ public class ProductController {
     }
 
     @GetMapping("/list")
-    public String getListProduct(@RequestParam(required = false,defaultValue = "0") int page,
-                                 @RequestParam(required = false,defaultValue = "") String codeProduct,
-                                 @RequestParam(required = false,defaultValue = "") String nameProduct,
-                                 Model model,RedirectAttributes redirectAttributes) {
-        if (page != 0){
-            page = page -1;
-        }
-        if (page < 0) {
-        	return "redirect:/product/list";
-		}
-        int limit = 4;
-        try {
-        	 Account accountLogin = getAccountLogin();
+    public String show(@RequestParam(required = false,defaultValue = "0") int page,
+                       @RequestParam(required = false,defaultValue = "") String codeProduct,
+                       @RequestParam(required = false,defaultValue = "") String nameProduct,
+                       Model model,RedirectAttributes redirectAttributes) {
+    	 Account accountLogin = getAccountLogin();
+    	 try {
+    		 if (page != 0){
+    			 page = page -1;
+    		 }
+    		 if (page < 0) {
+    			 return "redirect:/product/list";
+    		 }
+    		 int limit = 4;
         	 if (accountLogin.getRole().getName().equals("ROLE_ADMIN")) {
         		 model.addAttribute("isAdmin",true);
         	 }else {
@@ -137,11 +137,11 @@ public class ProductController {
     
         new ProductDTO().validate(productDTO,bindingResult);
         Account account = getAccountLogin();
-        if (!productService.isCodeProductExists(productDTO.getCodeProduct())){
+        if (!productService.isCodeProductExists(productDTO.getCode())){
         	errors.rejectValue("codeProduct", null, "Mã sản phẩm không được trùng");
 
         }
-        if (!productService.isNameProductExists(productDTO.getNameProduct())){
+        if (!productService.isNameProductExists(productDTO.getName())){
         	errors.rejectValue("nameProduct", null, "Tên sản phẩm không được trùng");
         }
     	if(bindingResult.hasFieldErrors()) {
@@ -152,7 +152,7 @@ public class ProductController {
     	}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);
-    	product.setNameProduct(product.getNameProduct().trim());
+    	product.setName(product.getName().trim());
     	int result = 0;
     	try {
     		 result = productService.insertProduct(product);
@@ -195,10 +195,10 @@ public class ProductController {
     								@RequestParam String codeSearch , BindingResult bindingResult,Errors errors, 
     								RedirectAttributes redirectAttributes, Model model) {
     	Account account = getAccountLogin();
-    	if (!productService.isCodeProductExistsToUpdate(productDTO.getCodeProduct(),productDTO.getId())) {
+    	if (!productService.isCodeProductExistsToUpdate(productDTO.getCode(),productDTO.getId())) {
     		errors.rejectValue("codeProduct", null,"Mã sản phẩm không được trùng");
     	}
-    	if (!productService.isNameProductExistsToUpdate(productDTO.getNameProduct(), productDTO.getId())) {
+    	if (!productService.isNameProductExistsToUpdate(productDTO.getName(), productDTO.getId())) {
     		errors.rejectValue("nameProduct", null,"Tên sản phẩm không được trùng");
     	}
     	
@@ -211,7 +211,7 @@ public class ProductController {
 		}
     	Product product = new Product();
     	BeanUtils.copyProperties(productDTO, product);
-    	product.setNameProduct(product.getNameProduct().trim());
+    	product.setName(product.getName().trim());
     	int result = 0;
     	try {
     		 result = productService.updateProduct(product);

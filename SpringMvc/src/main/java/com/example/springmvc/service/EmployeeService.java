@@ -24,14 +24,14 @@ public class EmployeeService implements IEmployeeService {
 	private AccountMapper accountMapper;
 
 	@Override
-	public List<Map<String, Object>> getAllEmployee(String username, String employeeName, String phoneNumber, int limit,
+	public List<Map<String, Object>> getAllEmployee(String accountName, String employeeName, String phone, int limit,
 			int offset) {
-		return employeeMapper.getAllEmployee(username, employeeName, phoneNumber, limit, offset);
+		return employeeMapper.getAllEmployee(accountName, employeeName, phone, limit, offset);
 	}
 
 	@Override
-	public int countTotalRow(String username, String employeeName, String phoneNumber) {
-		return employeeMapper.countTotalRow(username, employeeName, phoneNumber);
+	public int countTotalRow(String accountName, String employeeName, String phone) {
+		return employeeMapper.countTotalRow(accountName, employeeName, phone);
 	}
 
 	@Override
@@ -40,14 +40,13 @@ public class EmployeeService implements IEmployeeService {
 	}
 
 	@Override
-	public int updateStatusEmployee(int status, int version, int id ) {
-		return employeeMapper.updateStatusEmployee(status, version, id );
+	public int updateStatusEmployee(int status, int version, int employeeId ) {
+		return employeeMapper.updateStatusEmployee(status, version, employeeId );
 	}
 
 	@Override
-	public int deleteEmployeeById(int id) {
-		
-		return employeeMapper.deleteEmployeeById(id);
+	public int deleteEmployeeById(int employeeId, int version) {
+		return employeeMapper.deleteEmployeeById(employeeId, version);
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class EmployeeService implements IEmployeeService {
 		if (rowEffectByInsertAccount == 1) {
 			Map<String,Object> getIdByAccountAddNew = accountMapper.getAccountByUsername(account.getUsername());
 			int accountId = (int) getIdByAccountAddNew.get("id");
-			int rowEffectByInsertEmployee = employeeMapper.insertEmployee(employee.getName(),employee.getPhoneNumber(),accountId);
+			int rowEffectByInsertEmployee = employeeMapper.insertEmployee(employee.getName(),employee.getPhone(),accountId);
 			if (rowEffectByInsertEmployee == 1) {
 				return 1;
 			}else {
@@ -71,15 +70,15 @@ public class EmployeeService implements IEmployeeService {
 	}
 
 	@Override
-	public Employee getEmployeeById(int id) {
+	public Employee getEmployeeById(int employeeId) {
 		Employee employee = new Employee();
-		Map<String, Object> emplMap = employeeMapper.getEmployeeById(id);
+		Map<String, Object> emplMap = employeeMapper.getEmployeeById(employeeId);
 		if(emplMap== null) {
 			return null;
 		}
 		employee.setId((int) emplMap.get("id"));
 		employee.setName((String) emplMap.get("name"));
-		employee.setPhoneNumber((String) emplMap.get("phoneNumber"));
+		employee.setPhone((String) emplMap.get("phone"));
 		Account account = new Account();
 		account.setId((int) emplMap.get("accountId"));
 		account.setUsername((String) emplMap.get("username"));
@@ -95,7 +94,7 @@ public class EmployeeService implements IEmployeeService {
 		int rowEffectByEditAccount = accountMapper.editAccount(employee.getAccount().getUsername(),BCrypt.hashpw(employee.getAccount().getPassword(), BCrypt.gensalt()), 
 																employee.getAccount().getVersion(), employee.getAccount().getId());
 		if (rowEffectByEditAccount == 1) {
-			int rowEffectByEditEmployee = employeeMapper.updateEmployee(employee.getPhoneNumber(), employee.getVersion(), employee.getName(),employee.getId());
+			int rowEffectByEditEmployee = employeeMapper.updateEmployee(employee.getPhone(), employee.getVersion(), employee.getName(),employee.getId());
 			if (rowEffectByEditEmployee == 1) {
 				return 1;
 			}else {

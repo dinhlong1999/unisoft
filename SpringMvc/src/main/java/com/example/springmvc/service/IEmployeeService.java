@@ -7,19 +7,19 @@ import com.example.springmvc.model.Account;
 import com.example.springmvc.model.Employee;
 
 public interface IEmployeeService {
-	List<Map<String,Object>> getAllEmployee(String username, String employeeName,String phoneNumber,int limit, int offset);
+	List<Map<String,Object>> getAllEmployee(String accountName, String employeeName,String phone,int limit, int offset);
 	
-	int countTotalRow(String username, String employeeName, String phoneNumber);
+	int countTotalRow(String accountName, String employeeName, String phone);
 	
 	Employee getEmployeeByAccountId(int accountId);
 	
-	int updateStatusEmployee(int status,int version,int id);
+	int updateStatusEmployee(int status,int version,int employeeId);
 
-	int deleteEmployeeById (int id);
+	int deleteEmployeeById (int employeeId, int version);
 	
 	int insertEmployee(Account account, Employee employee);
 	
-	Employee getEmployeeById (int id);
+	Employee getEmployeeById (int employeeId);
 	
 	int updateEmployee(Employee employee);
 	

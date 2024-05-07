@@ -3,44 +3,50 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.springmvc.repository.EmployeeMapper">
 	<select id="getAllEmployee" resultType="java.util.Map">
-		<![CDATA[
+		
 			SELECT
-				e.id,e.isOnline,e.name,e.phoneNumber,a.username,a.roleId
+				e.employee_id AS id,
+				e.isOnline,
+				e.name,
+				e.phone,
+				e.version,
+				a.username,
+				a.role_id AS roleId
 			FROM
-				employee e
+				employees e
 			JOIN
-				account a ON a.id = e.accountId
+				accounts a ON a.account_id = e.account_Id
 			WHERE
 				e.flag = 0
-			AND
-				(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
-           			  THEN  a.username LIKE concat('%', #{arg0},'%')
-            		  ELSE 1=1 
-                END)
-            AND
-            	(CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
-            		  THEN  e.name LIKE concat('%', #{arg1},'%')
-            		  ELSE 1=1 
-            	END)
-            AND
-            	(CASE WHEN #{arg2} IS NOT NULL OR #{arg2 } != ''
-            		  THEN  e.phoneNumber LIKE concat('%',#{arg2},'%')
-            		  ELSE 1=1 
-            	END)
+			<if test="arg0 != null || arg0 != ''">
+			    AND a.username LIKE CONCAT('%', #{arg0},'%')
+			</if>	
+		    <if test="arg1 != null || arg1 != ''">
+                AND e.name LIKE CONCAT('%', #{arg1},'%')
+            </if>
+            <if test="arg2 != null || arg2 != ''">
+                AND e.phone LIKE CONCAT('%',#{arg2},'%')
+            </if>
             ORDER BY
             	e.name
             LIMIT
             	#{arg3}  OFFSET #{arg4}
-		]]>
+		
 		</select>
 	<select id="getEmployeeByAccountId" resultType="com.example.springmvc.model.Employee">
 		<![CDATA[
 			SELECT
-				id,name,flag,phoneNumber,accountId,isOnline,version
+				employee_id AS id,
+				name,
+				flag,
+				phone,
+				account_id AS accountId,
+				isOnline,
+				version
 			FROM
-				employee
+				employees
 			WHERE
-				accountId = #{accountId}
+				account_id = #{accountId}
 			AND
 				flag = 0;
 			]]>
@@ -48,60 +54,57 @@
 	
 	<update id="updateStatusEmployee">
 		UPDATE
-			employee
+			employees
 		SET
 			isOnline = #{arg0},
 			version = #{arg1} + 1
 		WHERE
-			id = #{arg2}
+			employee_id = #{arg2}
 		AND
 			version = #{arg1}
 	</update>
 	
 	<select id ="countTotalRow" resultType="int">
-		<![CDATA[
+		
 			SELECT 
 				COUNT(*)
 			FROM 
-				employee
+				employees e
 			JOIN
-				account on account.id = employee.accountId
+				accounts a on a.account_id = e.account_id
 			WHERE
-				employee.flag = 0
-			AND
-				(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
-           			  THEN  account.username LIKE concat('%', #{arg0},'%')
-            		  ELSE 1=1 
-                END)
-            AND
-            	(CASE WHEN #{arg1} IS NOT NULL OR #{arg1 } != ''
-            		  THEN  employee.name LIKE concat('%', #{arg1},'%')
-            		  ELSE 1=1 
-            	END)
-            AND
-            	(CASE WHEN #{arg2} IS NOT NULL OR #{arg2 } != ''
-            		  THEN  employee.phoneNumber LIKE concat('%',#{arg2},'%')
-            		  ELSE 1=1 
-            	END)	
-		]]>
+				e.flag = 0
+			<if test="arg0 != null || arg0 != ''">
+                AND a.username LIKE CONCAT('%', #{arg0},'%')
+            </if>   
+            <if test="arg1 != null || arg1 != ''">
+                AND e.name LIKE CONCAT('%', #{arg1},'%')
+            </if>
+            <if test="arg2 != null || arg2 != ''">
+                AND e.phone LIKE CONCAT('%',#{arg2},'%')
+            </if>
+		
 	</select>
 	
 	<update id="deleteEmployeeById">
-		<![CDATA[
+		
 			UPDATE
-				employee
+				employees
 			SET
-				flag =1
+				flag =1,
+				version = version + 1
 			WHERE
-				id = #{id};
-		]]>
+				employee_id = #{arg0}
+			AND
+			    version = #{arg1} 
+	
 	</update>
 	
 	
 	<insert id="insertEmployee">
 		<![CDATA[
-			INSERT INTO employee(
-				name,phoneNumber,accountId
+			INSERT INTO employees(
+				name,phone,account_id
 			)
 			VALUES(
 				#{arg0},#{arg1},#{arg2}
@@ -112,34 +115,34 @@
 	<select id="getEmployeeById" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
-				e.id,
+				e.employee_id AS id,
 				e.name,
-				e.phoneNumber,
+				e.phone,
 				e.version,
 				a.username,
-				a.id AS accountId,
-				a.version as accountVersion
+				a.account_id AS accountId,
+				a.version AS accountVersion
 			FROM
-				employee e
+				employees e
 			JOIN
-				account a on e.accountId = a.id
+				accounts a on e.account_id = a.account_id
 			WHERE
-				e.id = #{id}
+				e.employee_id = #{id}
 		]]>
 	</select>
 	
 	<update id="updateEmployee">
 		<![CDATA[
 			UPDATE
-				employee
+				employees
 			SET
-				phoneNumber = #{arg0},
-				version = #{arg1} + 1,
+				phone = #{arg0},
+				version = version + 1,
 				name = #{arg2}
 			WHERE
 				version = #{arg1}
 			AND
-				id = #{arg3}
+				employee_id = #{arg3}
 		]]>
 	</update>
 </mapper>

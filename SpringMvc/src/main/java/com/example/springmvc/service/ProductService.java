@@ -30,8 +30,8 @@ public class ProductService implements IProductService {
         for (Map<String,Object> map: productMap) {
             Product product = new Product();
             product.setId((int) map.get("id"));
-            product.setCodeProduct((String) map.get("codeProduct"));
-            product.setNameProduct((String) map.get("nameProduct"));
+            product.setCode((String) map.get("code"));
+            product.setName((String) map.get("name"));
             product.setInventory((int) map.get("inventory"));
             product.setPriceBuy((double) map.get("priceBuy"));
             product.setPriceSell((double) map.get("priceSell"));
@@ -49,9 +49,7 @@ public class ProductService implements IProductService {
     
 	@Override
 	public int deleteProductById(int id) {
-		productMapper.deleteProduct(id);
-		int result = productMapper.getDeleteProductCount(id);
-		return result;
+		return productMapper.deleteProduct(id) ;
 	}
 
 	@Override

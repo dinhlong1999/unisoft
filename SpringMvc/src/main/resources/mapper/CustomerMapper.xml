@@ -2,84 +2,81 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.springmvc.repository.CustomerMapper" >
+
 	<select id="getListCustomer" resultType="java.util.Map">
-	  <![CDATA[
-		SELECT
-			c.id, 
+	   SELECT
+			c.customer_id AS id, 
 			c.name,
-			c.phoneNumber,
+			c.phone,
 			c.address,
+			c.version,
 			e.name AS employeeName,
-			e.id AS employeeId ,
-			e.accountId
+			e.employee_id AS employeeId,
+			e.account_id AS accountId
 		FROM 
-			customer c
+			customers c
 		JOIN
-			employee e on c.employeeId = e.id
+			employees e on c.employee_id = e.employee_id
 		WHERE 
 	 		c.flag = 0
-	 	AND
-	 		(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
-	 			  THEN c.name LIKE CONCAT ('%',#{arg0},'%')
-	 			  ELSE 1=1
-	 		 END)
-	 	AND
-	 		(CASE WHEN #{arg1} IS NOT NULL OR #{arg1} != ''
-	 			  THEN c.phoneNumber LIKE CONCAT (#{arg1},'%')
-	 			  ELSE 1=1
-	 		 END)
+	 	<if test="arg0 != null || arg0 == ''">
+	 	     AND c.name LIKE CONCAT ('%',#{arg0},'%')
+	 	</if>
+	 	<if test="arg1 != null || arg1 == ''">
+	 	     AND c.phone LIKE CONCAT (#{arg1},'%')
+	 	</if>
 	 	ORDER BY
 	 		c.name
 	 	LIMIT
 	 		#{arg2} OFFSET #{arg3}
-	  ]]>
+	 
 	</select>
 	
 	<select id="countRecordOfCustomer" resultType="int">
-		<![CDATA[
+		
 			SELECT
 				count(*)
 			FROM 
-				customer c
+				customers c
 			JOIN
-				employee e on c.employeeId = e.id
+				employees e on c.employee_id = e.employee_id
 			WHERE 
 	 			c.flag = 0
-	 		AND
-	 			(CASE WHEN #{arg0} IS NOT NULL OR #{arg0} != ''
-	 			  	  THEN c.name LIKE CONCAT ('%',#{arg0},'%')
-	 			 ELSE 1=1
-	 		 	 END)
-	 		AND
-	 			(CASE WHEN #{arg1} IS NOT NULL OR #{arg1} != ''
-	 			  	 THEN c.phoneNumber LIKE CONCAT (#{arg1},'%')
-	 			 ELSE 1=1
-	 	    END)
-		]]>
+	 		<if test="arg0 != null || arg0 == ''">
+                AND c.name LIKE CONCAT ('%',#{arg0},'%')
+            </if>
+            <if test="arg1 != null || arg1 == ''">
+                AND c.phone LIKE CONCAT (#{arg1},'%')
+            </if>
+		
 	</select>
 	
 	<update id="deleteCustomer">
 		<![CDATA[
 			UPDATE 
-				customer
+				customers
 			SET
-				flag = 1
+				flag = 1,
+				version = version + 1
 			WHERE
-				id = #{id}
+				customer_id = #{arg0}
+			AND
+			    version = #{arg1}
+			
 		]]>
 	</update>
 
 	<update id="editCustomer">
 		<![CDATA[
 			UPDATE
-				customer
+				customers
 			SET
 			    name = #{arg0},
 			    address = #{arg1},
-			    version = #{arg2} + 1,
-			    phoneNumber = #{arg3}
+			    version = version + 1,
+			    phone = #{arg3}
 			WHERE
-			    id = #{arg4}
+			    customer_id = #{arg4}
 			AND
 			    version = #{arg2}
 		]]>
@@ -88,36 +85,35 @@
 	<select id="getCustomerById" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
-			    c.id,
+			    c.customer_id as id,
 			    c.name,
-			    c.phoneNumber,
+			    c.phone ,
 			    c.version,
 			    c.address,
 			    e.name AS employeeName,
-			    e.id AS employeeId
+			    e.employee_id AS employeeId
 			FROM
-			    customer c
+			    customers c
 			JOIN
-				employee e on e.id = c.employeeId
+				employees e on e.employee_id = c.employee_id
 			WHERE
-			    c.id = #{id}
+			    c.customer_id = #{customerId}
 		]]>
 	</select>
 
 	<select id="checkPhoneNumberExists" resultType="int">
-		<![CDATA[
+		
 			SELECT
 			    count(*)
 			FROM
-			    customer
+			    customers
 			WHERE
-			    phoneNumber = #{arg0}
-			AND
-			    (CASE WHEN #{arg1} IS NOT NULL OR #{arg1} != 0
-			    	  THEN  id <> #{arg1}
-			          ELSE 1 = 1
-			     END)
-		]]>
+			    phone = #{arg0}
+			<if test="arg1 != null || arg1 != 0">
+			     AND customer_id != #{arg1}			  
+			</if>
+			
+		
 	</select>
 
 
@@ -125,7 +121,7 @@
 	<insert id="saveCustomer">
 		<![CDATA[
 			INSERT INTO
-				customer(name, address,phoneNumber, employeeId)
+				customers(name, address,phone, employee_id)
 			VALUES (
 			    #{arg0}, #{arg1}, #{arg2},#{arg3}
 				   )
@@ -136,46 +132,36 @@
 	<select id="getPhoneNumberByNameCustomer" resultType="String">
 		<![CDATA[
 			SELECT
-			    phoneNumber
+			    phone 
 			FROM
-			    customer
+			    customers
 			WHERE
-			    name = #{name}
+			    name = #{customerName}
 		]]>
 	</select>
 
 	<select id="getNameByPhoneNumberCustomer" resultType="String">
 		<![CDATA[
-		SELECT
+		  SELECT
 			name
-		FROM
-			customer
-		WHERE
-			phoneNumber = #{phoneNumber}
+		  FROM
+			customers
+		  WHERE
+			phone = #{customerPhone}
 		]]>
 	</select>
 
 	<select id="getIdCustomerByPhoneNumber" resultType="int">
 		<![CDATA[
 			SELECT
-			    id
+			    customer_id
 			FROM
-			    customer
+			    customers
 			WHERE
-			    phoneNumber = #{phoneNumber}
+			    phone = #{customerPhone}
 			AND
 			    flag = 0;
 		]]>
 	</select>
-	
-	
-
-
-
-
-	
-	
-	
-	
 
 </mapper>

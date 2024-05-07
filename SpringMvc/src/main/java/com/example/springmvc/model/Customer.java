@@ -7,7 +7,7 @@ public class Customer {
 
     private String name;
 
-    private String phoneNumber;
+    private String phone;
 
     private String address;
 
@@ -15,9 +15,10 @@ public class Customer {
 
     private int version;
 
-    private Employee employeeName;
+    private Employee employee;
     
 	public Customer() {
+		
 	}
 
 	public int getId() {
@@ -33,15 +34,15 @@ public class Customer {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String getAddress() {
@@ -49,7 +50,7 @@ public class Customer {
 	}
 
 	public void setAddress(String address) {
-		this.address = address;
+		this.address = address.trim();
 	}
 
 	public boolean isFlag() {
@@ -68,12 +69,12 @@ public class Customer {
 		this.version = version;
 	}
 
-	public Employee getEmployeeName() {
-		return employeeName;
+	public Employee getEmployee() {
+		return employee;
 	}
 
-	public void setEmployeeName(Employee employeeName) {
-		this.employeeName = employeeName;
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
 	}
 
   

@@ -47,13 +47,13 @@
 		<form th:object="${productDTO}" th:action ="@{/product/create}" method="post">
  			 <div class="mb-3">
    				 <label for="codeProduct" class="form-label">Mã sản phẩm</label>
-   			     <input type="text" th:field="*{codeProduct}" th:value="${productDTO.codeProduct}" class="form-control" id="codeProduct" aria-describedby="emailHelp">
-    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{codeProduct}"></div>
+   			     <input type="text" th:field="*{code}" th:value="${productDTO.code}" class="form-control" id="codeProduct" aria-describedby="emailHelp">
+    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{code}"></div>
   			 </div>
   			 <div class="mb-3">
   	 			  <label for="nameProduct" class="form-label">Tên sản phẩm</label>
-   			     <input type="text" th:field="*{nameProduct}" class="form-control" th:value="${productDTO.nameProduct}"  id="nameProduct" aria-describedby="emailHelp">
-    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{nameProduct}"></div>
+   			     <input type="text" th:field="*{name}" class="form-control" th:value="${productDTO.name}" id="nameProduct" aria-describedby="emailHelp">
+    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{name}"></div>
   			 </div>
   			 <div class="mb-3">
   	 			  <label for="priceSell" class="form-label">Giá bán</label>
