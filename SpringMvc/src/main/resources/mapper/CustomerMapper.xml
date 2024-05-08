@@ -137,6 +137,8 @@
 			    customers
 			WHERE
 			    name = #{customerName}
+			AND
+			    flag = 0;
 		]]>
 	</select>
 
@@ -148,6 +150,8 @@
 			customers
 		  WHERE
 			phone = #{customerPhone}
+		  AND
+		    flag = 0;
 		]]>
 	</select>
 
@@ -159,8 +163,6 @@
 			    customers
 			WHERE
 			    phone = #{customerPhone}
-			AND
-			    flag = 0;
 		]]>
 	</select>
 

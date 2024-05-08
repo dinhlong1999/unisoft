@@ -15,15 +15,15 @@ public class CustomerRestController {
     @Autowired
     private ICustomerService customerService;
 
-    @GetMapping("/getPhoneNumber")
+    @GetMapping("/getCustomerPhone")
     public String getPhoneNumber(@RequestParam String customerName ){
-    	String phoneNumber = customerService.getPhoneNumberByNameCustomer(customerName);
-        return phoneNumber;
+    	String customerPhone = customerService.getPhoneNumberByNameCustomer(customerName);
+        return customerPhone;
     }
     
-    @GetMapping("/getNameCustomer")
-    public String getNameCustomer(@RequestParam String phoneNumber) {
-    	String nameCustomer = customerService.getNameByPhoneNumberCustomer(phoneNumber);
-    	return nameCustomer;
+    @GetMapping("/getCustomerName")
+    public String getNameCustomer(@RequestParam String customerPhone) {
+    	String customerName = customerService.getNameByPhoneNumberCustomer(customerPhone);
+    	return customerName;
     }
 }

@@ -31,19 +31,21 @@ public class OrderService implements IOrderService {
 	private IEmployeeService employeeService;
 
 	@Override
-	public List<Map<String, Object>> getListOrder(String username, String employeeName, String codeProduct,
-			String nameProduct, String customerName, String phoneNumber, boolean isAdmin, int employeeId,
-			LocalDate dateStart, LocalDate dateEnd, int statusAllocation, int statusBooking, int limit, int offset) {
-		// TODO Auto-generated method stub
-		return orderMapper.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, isAdmin, employeeId, dateStart, dateEnd, statusAllocation, statusBooking, limit, offset);
+	public List<Map<String, Object>> getListOrder(String accountName, String employeeName, String productCode,
+												  String productName, String customerName, String customerPhone, boolean isAdmin, int employeeId,
+												  LocalDate orderDayBegin, LocalDate orderDayEnd, int statusAllocation, int statusBooking, int limit, int offset) {
+		
+		return orderMapper.getListOrder(accountName, employeeName, productCode, productName, customerName, customerPhone, 
+										isAdmin, employeeId, orderDayBegin, orderDayEnd, statusAllocation, statusBooking, limit, offset);
 	}
-
+	
 	@Override
-	public int getTotalRecordByOrder(String username, String employeeName, String codeProduct, String nameProduct,
-			String customerName, String phoneNumber, boolean isAdmin, int employeeId, LocalDate dateStart,
-			LocalDate dateEnd, int statusAllocation, int statusBooking) {
-		// TODO Auto-generated method stub
-		return orderMapper.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber, isAdmin, employeeId, dateStart, dateEnd, statusAllocation, statusBooking);
+	public int getTotalRecordByOrder(String accountName, String employeeName, String productCode, String productName,
+									 String customerName, String customerPhone, boolean isAdmin, int employeeId, LocalDate orderDayBegin,
+									 LocalDate orderDayEnd, int statusAllocation, int statusBooking) {
+		
+		return orderMapper.getTotalRecordByOrder(accountName, employeeName, productCode, productName, customerName, 
+												 customerPhone, isAdmin, employeeId, orderDayBegin, orderDayEnd, statusAllocation, statusBooking);
 	}
 
 	@Override
@@ -52,9 +54,9 @@ public class OrderService implements IOrderService {
 		  for(OrdersDTO ordersDTO : ordersDTOs){
               if (ordersDTO.getId().matches("^\\d+$")){
                   int orderId = Integer.parseInt(ordersDTO.getId());
-                  Product product = productService.getProductByCodeProduct(ordersDTO.getCodeProduct());
-                  int customerId = customerService.getIdCustomerByPhoneNumber(ordersDTO.getPhoneNumber());         
-                  int quantityBook = ordersDTO.getQuantityBook();
+                  Product product = productService.getProductByCodeProduct(ordersDTO.getProductCode());
+                  int customerId = customerService.getIdCustomerByPhoneNumber(ordersDTO.getCustomerPhone());
+                  int quantityBook = ordersDTO.getQuantity();
                   int updateOrders = orderMapper.updateOrder(customerId,product.getId(),quantityBook,ordersDTO.getVersion(),product.getPriceSell(),orderId);
                   if (updateOrders != 1){
                       throw new RuntimeException("Không cap nhat được đơn hàng");
@@ -62,12 +64,12 @@ public class OrderService implements IOrderService {
                   	count += 1;
                   }
               }else {
-              	 int customerId = customerService.getIdCustomerByPhoneNumber(ordersDTO.getPhoneNumber());
+              	 int customerId = customerService.getIdCustomerByPhoneNumber(ordersDTO.getCustomerPhone());
               	 Employee employee = employeeService.getEmployeeByAccountId(accountId);
-              	 Product product = productService.getProductByCodeProduct(ordersDTO.getCodeProduct());
+              	 Product product = productService.getProductByCodeProduct(ordersDTO.getProductCode());
               	 LocalDateTime dateStart = LocalDateTime.now();
               	 int statusId = 1;
-              	 int insertOrders = orderMapper.insertOrders(customerId, employee.getId(),product.getId(),statusId, dateStart, product.getPriceSell(), ordersDTO.getQuantityBook());
+              	 int insertOrders = orderMapper.insertOrders(customerId, employee.getId(),product.getId(),statusId, dateStart, product.getPriceSell(), ordersDTO.getQuantity());
               	 if (insertOrders != 1) {
               		 throw new RuntimeException("Không thêm được đơn hàng");
 					}else {

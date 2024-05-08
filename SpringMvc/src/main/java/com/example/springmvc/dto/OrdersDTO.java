@@ -1,7 +1,6 @@
 package com.example.springmvc.dto;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,15 +9,15 @@ public class OrdersDTO {
 
 	private String id;
 
-	private String codeProduct;
+	private String productCode;
 
-	private String nameProduct;
+	private String productName;
 
-	private String nameCustomer;
+	private String customerName;
 
-	private String phoneNumber;
+	private String customerPhone;
 
-	private int quantityBook;
+	private int quantity;
 	
 	private int version;
 
@@ -33,44 +32,44 @@ public class OrdersDTO {
 		this.id = id;
 	}
 
-	public String getCodeProduct() {
-		return codeProduct;
+	public String getProductCode() {
+		return productCode;
 	}
 
-	public void setCodeProduct(String codeProduct) {
-		this.codeProduct = codeProduct;
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
 	}
 
-	public String getNameProduct() {
-		return nameProduct;
+	public String getProductName() {
+		return productName;
 	}
 
-	public void setNameProduct(String nameProduct) {
-		this.nameProduct = nameProduct;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
-	public String getNameCustomer() {
-		return nameCustomer;
+	public String getCustomerName() {
+		return customerName;
 	}
 
-	public void setNameCustomer(String nameCustomer) {
-		this.nameCustomer = nameCustomer;
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getCustomerPhone() {
+		return customerPhone;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setCustomerPhone(String customerPhone) {
+		this.customerPhone = customerPhone;
 	}
 
-	public int getQuantityBook() {
-		return quantityBook;
+	public int getQuantity() {
+		return quantity;
 	}
 
-	public void setQuantityBook(int quantityBook) {
-		this.quantityBook = quantityBook;
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 	
 
@@ -81,54 +80,33 @@ public class OrdersDTO {
 	public void setVersion(int version) {
 		this.version = version;
 	}
+	
 
 	@Override
 	public String toString() {
-		return "OrdersDTO [id=" + id + ", codeProduct=" + codeProduct + ", nameProduct=" + nameProduct
-				+ ", nameCustomer=" + nameCustomer + ", phoneNumber=" + phoneNumber + ", quantityBook=" + quantityBook
-				+ "]";
+		return "OrdersDTO [id=" + id + ", productCode=" + productCode + ", productName=" + productName
+				+ ", customerName=" + customerName + ", customerPhone=" + customerPhone + ", quantity=" + quantity
+				+ ", version=" + version + ", getId()=" + getId() + ", getProductCode()=" + getProductCode()
+				+ ", getProductName()=" + getProductName() + ", getCustomerName()=" + getCustomerName()
+				+ ", getCustomerPhone()=" + getCustomerPhone() + ", getQuantity()=" + getQuantity() + ", getVersion()="
+				+ getVersion() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ super.toString() + "]";
 	}
-
-//	public List<Map<String, List<String>>> validateSaveOrder(List<OrdersDTO> ordersDTO) {
-//		List<Map<String, List<String>>> errorList = new ArrayList<>();
-//		Map<String, List<String>> mapError = new TreeMap<>();
-//		for (int i = 0; i < ordersDTO.size(); i++) {
-//			List<String> fieldErrorList = new ArrayList<>();
-//			if (ordersDTO.get(i).getCodeProduct().isEmpty()) {
-//				fieldErrorList.add("codeProduct");
-//				fieldErrorList.add("nameProduct");
-//			}
-//			if (ordersDTO.get(i).getQuantityBook() <= 0) {
-//				fieldErrorList.add("quantityBook");
-//			}
-//			if (ordersDTO.get(i).getNameCustomer().isEmpty()) {
-//				fieldErrorList.add("customerName");
-//				fieldErrorList.add("phoneNumber");
-//			}
-//			if (!fieldErrorList.isEmpty()) {
-//				mapError.put(ordersDTO.get(i).getId(), fieldErrorList);
-//			}
-//			if (!mapError.isEmpty()) {
-//				errorList.add(mapError);
-//			}
-//		}
-//		return errorList;
-//	}
 
 	public Map<String, List<String>> validate(List<OrdersDTO> ordersDTOS) {
 		Map<String, List<String>> errorList = new TreeMap<>();
 		for (int i = 0; i < ordersDTOS.size(); i++) {
 			List<String> fieldErrorList = new ArrayList<>();
-			if (ordersDTOS.get(i).getCodeProduct().isEmpty()) {
-				fieldErrorList.add("codeProduct");
-				fieldErrorList.add("nameProduct");
+			if (ordersDTOS.get(i).getProductCode().isEmpty()) {
+				fieldErrorList.add("productCode");
+				fieldErrorList.add("productName");
 			}
-			if (ordersDTOS.get(i).getQuantityBook() <= 0) {
-				fieldErrorList.add("quantityBook");
+			if (ordersDTOS.get(i).getQuantity() <= 0) {
+				fieldErrorList.add("quantity");
 			}
-			if (ordersDTOS.get(i).getNameCustomer().isEmpty()) {
+			if (ordersDTOS.get(i).getCustomerName().isEmpty()) {
 				fieldErrorList.add("customerName");
-				fieldErrorList.add("phoneNumber");
+				fieldErrorList.add("customerPhone");
 			}
 			if (!fieldErrorList.isEmpty()) {
 				errorList.put(ordersDTOS.get(i).getId(), fieldErrorList);

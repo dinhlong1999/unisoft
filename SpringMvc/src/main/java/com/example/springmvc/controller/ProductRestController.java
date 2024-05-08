@@ -15,16 +15,16 @@ public class ProductRestController {
 	@Autowired
 	private IProductService productService;
 	
-	@GetMapping("/getNameProduct")
-	public String getNameProductFromCodeProduct(@RequestParam String codeProduct) {
-		String nameProduct = productService.getNameProductByCodeProduct(codeProduct);
-		return nameProduct;
+	@GetMapping("/getProductName")
+	public String getProductNameFromProductCode(@RequestParam String productCode) {
+		String productName = productService.getNameProductByCodeProduct(productCode);
+		return productName;
 	}
 	
-	@GetMapping("/getCodeProduct")
-	public String getCodeProductFromNameProduct(@RequestParam String nameProduct) {
-		String codeProduct = productService.getCodeProductByNameProduct(nameProduct);
-		return codeProduct;
+	@GetMapping("/getProductCode")
+	public String getCodeProductFromNameProduct(@RequestParam String productName) {
+		String productCode = productService.getCodeProductByNameProduct(productName);
+		return productCode;
 	}
 
 }

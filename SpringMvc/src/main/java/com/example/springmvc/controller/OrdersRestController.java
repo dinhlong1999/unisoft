@@ -2,13 +2,8 @@ package com.example.springmvc.controller;
 
 import com.example.springmvc.dto.OrdersDTO;
 import com.example.springmvc.model.Account;
-import com.example.springmvc.model.Employee;
-import com.example.springmvc.model.Product;
 import com.example.springmvc.service.IAccountService;
-import com.example.springmvc.service.ICustomerService;
-import com.example.springmvc.service.IEmployeeService;
 import com.example.springmvc.service.IOrderService;
-import com.example.springmvc.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Map;
 
@@ -28,18 +23,10 @@ public class OrdersRestController {
 
     @Autowired
     private IOrderService orderService;
-
-    @Autowired
-    private IProductService productService;
-
-    @Autowired
-    private ICustomerService customerService;
     
     @Autowired
     private IAccountService accountService;
     
-    @Autowired
-    private IEmployeeService employeeService;
     
     private Account getAccountLogin () {
  	   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -53,7 +40,6 @@ public class OrdersRestController {
 
     @PostMapping("/save")
     public Map<String,List<String>> saveOrder(@RequestBody List<OrdersDTO> data){
-    	int count = 0;
         Map<String,List<String>> errorsList  = new OrdersDTO().validate(data);
         if (errorsList.isEmpty()) {
         	 Account account = getAccountLogin();

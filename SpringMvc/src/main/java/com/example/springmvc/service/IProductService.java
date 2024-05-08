@@ -5,29 +5,29 @@ import com.example.springmvc.model.Product;
 import java.util.List;
 
 public interface IProductService {
-    List<Product> getListProduct(String codeProduct, String nameProduct, int limit, int offset);
+    List<Product> getListProduct(String productCode, String productName, int limit, int offset);
 
-    int totalRowGetListProduct(String codeProduct, String nameProduct);
+    int totalRowGetListProduct(String productCode, String productName);
     
-    int deleteProductById(int id);
+    int deleteProductById(int id, int version);
     
     int insertProduct(Product product);
     
-    boolean isNameProductExists(String nameProduct);
+    boolean isNameProductExists(String productName);
 
-    boolean isCodeProductExists(String codeProduct);
+    boolean isCodeProductExists(String productCode);
     
     Product getProductById(int id);
     
     int updateProduct(Product product);
     
-    boolean isNameProductExistsToUpdate(String nameProduct, int id);
+    boolean isNameProductExistsToUpdate(String productName, int id);
     
-    boolean isCodeProductExistsToUpdate(String codeProduct, int id);
+    boolean isCodeProductExistsToUpdate(String productCode, int id);
     
-    String getCodeProductByNameProduct(String nameProduct);
+    String getCodeProductByNameProduct(String productName);
     
-    String getNameProductByCodeProduct (String codeProduct);
+    String getNameProductByCodeProduct(String productCode);
 
-    Product getProductByCodeProduct(String codeProduct);
+    Product getProductByCodeProduct (String productCode);
 }

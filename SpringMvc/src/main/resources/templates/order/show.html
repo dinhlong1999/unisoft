@@ -61,7 +61,7 @@
         <form th:action="@{/orders/list}" method="get" >
             <div th:if = "${roleName == 'ROLE_ADMIN'}">
             	<span>
-                	Tên đăng nhập : <input class="input" type="text"  name="username" style="width:15%;margin-left: 11px" th:value="${username}" placeholder="Vui lòng nhập tên đăng nhập">
+                	Tên đăng nhập : <input class="input" type="text"  name="accountName" style="width:15%;margin-left: 11px" th:value="${accountName}" placeholder="Vui lòng nhập tên đăng nhập">
             	</span>
             </div>
             <div style="margin-top: 5px" th:if = "${roleName == 'ROLE_ADMIN'}">
@@ -71,12 +71,12 @@
             </div>
              <div style="margin-top: 5px">
             	<span>
-                	Mã sản phẩm  : <input type="text" class="input"  name="codeProduct" style="width:15%;margin-left: 19px" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
+                	Mã sản phẩm  : <input type="text" class="input"  name="productCode" style="width:15%;margin-left: 19px" th:value="${productCode}" placeholder="Vui lòng nhập mã sản phẩm">
             	</span>
              </div>
             <div style="margin-top: 5px">
             	<span>
-                	Tên sản phẩm  : <input type="text" class="input"  name="nameProduct" style="width:15%;margin-left: 18px" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
+                	Tên sản phẩm  : <input type="text" class="input"  name="productName" style="width:15%;margin-left: 18px" th:value="${productName}" placeholder="Vui lòng nhập tên sản phẩm">
             	</span>
             </div>
             <div style="margin-top: 5px">
@@ -86,17 +86,17 @@
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Số điện thoại : <input type="text" class="input" name="phoneNumber" style="width:15%;margin-left: 13px" th:value="${phoneNumber}" placeholder="Vui lòng nhập số điện thoại">
+                	Số điện thoại : <input type="text" class="input" name="customerPhone" style="width:15%;margin-left: 13px" th:value="${customerPhone}" placeholder="Vui lòng nhập số điện thoại">
             	</span>
             </div>
              <div style="margin-top: 5px">
             	<span>
-                	Ngày bắt đầu  : <input type="date" class="input"  name="dateStart" style="width:8%;margin-left: 2px" th:value="${dateStart}">
+                	Ngày bắt đầu  : <input type="date" class="input"  name="orderDayBegin" style="width:8%;margin-left: 2px" th:value="${orderDayBegin}">
             	</span>
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Ngày kết thúc  : <input type="date" class="input" name="dateEnd" style="width:8%;margin-left: 7px" th:value="${dateEnd}">
+                	Ngày kết thúc  : <input type="date" class="input" name="orderDayEnd" style="width:8%;margin-left: 7px" th:value="${orderDayEnd}">
             	</span>
             </div>
            <div style="margin-top: 5px">
@@ -135,32 +135,32 @@
    	     	</tr>
    	     	<tr th:if="${ordersMap.size() > 0}" th:each="order,status:${ordersMap}" th:id="${order['id']}">
                 <td th:text="${status.count + page * limit}"></td>
-                <td th:text="${#temporals.format(order['dateStart'], 'yyyy/MM/dd HH:mm:ss')}"></td>
-                <td class="codeProduct"  th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['codeProduct']}" ></td>
-                <td class="nameProduct"  th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['nameProduct']}"></td>
+                <td th:text="${#temporals.format(order['order_day'], 'yyyy/MM/dd HH:mm:ss')}"></td>
+                <td class="productCode"  th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['productCode']}" ></td>
+                <td class="productName"  th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['productName']}"></td>
                 <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                <td class="quantityBook" th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['quantityBook']}" ></td>
-                <td class="customerName" th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['customerName']}"></td>
-                <td class="phoneNumber"  th:contenteditable="${(order['dateAllocation'] == null)} ? 'true' : null" th:text="${order['phoneNumber']}" ></td>
+                <td class="quantity" th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['quantity']}" ></td>
+                <td class="customerName" th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['customerName']}"></td>
+                <td class="customerPhone"  th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['customerPhone']}" ></td>
                 <td th:text="${order['address']}"></td>
                 <td th:text="${order['statusName']}"></td>
-                <td th:text="${order['dateAllocation'] != null ? #temporals.format(order['dateAllocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
-                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['username']}"></td>
+                <td th:text="${order['order_allocation'] != null ? #temporals.format(order['order_allocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
+                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['accountName']}"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
                 <td class="hidden" th:text="${order['version']}" ></td>
    	     	</tr>
    	     	<tr th:each="order,status:${ordersMap}" th:id="${order['id']}" class="hidden">
                 <td th:text="${status.count + page * limit}"></td>
-                <td th:text="${#temporals.format(order['dateStart'], 'yyyy/MM/dd HH:mm:ss')}"></td>
-                <td class="codeProduct"  th:text="${order['codeProduct']}" ></td>
-                <td class="nameProduct"  th:text="${order['nameProduct']}"></td>
+                <td th:text="${#temporals.format(order['order_day'], 'yyyy/MM/dd HH:mm:ss')}"></td>
+                <td class="productCode"  th:text="${order['productCode']}" ></td>
+                <td class="productName"  th:text="${order['productName']}"></td>
                 <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                <td class="quantityBook" th:text="${order['quantityBook']}" ></td>
+                <td class="quantity" th:text="${order['quantity']}" ></td>
                 <td class="customerName" th:text="${order['customerName']}"></td>
-                <td class="phoneNumber"  th:text="${order['phoneNumber']}" ></td>
+                <td class="customerPhone"  th:text="${order['customerPhone']}" ></td>
                 <td th:text="${order['address']}"></td>
                 <td th:text="${order['statusName']}"></td>
-                <td th:text="${order['dateAllocation'] != null ? #temporals.format(order['dateAllocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
+                <td th:text="${order['order_allocation'] != null ? #temporals.format(order['order_allocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['username']}"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
    	     	</tr>
@@ -173,7 +173,7 @@
             <nav aria-label="Page navigation example" > 
 	            <ul class="pagination" style="display: flex;justify-content: center">
 	            	<li th:if="${page > 0}" class="page-item" >
-	            		<a class="page-link" th:href="@{/orders/list(page=${page},username=${username},employeeName=${employeeName},codeProduct=${codeProduct},nameProduct=${nameProduct},customerName=${customerName},phoneNumber=${phoneNumber},dateStart=${dateStart},dateEnd=${dateEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}">Previous</a>
+	            		<a class="page-link" th:href="@{/orders/list(page=${page},accountName=${accountName},employeeName=${employeeName},productCode=${productCode},productName=${productName},customerName=${customerName},customerPhone=${customerPhone},orderDayBegin=${orderDayBegin},orderDayEnd=${orderDayEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}">Previous</a>
 	            	</li>
 	            	<li class="page-item"  th:if="${showStartEllipsis}">
 	            		<span class="page-link">...</span >
@@ -183,14 +183,14 @@
 	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
 	            		</li>
 	            		<li class="page-item" th:if="${pageNumber -1 != page}">
-	            			<a class="page-link" th:text="${pageNumber}"  th:href="@{/orders/list(page=${pageNumber},username=${username},employeeName=${employeeName},codeProduct=${codeProduct},nameProduct=${nameProduct},customerName=${customerName},phoneNumber=${phoneNumber},dateStart=${dateStart},dateEnd=${dateEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}" ></a>
+	            			<a class="page-link" th:text="${pageNumber}"  th:href="@{/orders/list(page=${pageNumber},accountName=${accountName},employeeName=${employeeName},productCode=${productCode},productName=${productName},customerName=${customerName},customerPhone=${customerPhone},orderDayBegin=${orderDayBegin},orderDayEnd=${orderDayEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}" ></a>
 	            		</li>
 	            	</th:block>
 	            	<li class="page-item"  th:if="${showEndEllipsis}">
 	            		<span  class="page-link">...</span>
 	            	</li>
 	            	<li class="page-item" th:if="${page + 1 != totalPage }">
-	            		<a class="page-link" th:href="@{/orders/list(page=${page + 2},username=${username},employeeName=${employeeName},codeProduct=${codeProduct},nameProduct=${nameProduct},customerName=${customerName},phoneNumber=${phoneNumber},dateStart=${dateStart},dateEnd=${dateEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}">Next</a>
+	            		<a class="page-link" th:href="@{/orders/list(page=${page + 2},accountName=${accountName},employeeName=${employeeName},productCode=${productCode},productName=${productName},customerName=${customerName},customerPhone=${customerPhone},orderDayBegin=${orderDayBegin},orderDayEnd=${orderDayEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}">Next</a>
 	            	</li>
 	            </ul>
             </nav> 
@@ -224,9 +224,9 @@
 	}
 	
 	function compareObjectValue (oldObject, newObject){
-		return oldObject.id === newObject.id && oldObject.codeProduct === newObject.codeProduct
-				&& oldObject.nameProduct === newObject.nameProduct && oldObject.quantityBook === newObject.quantityBook
-				&& oldObject.phoneNumber === newObject.phoneNumber && oldObject.nameCustomer === newObject.nameCustomer;
+		return oldObject.id === newObject.id && oldObject.productCode === newObject.productCode
+				&& oldObject.productName === newObject.productName && oldObject.quantity === newObject.quantity
+				&& oldObject.customerPhone === newObject.customerPhone && oldObject.customerName === newObject.customerName;
 	}
 
 	function checkChangeValue(id, rowData){
@@ -234,11 +234,11 @@
 		let recordHidden = $('#myTable').find('tr.hidden[id="' + id + '"]');
 		let oldValue = {
 			id : id,
-			codeProduct: recordHidden.find('.codeProduct').text(),
-			nameProduct: recordHidden.find('.nameProduct').text(),
-			quantityBook: recordHidden.find('.quantityBook').text(),
-			nameCustomer: recordHidden.find('.customerName').text(),
-			phoneNumber: recordHidden.find('.phoneNumber').text()
+			productCode: recordHidden.find('.productCode').text(),
+			productName: recordHidden.find('.productName').text(),
+			quantity: recordHidden.find('.quantity').text(),
+			customerName: recordHidden.find('.customerName').text(),
+			customerPhone: recordHidden.find('.customerPhone').text()
 		};
 		if (!compareObjectValue(oldValue,rowData)){
 			let existingIndex = currentArray.findIndex(item => item.id === id);
@@ -282,12 +282,12 @@
         	$('#myTable').append('<tr id='+newRowID + ' >' +
                 '                     <td></td>\n' +
                 '                     <td></td>\n' +
-                '                     <td class="codeProduct" contenteditable="true" ></td>\n' +
-                '                     <td class="nameProduct" contenteditable="true"></td>\n' +
+                '                     <td class="productCode"   contenteditable="true" ></td>\n' +
+                '                     <td class="productName"   contenteditable="true"></td>\n' +
                 '                     <td></td>\n' +
-                '                     <td class ="quantityBook" contenteditable="true"></td>\n' +
-                '                     <td class= "customerName" contenteditable="true"></td>\n' +
-                '                     <td class="phoneNumber" contenteditable="true"></td>\n' +
+                '                     <td class="quantity"      contenteditable="true"></td>\n' +
+                '                     <td class="customerName"  contenteditable="true"></td>\n' +
+                '                     <td class="customerPhone" contenteditable="true"></td>\n' +
                 '                     <td ></td>\n' +
                 '                     <td></td>\n' +
                 '                     <td></td>\n' +
@@ -340,31 +340,31 @@
         	
         });
 
-        $('#myTable').on('focusout','td.codeProduct[contenteditable="true"]',function () {
-        	   let codeProduct = $(this).text();
+        $('#myTable').on('focusout','td.productCode[contenteditable="true"]',function () {
+        	   let productCode = $(this).text();
                let row = $(this).closest("tr");
-               let nameProductCell = row.find("td:eq(3)");
-               let valueCodeProduct = $(this);
+               let productNameCell = row.find("td:eq(3)");
+               let valueProductCode = $(this);
                $.ajax({
                    contentType :"application/json",
                    method : "GET",
-                   url : `http://localhost:8081/api/product/getNameProduct?codeProduct=`+encodeURIComponent(codeProduct),
+                   url : `http://localhost:8081/api/product/getProductName?productCode=`+encodeURIComponent(productCode),
                    success : function(data) {
                        if (data === "") {
-                           nameProductCell.text('')
-                           valueCodeProduct.text('')
+                    	   productNameCell.text('')
+                           valueProductCode.text('')
                        }
                        else {
-                           nameProductCell.text(data)
+                    	   productNameCell.text(data)
                        }
                        let id = row.attr('id');
                        let rowData = {
                            id: id,
-                           codeProduct: row.find('td:eq(2)').text(),
-                           nameProduct: row.find('td:eq(3)').text(),
-                           quantityBook: row.find('td:eq(5)').text(),
-                           nameCustomer: row.find('td:eq(6)').text(),
-                           phoneNumber: row.find('td:eq(7)').text(),
+                           productCode: row.find('td:eq(2)').text(),
+                           productName: row.find('td:eq(3)').text(),
+                           quantity: row.find('td:eq(5)').text(),
+                           customerName: row.find('td:eq(6)').text(),
+                           customerPhone: row.find('td:eq(7)').text(),
                            version : row.find('td:eq(13)').text()
                        };
                        console.log(rowData);
@@ -376,32 +376,32 @@
                })
         });
          
-        $('#myTable').on('focusout','td.nameProduct[contenteditable="true"]',function () {
-        	  let nameProduct = $(this).text();
+        $('#myTable').on('focusout','td.productName[contenteditable="true"]',function () {
+        	  let productName = $(this).text();
               let row = $(this).closest("tr");
-              let codeProductCell = row.find("td:eq(2)");
-              let valueNameProduct = $(this);
+              let productCodeCell = row.find("td:eq(2)");
+              let valueProductName = $(this);
               $.ajax({
                   contentType :"application/json",
                   method : "GET",
-                  url : `http://localhost:8081/api/product/getCodeProduct?nameProduct=`+encodeURIComponent(nameProduct),
+                  url : `http://localhost:8081/api/product/getProductCode?productName=`+encodeURIComponent(productName),
                   success : function(data) {
                       if (data === "") {
-                          codeProductCell.text('')
-                          valueNameProduct.text('')
+                    	  productCodeCell.text('')
+                          valueProductName.text('')
                       }
                       else {
-                          codeProductCell.text(data)
+                    	  productCodeCell.text(data)
                       }
                       let id = row.attr('id');
                       let rowData = {
-                          id: id,
-                          codeProduct: row.find('td:eq(2)').text(),
-                          nameProduct: row.find('td:eq(3)').text(),
-                          quantityBook: row.find('td:eq(5)').text(),
-                          nameCustomer: row.find('td:eq(6)').text(),
-                          phoneNumber: row.find('td:eq(7)').text(),
-                          version : row.find('td:eq(13)').text()
+                              id: id,
+                              productCode: row.find('td:eq(2)').text(),
+                              productName: row.find('td:eq(3)').text(),
+                              quantity: row.find('td:eq(5)').text(),
+                              customerName: row.find('td:eq(6)').text(),
+                              customerPhone: row.find('td:eq(7)').text(),
+                              version : row.find('td:eq(13)').text()
                       };
 					  checkChangeValue(id,rowData);
                   },
@@ -414,29 +414,29 @@
          $('#myTable').on('focusout','td.customerName[contenteditable="true"]',function () {
              let customerName = $(this).text();
              let row = $(this).closest("tr");
-             let phoneNumberCell = row.find("td:eq(7)");
+             let customerPhoneCell = row.find("td:eq(7)");
              let valueCurrentCustomerName = $(this);
              $.ajax({
                  contentType :"application/json",
                  method : "GET",
-                 url: `http://localhost:8081/api/customer/getPhoneNumber?customerName=`+encodeURIComponent(customerName),
+                 url: `http://localhost:8081/api/customer/getCustomerPhone?customerName=`+encodeURIComponent(customerName),
                  success:function (data) {
                 	
                 	 if (data === ""){
                          valueCurrentCustomerName.text('')
-                         phoneNumberCell.text('');
+                         customerPhoneCell.text('');
                      }else {
-                         phoneNumberCell.text(data);
+                    	 customerPhoneCell.text(data);
                      }
                      let id = row.attr('id');
                      let rowData = {
-                         id: id,
-                         codeProduct: row.find('td:eq(2)').text(),
-                         nameProduct: row.find('td:eq(3)').text(),
-                         quantityBook: row.find('td:eq(5)').text(),
-                         nameCustomer: row.find('td:eq(6)').text(),
-                         phoneNumber: row.find('td:eq(7)').text(),
-                         version : row.find('td:eq(13)').text()
+                             id: id,
+                             productCode: row.find('td:eq(2)').text(),
+                             productName: row.find('td:eq(3)').text(),
+                             quantity: row.find('td:eq(5)').text(),
+                             customerName: row.find('td:eq(6)').text(),
+                             customerPhone: row.find('td:eq(7)').text(),
+                             version : row.find('td:eq(13)').text()
                      };
                      console.log(rowData);
 					 checkChangeValue(id,rowData)
@@ -448,32 +448,32 @@
              })
         });
         
-        $('#myTable').on('focusout','td.phoneNumber[contenteditable="true"]',function () {
+        $('#myTable').on('focusout','td.customerPhone[contenteditable="true"]',function () {
                 // Thực hiện yêu cầu Ajax khi ô phoneNumber mất focus
-                let phoneNumber = $(this).text();
+                let customerPhone = $(this).text();
                 let row = $(this).closest("tr");
                 let customerName = row.find("td:eq(6)");
-                let valueCurrentPhoneNumber = $(this);
+                let valueCurrentCustomerPhone = $(this);
                 $.ajax({
                     contentType :"application/json",
                     method : "GET",
-                    url : `http://localhost:8081/api/customer/getNameCustomer?phoneNumber=`+encodeURIComponent(phoneNumber),
+                    url : `http://localhost:8081/api/customer/getCustomerName?customerPhone=`+encodeURIComponent(customerPhone),
                     success:function (data) {
                         if (data === ""){
-                            valueCurrentPhoneNumber.text('')
+                        	valueCurrentCustomerPhone.text('')
                             customerName.text('');
                         }else {
 							customerName.text(data);
 						}
                         let id = row.attr('id');
                         let rowData = {
-                            id: id,
-                            codeProduct: row.find('td:eq(2)').text(),
-                            nameProduct: row.find('td:eq(3)').text(),
-                            quantityBook: row.find('td:eq(5)').text(),
-                            nameCustomer: row.find('td:eq(6)').text(),
-                            phoneNumber: row.find('td:eq(7)').text(),
-                            version : row.find('td:eq(13)').text()
+                                id: id,
+                                productCode: row.find('td:eq(2)').text(),
+                                productName: row.find('td:eq(3)').text(),
+                                quantity: row.find('td:eq(5)').text(),
+                                customerName: row.find('td:eq(6)').text(),
+                                customerPhone: row.find('td:eq(7)').text(),
+                                version : row.find('td:eq(13)').text()
                         };
 						checkChangeValue(id,rowData);
                     },
@@ -484,19 +484,19 @@
                 })
             });
         
-        $('#myTable').on('focusout','td.quantityBook[contenteditable="true"]',function () {
+        $('#myTable').on('focusout','td.quantity[contenteditable="true"]',function () {
 			let row = $(this).closest("tr");
 			console.log(row)
 			let id = row.attr('id');
-			let rowData = {
-				        id: id,
-				        codeProduct: row.find('td:eq(2)').text(),
-				        nameProduct: row.find('td:eq(3)').text(),
-				        quantityBook: row.find('td:eq(5)').text(),
-				        nameCustomer: row.find('td:eq(6)').text(),
-				        phoneNumber: row.find('td:eq(7)').text(),
-				        version : row.find('td:eq(13)').text()
-				    };
+			 let rowData = {
+                     id: id,
+                     productCode: row.find('td:eq(2)').text(),
+                     productName: row.find('td:eq(3)').text(),
+                     quantity: row.find('td:eq(5)').text(),
+                     customerName: row.find('td:eq(6)').text(),
+                     customerPhone: row.find('td:eq(7)').text(),
+                     version : row.find('td:eq(13)').text()
+             };
 			checkChangeValue(id,rowData);
 		})  
        window.addEventListener('storage',function (event) {
@@ -516,12 +516,12 @@
 					tbody.append(`<tr id=${row.id}>
 									<td></td>
 									<td></td>
-									<td class="codeProduct" contenteditable="true">${row.codeProduct}</td>
-									<td class="nameProduct" contenteditable="true">${row.nameProduct}</td>
+									<td class="productCode" contenteditable="true">${row.productCode}</td>
+									<td class="productName" contenteditable="true">${row.productName}</td>
 									<td></td>
-									<td class="quantityBook" contenteditable="true">${row.quantityBook}</td>
-									<td class="customerName" contenteditable="true">${row.nameCustomer}</td>
-									<td class="phoneNumber"  contenteditable="true">${row.phoneNumber}</td>
+									<td class="quantity" contenteditable="true">${row.quantity}</td>
+									<td class="customerName" contenteditable="true">${row.customerName}</td>
+									<td class="customerPhone"  contenteditable="true">${row.customerPhone}</td>
 									<td></td>
 									<td></td>
 									<td></td>
@@ -530,11 +530,11 @@
 								  </tr>`)
 				} else {
 					let id = `${row.id}`;
-					tbody.find('tr[id="' + id + '"]').find('.codeProduct').text(`${row.codeProduct}`);
-					tbody.find('tr[id="' + id + '"]').find('.nameProduct').text(`${row.nameProduct}`);
-					tbody.find('tr[id="' + id + '"]').find('.quantityBook').text(`${row.quantityBook}`);
-					tbody.find('tr[id="' + id + '"]').find('.customerName').text(`${row.nameCustomer}`);
-					tbody.find('tr[id="' + id + '"]').find('.phoneNumber').text(`${row.phoneNumber}`);
+					tbody.find('tr[id="' + id + '"]').find('.productCode').text(`${row.productCode}`);
+					tbody.find('tr[id="' + id + '"]').find('.productName').text(`${row.productName}`);
+					tbody.find('tr[id="' + id + '"]').find('.quantity').text(`${row.quantity}`);
+					tbody.find('tr[id="' + id + '"]').find('.customerName').text(`${row.customerName}`);
+					tbody.find('tr[id="' + id + '"]').find('.customerPhone').text(`${row.customerPhone}`);
 				}
 			})
 		}

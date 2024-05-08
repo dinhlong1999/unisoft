@@ -10,29 +10,29 @@ import java.util.Map;
 @Mapper
 public interface ProductMapper {
 
-    List<Map<String, Object>> getListProduct( String codeProduct,String nameProduct,int limit,int page);
+    List<Map<String, Object>> getListProduct( String productCode,String productName,int limit,int page);
 
-    int totalCountGetListProduct( String codeProduct, String nameProduct);
+    int totalCountGetListProduct( String productCode, String productName);
 
-    int deleteProduct(int id);
+    int deleteProduct(int id,int version);
     
     int insertProduct(Product product);
     
-    int getNameProductExists(String nameProduct);
+    int getNameProductExists(String productName);
     
-    int getCodeProductExists(String codeProduct);
+    int getCodeProductExists(String productCode);
     
     Product getProductById(int id);
     
     int updateProduct(Product product);
     
-    int getNameProductExistsToUpdate(String nameProduct,int id);
+    int getNameProductExistsToUpdate(String productName,int id);
     
-    int getCodeProductExistsToUpdate(String codeProduct,int id);
+    int getCodeProductExistsToUpdate(String productCode,int id);
     
-    String getCodeProductByNameProduct(String nameProduct);
+    String getCodeProductByNameProduct(String productName);
     
-    String getNameProductByCodeProduct (String codeProduct);
+    String getNameProductByCodeProduct (String productCode);
 
-    Product getProductByCodeProduct(String codeProduct);
+    Product getProductByCodeProduct(String productCode);
 }

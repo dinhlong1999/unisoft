@@ -10,9 +10,10 @@
             code, 
             flag, 
             inventory, 
-            name, 
-            price_buy AS priceBuy, 
-            price_sell AS priceSell 
+            name,
+            version, 
+            price_buy, 
+            price_sell 
         FROM
             products
         WHERE
@@ -65,7 +66,7 @@
    		FROM 
    			products
    		WHERE 
-   			name = #{nameProduct}
+   			name = #{productName}
      </select>
      
      <select id="getCodeProductExists" resultType ="int">
@@ -74,7 +75,7 @@
      	FROM 
      		products 
      	WHERE 
-     		code = #{codeProduct}
+     		code = #{productCode}
      </select>
      
      <select id="getNameProductExistsToUpdate" resultType="int">
@@ -110,9 +111,9 @@
     			flag = 1,
     		    version = version + 1
     		WHERE 
-    			id = #{id}
+    			id = #{arg0}
     		AND
-    		    version = #{version}
+    		    version = #{arg1}
     	]]>
     </update>
     
@@ -124,7 +125,7 @@
     			name,
     			code,
     			price_sell AS priceSell,
-    			priceBuy   AS priceSell,
+    			price_buy  AS priceBuy,
     			inventory,
     			version
     		FROM 
@@ -160,7 +161,7 @@
     		FROM
     			products
     		WHERE
-    			name  = #{nameProduct}
+    			name  = #{productName}
     		AND
     			flag = 0
     	]]>
@@ -173,7 +174,7 @@
     		FROM
     			products
     		WHERE
-    			code = #{codeProduct}
+    			code = #{productCode}
     		AND
     			flag = 0
     	]]>
@@ -183,11 +184,11 @@
 		<![CDATA[
 			SELECT
 			    id,
-			    price_sell AS priceSellS
+			    price_sell AS priceSell
 			FROM
 			    products
 			WHERE
-			    code = #{codeProduct}
+			    code = #{productCode}
 			AND
 			    flag = 0
 		]]>

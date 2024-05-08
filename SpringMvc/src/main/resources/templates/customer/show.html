@@ -61,8 +61,8 @@
     </div>
       	 
       	 <div class="createform">
-  		 	<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${customerName}','${customerPhone}')|">
-  				<a th:href="@{/customer/create}" style="text-decoration: none;color:black">Thêm mới khách hàng</a>
+  		 	<button th:attr ="onclick=|saveDataInLocalStorage('create',${page},'','${customerName}','${customerPhone}')|">
+  				Thêm mới khách hàng
   		 	</button>
   	  	 </div>
   	  	 
@@ -102,8 +102,8 @@
 					<td th:text="${customer['address']}"></td>
 					<td th:text="${customer['employeeName']}"></td>
 					<td th:if="${isAdmin == true || customer['accountId'] == accountId}" style="width:10%">
-						<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage(${page},'${customerName}','${customerPhone}')|" >
-  							<a th:href="@{/customer/edit/{id}(id=${customer['id']})}"  style="text-decoration: none;color:black">Chỉnh sửa</a>
+						<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage('edit',${page},${customer['id']},'${customerName}','${customerPhone}')|" >
+  							Chỉnh sửa
   						</button>
 					</td>
 		
@@ -181,10 +181,18 @@
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
 </script>
 <script>
-	function saveDataInLocalStorage(page,customerName,customerPhone) {
+	function saveDataInLocalStorage(action,page,id,customerName,customerPhone) {
     localStorage.setItem("page",page+1);
     localStorage.setItem("customerName",customerName);
     localStorage.setItem("customerPhone",customerPhone);
+		if(action === 'create' ){
+			console.log("Thêm mới");
+			window.location.href = '/customer/create'
+		}
+		if(action ==='edit') {
+			console.log("Chỉnh sửa");
+			window.location.href = '/customer/edit/' + encodeURIComponent(id);
+		}
 	}
 
 	window.onload=function (){
@@ -192,9 +200,9 @@
 	}
 	
 	function sendData(id,version,name){
-		document.getElementById("id").value = id;
-		document.getElementById("version").value = version;
-		document.getElementById("name").innerText=name;
+		$('#id').val(id);
+		$('#version').val(version);
+		$('#name').text(name);
 	}
 	 $(document).ready(function(){
      	$('#clear').on('click',function () {

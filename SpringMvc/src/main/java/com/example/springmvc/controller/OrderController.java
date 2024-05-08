@@ -2,7 +2,6 @@ package com.example.springmvc.controller;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.springmvc.common.Paging;
 import com.example.springmvc.model.Account;
 import com.example.springmvc.service.IAccountService;
 import com.example.springmvc.service.IOrderService;
@@ -46,126 +46,108 @@ public class OrderController {
 	    }
 
     @GetMapping("/list")
-    public String showListOrder(@RequestParam(required = false,defaultValue = "0") int page,
-    							@RequestParam(required = false,defaultValue = "") String username,
+    public String show(@RequestParam(required = false,defaultValue = "0") int page,
+    							@RequestParam(required = false,defaultValue = "") String accountName,
     							@RequestParam(required = false,defaultValue = "") String employeeName,
-    							@RequestParam(required = false,defaultValue = "") String codeProduct,
-    							@RequestParam(required = false,defaultValue = "") String nameProduct,
+    							@RequestParam(required = false,defaultValue = "") String productCode,
+    							@RequestParam(required = false,defaultValue = "") String productName,
     							@RequestParam(required = false,defaultValue = "") String customerName,
-    							@RequestParam(required = false,defaultValue = "") String phoneNumber,
-    							@RequestParam(required = false,defaultValue = "") String dateStart, 
-    							@RequestParam(required = false,defaultValue = "") String dateEnd,
+    							@RequestParam(required = false,defaultValue = "") String customerPhone,
+    							@RequestParam(required = false,defaultValue = "") String orderDayBegin, 
+    							@RequestParam(required = false,defaultValue = "") String orderDayEnd,
     							@RequestParam(required = false,defaultValue = "0") Integer statusAllocation,
     							@RequestParam(required = false,defaultValue = "0") Integer statusBooking,Model model){
-    	if (page != 0) {
-    		page = page - 1;
-		}
-    	int limit = 4;
-    	if (dateStart.isEmpty()) {
-    		dateStart = "2000-10-10";
-    	}else {
-    		model.addAttribute("dateStart", dateStart);
-    	};
-    	if (dateEnd.isEmpty()) {
-			dateEnd = "9999-10-10";
-		}else {
-			model.addAttribute("dateEnd", dateEnd);
-		}
-    	 if (statusAllocation == 0 && statusBooking == 0 ) {
-            statusAllocation = 2;
-            statusBooking = 1;
-         };
-         
-         if (dateStart.length() > 10) {
-        	 dateStart = "9999-10-10";
-         }else if (dateStart.length() < 10) {
-			dateStart = "1000-10-10";
-         }
-         if (dateEnd.length() > 10) {
-        	 dateEnd = "9999-10-10";
-         }else if (dateEnd.length() < 10) {
-        	 dateEnd = "1000-10-10";
-		}
-        
-         
-		 Account accountLogin = getAccountLogin();
-		 String roleName = accountLogin.getRole().getName();
-		 Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
-		 int employeeId = employee.getId();
-		 List<Map<String, Object>> ordersMap;
-		 int totalRecordByListAccount;
+    	Account accountLogin = getAccountLogin();
+    	String roleName = accountLogin.getRole().getName();
     	try {
-    		ordersMap = orderService.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking, limit, limit * page);
-        	totalRecordByListAccount = orderService.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking);
-		} catch (Throwable e) {
-			ordersMap = new ArrayList<>();
-			totalRecordByListAccount = 0;
-		}
-//		}List<Map<String, Object>> ordersMap = orderService.getListOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking, limit, limit * page);
-//    	int totalRecordByListAccount = orderService.getTotalRecordByOrder(username, employeeName, codeProduct, nameProduct, customerName, phoneNumber,(roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(dateStart), LocalDate.parse(dateEnd), statusAllocation,statusBooking);
-    	double temp = (double) totalRecordByListAccount / limit;
-    	int totalPage = (int) Math.ceil(temp);
+    		 if (page != 0) {
+    			 page = page - 1;
+    		 }
+    		 int limit = 4;
+    		 if (orderDayBegin.isEmpty()) {
+    			 orderDayBegin = "2000-10-10";
+    		 }else {
+    			 model.addAttribute("orderDayBegin", orderDayBegin);
+    		 };
+    		 if (orderDayEnd.isEmpty()) {
+    			 orderDayEnd = "9999-10-10";
+    		 }else {
+    			 model.addAttribute("orderDayEnd", orderDayEnd);
+    		 }
+    		 if (statusAllocation == 0 && statusBooking == 0 ) {
+    			 statusAllocation = 2;
+    			 statusBooking = 1;
+    		 };
+         
+    		 if (orderDayBegin.length() > 10) {
+    			 orderDayBegin = "9999-10-10";
+    		 }else if (orderDayBegin.length() < 10) {
+    			 orderDayBegin = "1000-10-10";
+    		 }
+    		 if (orderDayEnd.length() > 10) {
+    			 orderDayEnd = "9999-10-10";
+    		 }else if (orderDayEnd.length() < 10) {
+    			 orderDayEnd = "1000-10-10";
+    		 }
+        
+    		
+    		 Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
+    		 int employeeId = employee.getId();
+    		 List<Map<String, Object>> ordersMap = orderService.getListOrder(accountName, employeeName, productCode, productName, customerName, customerPhone,
+    											 (roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(orderDayBegin), 
+    											 LocalDate.parse(orderDayEnd), statusAllocation,statusBooking, limit, limit * page);
+    		 int totalRecordByListAccount = orderService.getTotalRecordByOrder(accountName, employeeName, productCode, productName, customerName, customerPhone,
+        																 (roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd), 
+        																  statusAllocation,statusBooking);
+		
+        	 double temp = (double) totalRecordByListAccount / limit;
+        	 int totalPage = (int) Math.ceil(temp);
     	
-    	//logic phân trang
-    	int maxVisitablePages = 10; //Số trang tối đa hiển thị
-        int adjacentPages = 2;  //số trang bên cạnh trang hiện tại
-        int startPage;
-        int endPage;
-        boolean showStartEllipsis = false; // Dấu ... đầu
-        boolean showEndEllipsis = false;  // Dấu ... cuối
-        if (totalPage <= maxVisitablePages) {
-       	    startPage = 1;
-       	    endPage = totalPage;
-       	} else {
-       	    if (page <= maxVisitablePages - adjacentPages) {
-       	        startPage = 1;
-       	        endPage = maxVisitablePages;
-       	        showEndEllipsis = true;
-       	    } else if (page >= totalPage - adjacentPages) {
-       	        startPage = totalPage - maxVisitablePages + 1;
-       	        endPage = totalPage;
-       	        showStartEllipsis = true;
-       	    } else {
-       	        startPage = page - adjacentPages;
-       	        endPage = page + adjacentPages;
-       	        showStartEllipsis = true;
-       	        showEndEllipsis = true;
-       	    }
-       	    
-       	    
-       	}
-        model.addAttribute("startPage",startPage);
-        model.addAttribute("endPage", endPage);
-        model.addAttribute("page",page);
-        model.addAttribute("limit",limit);
-        model.addAttribute("totalPage",totalPage);
-        model.addAttribute("showStartEllipsis",showStartEllipsis);
-        model.addAttribute("showEndEllipsis",showEndEllipsis);
+        	 //Send variable to handle paging
+        	 Map<String,Object> handlePaging = Paging.handlePaging(page, totalPage);
+        	 int startPage = (int) handlePaging.get("startPage");
+        	 int endPage = (int) handlePaging.get("endPage");
+        	 boolean showStartEllipsis = (boolean) handlePaging.get("showStartEllipsis");
+        	 boolean showEndEllipsis = (boolean) handlePaging.get("showEndEllipsis");
+    	
+        	 model.addAttribute("startPage",startPage);
+        	 model.addAttribute("endPage", endPage);
+        	 model.addAttribute("page",page);
+        	 model.addAttribute("limit",limit);
+        	 model.addAttribute("totalPage",totalPage);
+        	 model.addAttribute("showStartEllipsis",showStartEllipsis);
+        	 model.addAttribute("showEndEllipsis",showEndEllipsis);
         
-        model.addAttribute("ordersMap", ordersMap);
-        model.addAttribute("nameLogin", accountLogin.getUsername());
-		model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
-        model.addAttribute("roleName",roleName);
+        	 model.addAttribute("ordersMap", ordersMap);
+        	 model.addAttribute("nameLogin", accountLogin.getUsername());
+        	 model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
+        	 model.addAttribute("roleName",roleName);
         
-        model.addAttribute("username", username);
-        model.addAttribute("employeeName", employeeName);
-        model.addAttribute("codeProduct", codeProduct);
-        model.addAttribute("nameProduct", nameProduct);
-        model.addAttribute("customerName", customerName);
-        model.addAttribute("phoneNumber", phoneNumber);
+        	 model.addAttribute("accountName", accountName);
+        	 model.addAttribute("employeeName", employeeName);
+        	 model.addAttribute("productCode", productCode);
+        	 model.addAttribute("productName", productName);
+        	 model.addAttribute("customerName", customerName);
+        	 model.addAttribute("customerPhone", customerPhone);
         
       
-        model.addAttribute("statusAllocation", statusAllocation);
-        model.addAttribute("statusBooking", statusBooking);
-        return "order/listOrder";
+        	 model.addAttribute("statusAllocation", statusAllocation);
+        	 model.addAttribute("statusBooking", statusBooking);
+        	 return "order/show";
+    	} catch (Throwable e) {
+    		System.out.println(e.getMessage());
+    		model.addAttribute("nameLogin", accountLogin.getUsername());
+       	 	model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
+       	 	model.addAttribute("roleName",roleName);
+       	 	model.addAttribute("ordersMap", new ArrayList<>());
+       	 	model.addAttribute("error", "Lỗi !!! Vui lòng thử lại");
+       	    return "order/show";
+			
+			
+		}	
     }
     
-    @GetMapping("/save")
-    public String saveOrders(@RequestParam List<Object> data,Model model ) {
-    	
-    	
-    	return "orders/list";
-    }
+
     
     
     

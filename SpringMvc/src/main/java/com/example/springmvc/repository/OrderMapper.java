@@ -10,19 +10,21 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface OrderMapper {
 	
-	List<Map<String, Object>> getListOrder(String username, String employeeName, String codeProduct, String nameProduct, String customerName,
-									 String phoneNumber, boolean isAdmin, int employeeId, LocalDate dateStart, LocalDate  dateEnd, int statusAllocation, int statusBooking, int limit, int offset);
+	List<Map<String, Object>> getListOrder(String accountName, String employeeName, String productCode, String productName, String customerName,
+									 String customerPhone, boolean isAdmin, int employeeId, LocalDate orderDayBegin, LocalDate orderDayEnd, int statusAllocation, int statusBooking, int limit, int offset);
 	
-	int getTotalRecordByOrder(String username, String employeeName, String codeProduct, String nameProduct, String customerName,
-									 String phoneNumber,  boolean isAdmin, int employeeId, LocalDate dateStart, LocalDate dateEnd, int statusAllocation, int statusBooking);
+	int getTotalRecordByOrder(String accountName, String employeeName, String productCode, String productName, String customerName,
+									 String customerPhone,  boolean isAdmin, int employeeId, LocalDate orderDayBegin, LocalDate orderDayEnd, int statusAllocation, int statusBooking);
 	
 
-	int insertOrders(int customerId, int employeeId, int productId, int statusId, LocalDateTime dateStart,double price, int quantityBook );
+	int insertOrders(int customerId, int employeeId, int productId, int statusId, LocalDateTime orderDay,double price, int quantity );
 	
 	
-	int updateOrder(int customerId, int productId, int quantitybook, int version, double price ,int id);
+	int updateOrder(int customerId, int productId, int quantity, int version, double price ,int id);
 
+	
 	int getOrderVersionById(int id);
+	
 	
 	String goodsAllocation(int productId, int quantityBook);
 }

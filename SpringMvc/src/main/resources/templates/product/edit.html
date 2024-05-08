@@ -5,7 +5,7 @@
 <title>Chỉnh sửa sản phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	
 	<style>
 		body{
@@ -46,11 +46,11 @@
 	<h1>Chỉnh sửa sản phẩm</h1>
 		
 	<div class="list">
-  		<button type="button" class="btn btn-light">
-  			<a id="link" th:href="@{/product/list}" style="text-decoration: none;color:black">Quay về danh sách</a>
+  		<button type="button" class="btn btn-light" id="btn-back">
+  			Quay về danh sách
   		</button>
   	</div>
-  		<form th:object="${productDTO}" th:action ="@{/product/edit}" method="post">
+  		<form th:object="${productDTO}" th:action ="@{/product/update}" method="post">
   			 <div class="mb-3">
    				 <label for="codeProduct" class="form-label">Mã sản phẩm</label>
    			     <input type="text" th:field="*{code}" class="form-control" id="codeProduct" aria-describedby="emailHelp">
@@ -65,7 +65,7 @@
   			 </div>
   			 <div class="mb-3">
   	 			  <label for="priceSell" class="form-label">Giá bán</label>
-   			     <input type="number"    th:field="*{priceSell}" class="form-control" id="priceSell"  aria-describedby="emailHelp">
+   			     <input type="number"    th:field="*{priceSell}"   class="form-control" id="priceSell"  aria-describedby="emailHelp">
 				 <input type="hidden" th:value="${productDTO.priceSell}" id="priceSellOld">
     			 <div  class="form-text" th:if="${#fields.hasErrors()}"  th:errors="*{priceSell}"></div>
   			 </div>
@@ -83,8 +83,8 @@
 			<input type ="hidden" th:field ="*{id}" class="form-control" >
 			<input type ="hidden" th:field ="*{version}" class="form-control" >
 			<input type="hidden" id="page" name="page"/>
-			<input type="hidden" id="nameSearch" name="nameSearch">
-			<input type="hidden" id="codeSearch" name="codeSearch">
+			<input type="hidden" id="productName" name="productName">
+			<input type="hidden" id="productCode" name="productCode">
 
   			 <div class="mb-3" id="sub">
   			  	<button id="submit" type="submit"  class="btn btn-light" >Chỉnh sửa sản phẩm</button>
@@ -99,13 +99,9 @@
  
 </body>
 <script>
-	let link = document.getElementById("link")
 	let page = localStorage.getItem("page");
-	let nameProduct = localStorage.getItem("nameProduct");
-	let codeProduct = localStorage.getItem("codeProduct");
-
-
-	link.href = '/product/list?page='+(page)+'&nameProduct='+nameProduct+'&codeProduct=' + codeProduct;
+	let productName = localStorage.getItem("productName");
+	let productCode = localStorage.getItem("productCode");
 
 	function compareObject(oldValueObject,newValueObject) {
 		return oldValueObject.code === newValueObject.code
@@ -117,8 +113,8 @@
  	$(document).ready(function (){
  		$('#submit').on('click',function(event){
  			$('#page').val(page);
- 	 		$('#nameSearch').val(nameProduct);
- 	 		$('#codeSearch').val(codeProduct);
+ 	 		$('#productName').val(productName);
+ 	 		$('#productCode').val(productCode);
 			let codeProductOld = $('#codeProductOld').val();
 			let nameProductOld = $('#nameProductOld').val();
 			let priceSellOld = $('#priceSellOld').val();
@@ -151,7 +147,9 @@
 			}
 
  		});
- 		
+ 		$('#btn-back').on('click',function () {
+			window.location.href = '/product/list?page='+(page)+'&productName='+productName+'&productCode=' + productCode;
+		})
  	})
  	
 

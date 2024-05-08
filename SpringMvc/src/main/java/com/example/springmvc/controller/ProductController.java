@@ -21,7 +21,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +29,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/product")
 public class ProductController {
+	
     @Autowired
     private IProductService productService;
    
@@ -49,15 +50,15 @@ public class ProductController {
 
     @GetMapping("/list")
     public String show(@RequestParam(required = false,defaultValue = "0") int page,
-                       @RequestParam(required = false,defaultValue = "") String codeProduct,
-                       @RequestParam(required = false,defaultValue = "") String nameProduct,
+                       @RequestParam(required = false,defaultValue = "") String productCode,
+                       @RequestParam(required = false,defaultValue = "") String productName,
                        Model model,RedirectAttributes redirectAttributes) {
     	 Account accountLogin = getAccountLogin();
     	 try {
     		 if (page != 0){
     			 page = page -1;
     		 }
-    		 if (page < 0) {
+    		 if (page < 0 ) {
     			 return "redirect:/product/list";
     		 }
     		 int limit = 4;
@@ -66,8 +67,8 @@ public class ProductController {
         	 }else {
         		 model.addAttribute("isAdmin",false);
         	 }
-        	 List<Product> productList = productService.getListProduct(codeProduct,nameProduct,limit,limit*page);
-             int totalRow = productService.totalRowGetListProduct(codeProduct,nameProduct) ;
+        	 List<Product> productList = productService.getListProduct(productCode,productName,limit,limit*page);
+             int totalRow = productService.totalRowGetListProduct(productCode,productName) ;
              double temp = (double) totalRow / limit ;
              int totalPage = (int) Math.ceil(temp);
              
@@ -87,94 +88,101 @@ public class ProductController {
              model.addAttribute("showEndEllipsis",showEndEllipsis);
              
              
-             
              model.addAttribute("productList",productList);
-             model.addAttribute("codeProduct",codeProduct);
-             model.addAttribute("nameProduct",nameProduct);
+             model.addAttribute("productCode",productCode);
+             model.addAttribute("productName",productName);
              model.addAttribute("nameLogin",accountLogin.getUsername());
-            
 		} catch (Exception  e) {
-		System.out.println(e.getMessage());	
-		
+			 System.out.println(e.getMessage());
+			 model.addAttribute("error", "Lỗi !!! Vui lòng thử lại.");
+			 model.addAttribute("productList", new ArrayList<>());
+			 model.addAttribute("productCode",productCode);   
+			 model.addAttribute("productName",productName);
+			 model.addAttribute("nameLogin",accountLogin.getUsername());
 		}
-        return "product/listproduct";
+        return "product/show";
     }
     
-    @PostMapping("/delete")
-    public String deleteProduct(@RequestParam int idDelete,
-    							@RequestParam int page,
-    							@RequestParam String nameProduct,
-    							@RequestParam String codeProduct, RedirectAttributes redirectAttributes) {
-    	int rowEffect = 0;
+    @PostMapping("/destroy")
+    public String delete(@RequestParam int id,
+    					 @RequestParam int version,
+    					 @RequestParam int page,
+    					 @RequestParam String productName,
+    					 @RequestParam String productCode, 
+    					 RedirectAttributes redirectAttributes) {
     	try {
-    		 rowEffect = productService.deleteProductById(idDelete);
-		} catch (Throwable e) {
+    		 int rowEffect = 0;
+    		 rowEffect = productService.deleteProductById(id,version);
+    		 if (rowEffect == 1) {
+    			 redirectAttributes.addFlashAttribute("success","Xóa thành công.");
+    			 return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
+    		 }else {
+    			 redirectAttributes.addFlashAttribute("error","Xóa thất bại.");
+    			 return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
+    		 }
+    	} catch (Throwable e) {
 			System.out.println(e.getMessage());
+			redirectAttributes.addFlashAttribute("error","Lỗi !!! Vui lòng thử lại.");
+			return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
 		}
-    	if (rowEffect == 1) {
-    		redirectAttributes.addFlashAttribute("message","Xóa thành công.");
-    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeProduct + "&nameProduct=" +nameProduct;
-    	}else {
-    		redirectAttributes.addFlashAttribute("message","Xóa thất bại.");
-    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeProduct + "&nameProduct=" +nameProduct;
-    	}
     }
     
-    @GetMapping("/showform")
-    public String showFormCreate(Model model) {
+    @GetMapping("/create")
+    public String create(Model model) {
     	Account account = getAccountLogin();
     	model.addAttribute("productDTO",new ProductDTO());
     	model.addAttribute("nameLogin",account.getUsername());
     	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-    	return "product/formcreateproduct";	
+    	return "product/create";	
     }
     
-    @PostMapping("/create")
-    public String saveProduct(@Valid @ModelAttribute ("productDTO") ProductDTO productDTO,@RequestParam int page,
-    												 @RequestParam String nameSearch,@RequestParam String codeSearch , 
-    												 BindingResult bindingResult,Errors errors, 
-    												 RedirectAttributes redirectAttributes, Model model) {
-    
-        new ProductDTO().validate(productDTO,bindingResult);
-        Account account = getAccountLogin();
-        if (!productService.isCodeProductExists(productDTO.getCode())){
-        	errors.rejectValue("codeProduct", null, "Mã sản phẩm không được trùng");
-
-        }
-        if (!productService.isNameProductExists(productDTO.getName())){
-        	errors.rejectValue("nameProduct", null, "Tên sản phẩm không được trùng");
-        }
-    	if(bindingResult.hasFieldErrors()) {
-    		model.addAttribute("productDTO",productDTO);
-    		model.addAttribute("nameLogin",account.getUsername());
-        	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-    		return "product/formcreateproduct";
-    	}
-    	Product product = new Product();
-    	BeanUtils.copyProperties(productDTO, product);
-    	product.setName(product.getName().trim());
-    	int result = 0;
+    @PostMapping("/store")
+    public String store(@Valid @ModelAttribute ("productDTO") ProductDTO productDTO,
+    					@RequestParam int page,
+    					@RequestParam String productCode,
+    					@RequestParam String productName, 
+    					BindingResult bindingResult,Errors errors, 
+    					RedirectAttributes redirectAttributes, Model model) {
+    	Account account = getAccountLogin();
     	try {
-    		 result = productService.insertProduct(product);
-		} catch (Throwable e) {
+    		new ProductDTO().validate(productDTO,bindingResult);
+    		if (!productService.isCodeProductExists(productDTO.getCode())){
+    			errors.rejectValue("code", null, "Mã sản phẩm không được trùng");
+    		}
+    		if (!productService.isNameProductExists(productDTO.getName())){
+    			errors.rejectValue("name", null, "Tên sản phẩm không được trùng");
+    		}
+    		if(bindingResult.hasFieldErrors()) {
+    			model.addAttribute("productDTO",productDTO);
+    			model.addAttribute("nameLogin",account.getUsername());
+    			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
+    			return "product/create";
+    		}
+    		Product product = new Product();
+    		BeanUtils.copyProperties(productDTO, product);
+    		int result = productService.insertProduct(product);
+    		if( result == 0 ) {
+                redirectAttributes.addFlashAttribute("error","Thêm mới thất bại.");
+        		return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
+        	}else {
+                redirectAttributes.addFlashAttribute("success","Thêm mới thành công.");
+        		return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
+        	}
+		}catch (Throwable e) {
 			System.out.println(e.getMessage());
+			redirectAttributes.addFlashAttribute("error", "Lỗi !!! Vui lòng thử lại.");
+			return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
 		}
-    	if(result == 0) {
-            redirectAttributes.addFlashAttribute("message","Thêm mới thất bại.");
-    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
-    	}else {
-            redirectAttributes.addFlashAttribute("message","Thêm mới thành công.");
-    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
-    	}
+    	
     }
     
-    @GetMapping("/showformedit/{id}")
-    public String showFromEdit(@PathVariable("id") int id,Model model,RedirectAttributes redirectAttributes) {
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") int id,Model model,RedirectAttributes redirectAttributes) {
     	Account account = getAccountLogin();
     	try {
     		Product product = productService.getProductById(id);
     		if (product == null) {
-				redirectAttributes.addFlashAttribute("message", "Không tồn tại sản phẩm này trong hệ thống");
+				redirectAttributes.addFlashAttribute("error", "Không tồn tại sản phẩm này trong hệ thống");
 				return "redirect:/product/list";
 			}
         	ProductDTO productDTO = new ProductDTO();
@@ -182,49 +190,51 @@ public class ProductController {
         	model.addAttribute("productDTO",productDTO);
         	model.addAttribute("nameLogin",account.getUsername());
         	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
+        	return "product/edit";
 		} catch (Throwable e) {
 			System.out.println(e.getMessage());
+			redirectAttributes.addFlashAttribute("error", "Lỗi !!! Vui lòng thử lại.");
+			return "redirect:/product/list";
 		}
     	
-    	return "product/formupdateproduct";
     }
     
-    @PostMapping("/edit")
-    public String editProduct(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
-    								@RequestParam int page,@RequestParam String nameSearch,
-    								@RequestParam String codeSearch , BindingResult bindingResult,Errors errors, 
-    								RedirectAttributes redirectAttributes, Model model) {
+    @PostMapping("/update")
+    public String update(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
+    					 @RequestParam int page,
+    				     @RequestParam String productName,
+    					 @RequestParam String productCode , 
+    				     BindingResult bindingResult,Errors errors, 
+    					 RedirectAttributes redirectAttributes, Model model) {
     	Account account = getAccountLogin();
-    	if (!productService.isCodeProductExistsToUpdate(productDTO.getCode(),productDTO.getId())) {
-    		errors.rejectValue("codeProduct", null,"Mã sản phẩm không được trùng");
-    	}
-    	if (!productService.isNameProductExistsToUpdate(productDTO.getName(), productDTO.getId())) {
-    		errors.rejectValue("nameProduct", null,"Tên sản phẩm không được trùng");
-    	}
-    	
-    	new ProductDTO().validate(productDTO, bindingResult);
-    	if (bindingResult.hasErrors()) {
-    		model.addAttribute("nameLogin",account.getUsername());
-        	model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-			model.addAttribute("productDTO",productDTO);
-			return "product/formupdateproduct";
-		}
-    	Product product = new Product();
-    	BeanUtils.copyProperties(productDTO, product);
-    	product.setName(product.getName().trim());
-    	int result = 0;
     	try {
-    		 result = productService.updateProduct(product);
-		} catch (Throwable e) {
+    		if (!productService.isCodeProductExistsToUpdate(productDTO.getCode(),productDTO.getId())) {
+    			errors.rejectValue("code", null,"Mã sản phẩm không được trùng");
+    		}
+    		if (!productService.isNameProductExistsToUpdate(productDTO.getName(), productDTO.getId())) {
+    			errors.rejectValue("name", null,"Tên sản phẩm không được trùng");
+    		}
+    		new ProductDTO().validate(productDTO, bindingResult);
+    		if (bindingResult.hasErrors()) {
+    			model.addAttribute("nameLogin",account.getUsername());
+    			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
+    			model.addAttribute("productDTO",productDTO);
+    			return "product/edit";
+    		}
+    		Product product = new Product();
+    		BeanUtils.copyProperties(productDTO, product);
+    		int result = productService.updateProduct(product);
+    		if (result != 1) {
+    			redirectAttributes.addFlashAttribute("error","Chỉnh sửa thất bại.");
+    			return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
+    		}else {
+    			redirectAttributes.addFlashAttribute("success","Chỉnh sửa thành công.");
+    			return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;    	
+    		}
+    	}catch (Throwable e) {
 			System.out.println(e.getMessage());
-		}
-    	if (result != 1) {
-    		redirectAttributes.addFlashAttribute("message","Chỉnh sửa thất bại.");
-    		return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
-		}else {
-			redirectAttributes.addFlashAttribute("message","Chỉnh sửa thành công.");
-	    	return "redirect:/product/list?page=" + page + "&codeProduct="+codeSearch + "&nameProduct=" +nameSearch;
-	    	
+			redirectAttributes.addFlashAttribute("error","Lỗi !!! Vui lòng thử lại");
+			return "redirect:/product/list?page=" + page + "&productCode="+productCode + "&productName=" +productName;
 		}
     	
     }

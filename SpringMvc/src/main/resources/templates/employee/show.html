@@ -59,8 +59,8 @@
         </script>
     
       <div class="createform">
-  		<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${accountName}','${employeeName}','${phone}')|">
-  			<a th:href="@{/employee/create}" style="text-decoration: none;color:black">Thêm mới nhân viên</a>
+  		<button th:attr ="onclick=|saveDataInLocalStorage('create',${page},'','${accountName}','${employeeName}','${phone}')|">
+  			Thêm mới nhân viên
   		</button>
   	  </div>
   	  
@@ -105,8 +105,8 @@
    	     			<td th:text="${map['phone']}"></td>
    	     			<td class="isOnline" th:text="${map['isOnline'] ? 'Online' : 'Offline' }"></td>
    	     			<td style="width:10%" th:colspan="${(map['roleId'] == 2) ? 1 : 2}">
-   	     				<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage(${page},'${accountName}','${employeeName}','${phone}')|" >
-  							<a th:href ="@{/employee/edit/{id}(id=${map['id']})}"  style="text-decoration: none;color:black">Chỉnh sửa</a>
+   	     				<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage('edit',${page},${map['id']},'${accountName}','${employeeName}','${phone}')|" >
+  							Chỉnh sửa
   						</button>
    	     			</td>
    	     			<td th:if="${map['roleId'] == 2}">
@@ -187,42 +187,50 @@
 <script src="/webjars/sockjs-client/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 <script>
-        var stompClient = null;
-        $(document).ready(function() {
-            connect();
-        });
-
-        function connect() {
-            var socket = new SockJS("/hello");
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
-                console.log("Connected");
-                stompClient.subscribe('/topic/employeeStatus', function(message) {
-                	var employee = JSON.parse(message.body);
-                	console.log("nhan vien" + employee.name);
-                	console.log(message)
-                	console.log("online " + employee.online)
-                	console.log("Online " + employee.Online)
-                	var employeeId = employee.id;
-                    $('#employeeTable').find('tr[data-id="' + employeeId + '"]').find('.isOnline').text(employee.online ? 'Online' : 'Offline');
-
-                	
-                });
-            });
-        };
+        // var stompClient = null;
+        // $(document).ready(function() {
+        //     connect();
+        // });
+		//
+        // function connect() {
+        //     var socket = new SockJS("/hello");
+        //     stompClient = Stomp.over(socket);
+        //     stompClient.connect({}, function(frame) {
+        //         console.log("Connected");
+        //         stompClient.subscribe('/topic/employeeStatus', function(message) {
+        //         	var employee = JSON.parse(message.body);
+        //         	console.log("nhan vien" + employee.name);
+        //         	console.log(message)
+        //         	console.log("online " + employee.online)
+        //         	console.log("Online " + employee.Online)
+        //         	var employeeId = employee.id;
+        //             $('#employeeTable').find('tr[data-id="' + employeeId + '"]').find('.isOnline').text(employee.online ? 'Online' : 'Offline');
+		//
+        //
+        //         });
+        //     });
+        // };
         
         
         function sendData(id,version,name){
-        	document.getElementById("id").value = id;
-        	document.getElementById("version").value= version;
-        	document.getElementById("name").innerText = name;
+			$('#id').val(id);
+			$('#version').val(version);
+			$('#name').text(name);
         }
         
-        function saveDataInLocalStorage(page,accountName,employeeName,phone) {
+        function saveDataInLocalStorage(action,page,id,accountName,employeeName,phone) {
             localStorage.setItem("page",page+1);
             localStorage.setItem("accountName",accountName);
             localStorage.setItem("employeeName",employeeName);
             localStorage.setItem("phone",phone);
+			if(action === 'create' ){
+				console.log("Thêm mới");
+				window.location.href = '/employee/create'
+			}
+			if(action ==='edit') {
+				console.log("Chỉnh sửa");
+				window.location.href = '/employee/edit/' + encodeURIComponent(id);
+			}
         }
 
         window.onload=function (){

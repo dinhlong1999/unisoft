@@ -5,6 +5,7 @@
     <title>Danh sach san pham</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         h1,td,th {
@@ -40,24 +41,28 @@
   
   <div class="container-fluid">
     <h1>Danh sách sản phẩm</h1>
-   
-    <div style="color: red" th:if="${message}">
-        <span id ="test" th:text="${message}"></span>
-        <script th:inline="javascript">           
-            function myJavaScriptFunction() {
-                var message = /*[[${message}]]*/ '';
-                alert(message);
-                
-            }
-                myJavaScriptFunction();
-           
-
-        </script>
-    </div>
+    <script th:inline="javascript">
+        let successMessage = /*[[${success}]]*/ null;
+        if (successMessage !== null && successMessage !== '') {
+            Swal.fire({
+            title: successMessage,
+            icon: 'success',
+            confirmButtonColor: 'blue' 
+            });
+        }   
+        let errorMessage = /*[[${error}]]*/ null;
+        if (errorMessage !== null && errorMessage !== '') {
+            Swal.fire({
+            title: errorMessage,
+            icon: 'error',
+            confirmButtonColor: 'red' 
+            });
+        }
+     </script>
     
   	<div class="createform"  th:if="${isAdmin}">
-  		<button th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
-  			<a th:href="@{/product/showform}" style="text-decoration: none;color:black">Thêm mới sản phẩm</a>
+  		<button th:attr ="onclick=|saveDataInLocalStorage('create',${page},'','${productName}','${productCode}')|">
+  			Thêm mới sản phảm
   		</button>
   	</div>
     	
@@ -65,12 +70,12 @@
         <form th:action="@{/product/list}" method="get" >
             <div>
             <span>
-                Mã sản phẩm : <input class="input" type="text"  name="codeProduct" style="width:14%;" th:value="${codeProduct}" placeholder="Vui lòng nhập mã sản phẩm">
+                Mã sản phẩm : <input class="input" type="text"  name="productCode" style="width:14%;" th:value="${productCode}" placeholder="Vui lòng nhập mã sản phẩm">
             </span>
             </div>
             <div style="margin-top: 5px">
             <span>
-                 Tên sản phẩm: <input class="input" type="text"  name="nameProduct" style="width:14%;margin-left:3px" th:value="${nameProduct}" placeholder="Vui lòng nhập tên sản phẩm">
+                 Tên sản phẩm: <input class="input" type="text"  name="productName" style="width:14%;margin-left:3px" th:value="${productName}" placeholder="Vui lòng nhập tên sản phẩm">
             </span>
             </div>
             <div style="margin-top: 5px;">
@@ -101,12 +106,13 @@
                 <td th:if="${isAdmin == true}" th:text="${#numbers.formatDecimal(product.priceBuy, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 
                 <td th:if="${isAdmin == true}" style="width:10%">
-  					<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage(${page},'${nameProduct}','${codeProduct}')|">
-  						<a th:href="@{/product/showformedit/{id}(id=${product.id})}" style="text-decoration: none;color:black">Chỉnh sửa</a>
+  					<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage('edit',${page},${product.id},'${productName}','${productCode}')|">
+  						Chỉnh sửa 
   					</button>
                 </td>
                 <td th:if="${isAdmin == true}">
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr ="onclick=|sendData(${product.id},'${product.nameProduct}')|">
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            th:attr="onclick=|sendData(${product.id},${product.version},'${product.name}')|">
   						Xóa
 					</button>
                 </td>
@@ -121,7 +127,7 @@
             <nav aria-label="Page navigation example" > 
 	            <ul class="pagination" style="display: flex;justify-content: center">
 	            	<li th:if="${page > 0}" class="page-item" >
-	            		<a class="page-link" th:href="@{/product/list(page=${page},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Previous</a>
+	            		<a class="page-link" th:href="@{/product/list(page=${page},productCode=${productCode},productName=${productName})}">Previous</a>
 	            	</li>
 	            	<li class="page-item"  th:if="${showStartEllipsis}">
 	            		<span class="page-link">...</span >
@@ -131,14 +137,14 @@
 	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
 	            		</li>
 	            		<li class="page-item" th:if="${pageNumber -1 != page}">
-	            			<a class="page-link " th:href="@{/product/list(page=${pageNumber},codeProduct=${codeProduct},nameProduct=${nameProduct})}" th:text="${pageNumber}" ></a>
+	            			<a class="page-link " th:href="@{/product/list(page=${pageNumber},productCode=${productCode},productName=${productName})}" th:text="${pageNumber}" ></a>
 	            		</li>
 	            	</th:block>
 	            	<li class="page-item"  th:if="${showEndEllipsis}">
 	            		<span  class="page-link">...</span>
 	            	</li>
 	            	<li class="page-item" th:if="${page + 1 != totalPage }">
-	            		<a class="page-link" th:href="@{/product/list(page=${page+2},codeProduct=${codeProduct},nameProduct=${nameProduct})}">Next</a>
+	            		<a class="page-link" th:href="@{/product/list(page=${page+2},productCode=${productCode},productName=${productName})}">Next</a>
 	            	</li>
 	            </ul>
    
@@ -158,13 +164,14 @@
         <h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form th:action ="@{/product/delete}" method= "post">
+      <form th:action ="@{/product/destroy}" method= "post">
        <div class="modal-body">
 	      Bạn có muốn xóa sản phẩm : <span id="name" style="color:red"></span>?
-	   	<input type="hidden" id="id" name="idDelete">
+	   	<input type="hidden" id="id" name="id">
+	   	<input type="hidden" id="version" name="version">
 	   	<input type="hidden" name="page" th:value="${page + 1}">
-	   	<input type="hidden" name="nameProduct" th:value="${nameProduct}">
-	   	<input type="hidden" name="codeProduct" th:value="${codeProduct}">
+	   	<input type="hidden" name="productName" th:value="${productName}">
+	   	<input type="hidden" name="productCode" th:value="${productCode}">
 	   	
       </div>
       <div class="modal-footer">
@@ -177,16 +184,24 @@
 </div>
 
 <script>
-	function sendData(id,name){
-		document.getElementById("id").value = id;
-		document.getElementById("name").innerText = name;
-		console.log(id,name)
+	function sendData(id,version,name){
+        $('#id').val(id);
+        $('#version').val(version);
+        $('#name').text(name);
 	}
 
-    function saveDataInLocalStorage(page,nameProduct,codeProduct) {
+    function saveDataInLocalStorage(action,page,id,productName,productCode) {
         localStorage.setItem("page",page+1);
-        localStorage.setItem("nameProduct",nameProduct);
-        localStorage.setItem("codeProduct",codeProduct);
+        localStorage.setItem("productName",productName);
+        localStorage.setItem("productCode",productCode);
+        if(action === 'create' ){
+        	console.log("Thêm mới");
+        	window.location.href = '/product/create'
+        }
+        if(action ==='edit') {
+        	console.log("Chỉnh sửa");
+        	window.location.href = '/product/edit/' + encodeURIComponent(id);
+        }
     }
 
     window.onload=function (){
@@ -197,6 +212,7 @@
     	$('#clear').on('click',function () {
 			$('.input').val(null);
 		});
+
     });
 </script>
 
