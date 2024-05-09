@@ -80,17 +80,19 @@ public class OrdersDTO {
 	public void setVersion(int version) {
 		this.version = version;
 	}
-	
+
 
 	@Override
 	public String toString() {
-		return "OrdersDTO [id=" + id + ", productCode=" + productCode + ", productName=" + productName
-				+ ", customerName=" + customerName + ", customerPhone=" + customerPhone + ", quantity=" + quantity
-				+ ", version=" + version + ", getId()=" + getId() + ", getProductCode()=" + getProductCode()
-				+ ", getProductName()=" + getProductName() + ", getCustomerName()=" + getCustomerName()
-				+ ", getCustomerPhone()=" + getCustomerPhone() + ", getQuantity()=" + getQuantity() + ", getVersion()="
-				+ getVersion() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
+		return "OrdersDTO{" +
+				"id='" + id + '\'' +
+				", productCode='" + productCode + '\'' +
+				", productName='" + productName + '\'' +
+				", customerName='" + customerName + '\'' +
+				", customerPhone='" + customerPhone + '\'' +
+				", quantity=" + quantity +
+				", version=" + version +
+				'}';
 	}
 
 	public Map<String, List<String>> validate(List<OrdersDTO> ordersDTOS) {

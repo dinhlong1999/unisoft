@@ -3,9 +3,6 @@ package com.example.springmvc.dto;
 import java.util.List;
 import java.util.Map;
 
-import com.example.springmvc.model.Customer;
-import com.example.springmvc.model.Product;
-
 public class AnalystDTO {
 	
 	private List<Map<String,Object>> customerList;
@@ -20,15 +17,17 @@ public class AnalystDTO {
 	
 	private int limit;
 	
-	private String dateStart;
+	private String orderDayBegin;
 	
-	private String dateEnd;
+	private String orderDayEnd;
 	
 	private boolean showStartEllipsis;
 	
 	private boolean showEndEllipsis;
 	
 	private int page;
+	
+	private String messageError;
 	
 	public AnalystDTO() {
 		
@@ -106,21 +105,30 @@ public class AnalystDTO {
 		this.showEndEllipsis = showEndEllipsis;
 	}
 
-	public String getDateStart() {
-		return dateStart;
+	public String getOrderDayBegin() {
+		return orderDayBegin;
 	}
 
-	public void setDateStart(String dateStart) {
-		this.dateStart = dateStart;
+	public void setOrderDayBegin(String orderDayBegin) {
+		this.orderDayBegin = orderDayBegin;
 	}
 
-	public String getDateEnd() {
-		return dateEnd;
+	public String getOrderDayEnd() {
+		return orderDayEnd;
 	}
 
-	public void setDateEnd(String dateEnd) {
-		this.dateEnd = dateEnd;
+	public void setOrderDayEnd(String orderDayEnd) {
+		this.orderDayEnd = orderDayEnd;
 	}
+
+	public String getMessageError() {
+		return messageError;
+	}
+
+	public void setMessageError(String messageError) {
+		this.messageError = messageError;
+	}
+	
 	
 
 	

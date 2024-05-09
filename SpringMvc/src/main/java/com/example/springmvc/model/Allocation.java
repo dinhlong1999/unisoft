@@ -1,41 +1,30 @@
 package com.example.springmvc.model;
 
 public class Allocation {
+	private String productCode;
 	
-	
-	private String codeProduct;
-	
-	private String nameProduct;
+	private String productName;
 	
 	private Integer quantity;
 
 	public Allocation() {
 		
 	}
-	
 
-	public Allocation(String codeProduct, String nameProduct, Integer quantity) {
-		super();
-		this.codeProduct = codeProduct;
-		this.nameProduct = nameProduct;
-		this.quantity = quantity;
+	public String getProductCode() {
+		return productCode;
 	}
 
-
-	public String getCodeProduct() {
-		return codeProduct;
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
 	}
 
-	public void setCodeProduct(String codeProduct) {
-		this.codeProduct = codeProduct;
+	public String getProductName() {
+		return productName;
 	}
 
-	public String getNameProduct() {
-		return nameProduct;
-	}
-
-	public void setNameProduct(String nameProduct) {
-		this.nameProduct = nameProduct;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
 	public Integer getQuantity() {
@@ -48,13 +37,10 @@ public class Allocation {
 
 	@Override
 	public String toString() {
-		return "Allocation [codeProduct=" + codeProduct + ", nameProduct=" + nameProduct + ", quantity=" + quantity
-				+ "]";
+		return "Allocation{" +
+				"productCode='" + productCode + '\'' +
+				", productName='" + productName + '\'' +
+				", quantity=" + quantity +
+				'}';
 	}
-	
-	
-	
-	
-	
-	
 }

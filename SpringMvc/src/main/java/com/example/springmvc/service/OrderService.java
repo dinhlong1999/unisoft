@@ -82,7 +82,7 @@ public class OrderService implements IOrderService {
 
 	@Override
 	public String goodsAllocation(int productId, int quantityBook) {
-		// TODO Auto-generated method stub
+		
 		return orderMapper.goodsAllocation(productId, quantityBook);
 	}
 

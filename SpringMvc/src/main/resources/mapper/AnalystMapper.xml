@@ -5,24 +5,24 @@
 	<select id="getCustomerNoOrders" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
-				c.id,
+				c.customer_id,
     			c.`name`,
     			c.address,
-    			c.phoneNumber
+    			c.phone
 			FROM
-				customer c
+				customers c
 			LEFT JOIN
 				(SELECT
-					c.id as customerId,
+					c.customer_id as customerId,
 					c.`name`,
 					c.address,
-					c.phoneNumber
+					c.phone
 				FROM
-					customer c
+					customers c
 				JOIN
-					orders o on o.customerId = c.id
+					orders o on o.customer_id = c.customer_id
 				WHERE
-					o.dateStart BETWEEN #{arg0} AND #{arg1} ) as tableTemp ON c.id = tableTemp.customerId
+					o.order_day BETWEEN #{arg0} AND #{arg1} ) as tableTemp ON c.customer_id = tableTemp.customerId
 			WHERE 
 				customerId is null
 			ORDER BY
@@ -37,38 +37,38 @@
 			SELECT
 				count(*)
 			FROM
-				customer c
-			LEFT JOIN
-				(SELECT
-					c.id as customerId,
-					c.`name`,
-					c.address,
-					c.phoneNumber
-				FROM
-					customer c
-				JOIN
-					orders o on o.customerId = c.id
-				WHERE
-					o.dateStart BETWEEN #{arg0} AND #{arg1} ) as tableTemp ON c.id = tableTemp.customerId
-			WHERE 
-				customerId is null	
+                customers c
+            LEFT JOIN
+                (SELECT
+                    c.customer_id as customerId,
+                    c.`name`,
+                    c.address,
+                    c.phone
+                FROM
+                    customers c
+                JOIN
+                    orders o on o.customer_id = c.customer_id
+                WHERE
+                    o.order_day BETWEEN #{arg0} AND #{arg1} ) as tableTemp ON c.customer_id = tableTemp.customerId
+            WHERE 
+                customerId is null
 		]]>
 	</select>
 	<select id="getProductBestSeller" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
 				p.id,
-    			p.codeProduct,
-    			p.nameProduct,
-    			SUM(o.quantityBook) as quantity
+    			p.code,
+    			p.name,
+    			SUM(o.quantity) as quantity
 			FROM
-				product p
+				products p
 			JOIN
-				orders o ON o.productId = p.id
+				orders o ON o.product_id = p.id
 			WHERE
-				o.dateStart BETWEEN #{arg0} AND #{arg1}
+				o.order_day BETWEEN #{arg0} AND #{arg1}
 			GROUP BY
-				p.id, p.codeProduct
+				p.id, p.code
 			ORDER BY
 				quantity DESC
 			LIMIT 
@@ -81,41 +81,41 @@
 				COUNT(*)
 			FROM 
 				(SELECT
-					p.id,
-   					p.codeProduct,
-    				p.nameProduct,
-    				sum(o.quantityBook) as quantity
-				FROM
-					product p
-				JOIN
-					orders o ON o.productId = p.id
-				WHERE
-					o.dateStart BETWEEN #{arg0} AND #{arg1}
-				GROUP BY
-					p.id, p.codeProduct) AS tableTemp;
+                    p.id,
+                    p.code,
+                    p.name,
+                    SUM(o.quantity) as quantity
+                FROM
+                    products p
+                JOIN
+                    orders o ON o.product_id = p.id
+                WHERE
+                    o.order_day BETWEEN #{arg0} AND #{arg1}
+                GROUP BY
+                    p.id, p.code) AS tableTemp;
 		]]>
 	</select>
 	<select id="getProductNoSeller" resultType="java.util.Map">
 		<![CDATA[
 			SELECT
 				p.id,
-    			p.codeProduct,
-    			p.nameProduct
+    			p.code,
+    			p.name
 			FROM
-				product p
+				products p
 			LEFT JOIN
 				(SELECT
 					p.id as productId, 
-					p.codeProduct,
-					p.nameProduct
+					p.code,
+					p.name
 				FROM
-					product p
+					products p
 				JOIN
-					orders o ON o.productId = p.id
+					orders o ON o.product_id = p.id
 				WHERE
-					o.dateStart BETWEEN #{arg0} AND #{arg1}
+					o.order_day BETWEEN #{arg0} AND #{arg1}
 				GROUP BY
-					p.id, p.codeProduct) as tableTemp ON tableTemp.productId = p.id
+					p.id, p.code) as tableTemp ON tableTemp.productId = p.id
 				WHERE
 					productId is null
 				LIMIT
@@ -127,20 +127,20 @@
 			SELECT
 				COUNT(*)
 			FROM
-				product p
+				products p
 			LEFT JOIN
 				(SELECT
-					p.id as productId, 
-					p.codeProduct,
-					p.nameProduct
-				FROM
-					product p
-				JOIN
-					orders o ON o.productId = p.id
-				WHERE
-					o.dateStart BETWEEN #{arg0} AND #{arg1}
-				GROUP BY
-					p.id, p.codeProduct) as tableTemp ON tableTemp.productId = p.id
+                    p.id as productId, 
+                    p.code,
+                    p.name
+                FROM
+                    products p
+                JOIN
+                    orders o ON o.product_id = p.id
+                WHERE
+                    o.order_day BETWEEN #{arg0} AND #{arg1}
+                GROUP BY
+                    p.id, p.code) as tableTemp ON tableTemp.productId = p.id
 			WHERE
 				productId is null;
 		]]>

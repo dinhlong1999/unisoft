@@ -18,39 +18,39 @@ public class AnalystService implements IAnalystService {
 	private AnalystMapper analystMapper;
 
 	@Override
-	public List<Map<String, Object>> getCustomerNoOrders(LocalDate dateStart, LocalDate dateEnd, int limit, int page) {
+	public List<Map<String, Object>> getCustomerNoOrders(LocalDate orderDayBegin, LocalDate orderDayEnd, int limit, int page) {
 		// TODO Auto-generated method stub
-		return analystMapper.getCustomerNoOrders(dateStart, dateEnd, limit, page);
+		return analystMapper.getCustomerNoOrders(orderDayBegin, orderDayEnd, limit, page);
 	}
 
 	@Override
-	public int getTotalRowByCustomerNoOrders(LocalDate dateStart, LocalDate dateEnd) {
+	public int getTotalRowByCustomerNoOrders(LocalDate orderDayBegin, LocalDate orderDayEnd) {
 		// TODO Auto-generated method stub
-		return analystMapper.getTotalRowByCustomerNoOrders(dateStart, dateEnd);
+		return analystMapper.getTotalRowByCustomerNoOrders(orderDayBegin, orderDayEnd);
 	}
 
 	@Override
-	public List<Map<String, Object>> getProductBestSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page) {
+	public List<Map<String, Object>> getProductBestSeller(LocalDate orderDayBegin, LocalDate orderDayEnd, int limit, int page) {
 		// TODO Auto-generated method stub
-		return analystMapper.getProductBestSeller(dateStart, dateEnd, limit, page);
+		return analystMapper.getProductBestSeller(orderDayBegin, orderDayEnd, limit, page);
 	}
 
 	@Override
-	public int getTotalRowByProductBestSeller(LocalDate dateStart, LocalDate dateEnd) {
+	public int getTotalRowByProductBestSeller(LocalDate orderDayBegin, LocalDate orderDayEnd) {
 		// TODO Auto-generated method stub
-		return analystMapper.getTotalRowByProductBestSeller(dateStart, dateEnd);
+		return analystMapper.getTotalRowByProductBestSeller(orderDayBegin, orderDayEnd);
 	}
 
 	@Override
-	public List<Map<String, Object>> getProductNoSeller(LocalDate dateStart, LocalDate dateEnd, int limit, int page) {
+	public List<Map<String, Object>> getProductNoSeller(LocalDate orderDayBegin, LocalDate orderDayEnd, int limit, int page) {
 		// TODO Auto-generated method stub
-		return analystMapper.getProductNoSeller(dateStart, dateEnd, limit, page);
+		return analystMapper.getProductNoSeller(orderDayBegin, orderDayEnd, limit, page);
 	}
 
 	@Override
-	public int getTotalRowByProductNoSeller(LocalDate dateStart, LocalDate dateEnd) {
+	public int getTotalRowByProductNoSeller(LocalDate orderDayBegin, LocalDate orderDayEnd) {
 		// TODO Auto-generated method stub
-		return analystMapper.getTotalRowByProductNoSeller(dateStart, dateEnd);
+		return analystMapper.getTotalRowByProductNoSeller(orderDayBegin, orderDayEnd);
 	}
 
 }

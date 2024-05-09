@@ -42,35 +42,35 @@ public class AnalystController {
 	
 	@GetMapping("/list")
 	public String anaLystProduct(@RequestParam(required = false,defaultValue = "0") int page,
-								 @RequestParam(required = false,defaultValue = "") String dateStart,
-								 @RequestParam(required = false,defaultValue = "") String dateEnd,Model model) {
+								 @RequestParam(required = false,defaultValue = "") String orderDayBegin,
+								 @RequestParam(required = false,defaultValue = "") String orderDayEnd,Model model) {
 		int limit = 4;
     	if (page != 0) {
     		page = page - 1;
 		}
 
-		if (dateStart.isEmpty()) {
-			dateStart = "2000-01-01";
-			model.addAttribute("dateStart", "");
+		if (orderDayBegin.isEmpty()) {
+			orderDayBegin = "2000-01-01";
+			model.addAttribute("orderDayBegin", "");
 		}else {
-			model.addAttribute("dateStart", dateStart);
+			model.addAttribute("orderDayBegin", orderDayBegin);
 		};
-		if (dateEnd.isEmpty()) {
-			model.addAttribute("dateEnd","");
-			dateEnd = "9999-01-01";
+		if (orderDayEnd.isEmpty()) {
+			model.addAttribute("orderDayEnd","");
+			orderDayEnd = "9999-01-01";
 		}else {
-			model.addAttribute("dateEnd",dateEnd);
+			model.addAttribute("orderDayEnd",orderDayEnd);
 		}
 		
-		if (dateStart.length() > 10) {
-	        dateStart = "9999-10-10";
-	    }else if (dateStart.length() < 10) {
-			dateStart = "1000-10-10";
+		if (orderDayBegin.length() > 10) {
+			orderDayBegin = "9999-10-10";
+	    }else if (orderDayBegin.length() < 10) {
+	    	orderDayBegin = "1000-10-10";
 	    }
-	    if (dateEnd.length() > 10) {
-	        dateEnd = "9999-10-10";
-	    }else if (dateEnd.length() < 10) {
-	        dateEnd = "1000-10-10";
+	    if (orderDayEnd.length() > 10) {
+	    	orderDayEnd = "9999-10-10";
+	    }else if (orderDayEnd.length() < 10) {
+	    	orderDayEnd = "1000-10-10";
 		}
 		Account account = getAccountLogin();
 		
@@ -78,8 +78,8 @@ public class AnalystController {
 		List<Map<String, Object>> customerNoOrder;
 		int totalRowByCustomerNoOrder;
 		try {
-			customerNoOrder = analystService.getCustomerNoOrders(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
-			totalRowByCustomerNoOrder = analystService.getTotalRowByCustomerNoOrders(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+			customerNoOrder = analystService.getCustomerNoOrders(LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd), limit, limit*page);
+			totalRowByCustomerNoOrder = analystService.getTotalRowByCustomerNoOrders(LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd));
 		} catch (Throwable e) {
 			customerNoOrder = new ArrayList<>();
 			totalRowByCustomerNoOrder = 0;
@@ -110,10 +110,11 @@ public class AnalystController {
 		List<Map<String,Object>> productsBestSeller;
 		int totalRowByProductBestSeller;
 		try {
-			productsBestSeller = analystService.getProductBestSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
-			totalRowByProductBestSeller = analystService.getTotalRowByProductBestSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+			productsBestSeller = analystService.getProductBestSeller(LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd), limit, limit*page);
+			totalRowByProductBestSeller = analystService.getTotalRowByProductBestSeller(LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd));
 		} catch (Throwable e) {
 			productsBestSeller = new ArrayList<>();
+			System.out.println(e.getMessage());
 			totalRowByProductBestSeller = 0;
 		}
 	    
@@ -137,9 +138,10 @@ public class AnalystController {
 		List<Map<String, Object>> productsNoSell ;
 		int getTotalRowByProductNoSell;
 		try {
-			productsNoSell = analystService.getProductNoSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd), limit, limit*page);
-			getTotalRowByProductNoSell = analystService.getTotalRowByProductNoSeller(LocalDate.parse(dateStart), LocalDate.parse(dateEnd));
+			productsNoSell = analystService.getProductNoSeller(LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd), limit, limit*page);
+			getTotalRowByProductNoSell = analystService.getTotalRowByProductNoSeller(LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd));
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			productsNoSell = new ArrayList<>();
 			getTotalRowByProductNoSell = 0;
 		}

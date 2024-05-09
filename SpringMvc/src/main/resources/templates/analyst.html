@@ -6,7 +6,9 @@
 	 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	 <style>
+	 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<style>
         h1,td,th {
             text-align: center;
         }
@@ -32,6 +34,12 @@
         .hidden {
         	display:none;
         }
+        th {
+            width : 30%;
+        }
+        .mt-5, .mt-3{
+            height:310px;
+        }
     </style>
 </head>
 <body>
@@ -43,12 +51,12 @@
     	  	<form method="get" id="myForm">
     	  	 <div>
             	<span>
-                	Ngày bắt đầu  : <input type="date" class="input"  name="dateStart" style="width:8%;margin-left: 2px" th:value="${dateStart}">
+                	Ngày bắt đầu  : <input type="date" class="input"  name="orderDayBegin" style="width:8%;margin-left: 2px" th:value="${orderDayBegin}">
             	</span>
             </div>
             <div style="margin-top: 5px">
             	<span>
-                	Ngày kết thúc  : <input type="date" class="input" name="dateEnd" style="width:8%;margin-left: 7px" th:value="${dateEnd}">
+                	Ngày kết thúc  : <input type="date" class="input" name="orderDayEnd" style="width:8%;margin-left: 7px" th:value="${orderDayEnd}">
             	</span>
             </div>
             <div style="margin-top: 5px">
@@ -58,13 +66,13 @@
     	  	</form>
     	  </div>
     	  
-    	  	<div class="mt-5">
+    	  	<div class="mt-3">
     	  		<h3>Danh sách khách hàng không mua đơn hàng nào</h3>
     	  
     	  		<table id="customerTable" class="table table-hover table-bordered">
     	  			<thead>
     	  				<tr style="background-color: grey;color: white">
-    	  					<th>STT</th>
+    	  					<th style="width: 10%">STT</th>
     	  					<th>Tên khách hàng</th>
     	  					<th>Số điện thoại</th>
     	  					<th>Địa chỉ</th>
@@ -74,7 +82,7 @@
     	  				<tr th:each="item,status : ${customerNoOrder}">
     	  					<td th:text="${status.count + page * limit}"></td> 
     	  					<td th:text="${item['name']}"></td>
-    	  					<td th:text="${item['phoneNumber']}"></td>
+    	  					<td th:text="${item['phone']}"></td>
     	  					<td th:text="${item['address']}"></td>	
     	  				</tr>
     	  				<tr th:if="${customerNoOrder.size() == 0}">
@@ -86,7 +94,7 @@
             		<nav aria-label="Page navigation example" > 
 	            		<ul class="pagination" style="display: flex;justify-content: center">
 	            			<li th:if="${page > 0}" class="page-item" >
-	            				<button id="customerNoOrder"  class="page-link" th:attr="data-pages='/api/analyst/customernoorder?page=' + ${page} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Previous</button>
+	            				<button id="customerNoOrder"  class="page-link" th:attr="data-pages='/api/analyst/customernoorder?page=' + ${page} + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}">Previous</button>
 	            			</li>
 	            			<li class="page-item"  th:if="${showStartEllipsisCustomerNoOrder}">
 	            				<span class="page-link">...</span >
@@ -96,14 +104,14 @@
 	            			 		<a class="page-link "  th:text="${pageNumber}"></a>
 	            				</li>
 	            				<li class="page-item" th:if="${pageNumber -1 != page}">
-	            					<button id="customerNoOrder" class="page-link" th:text="${pageNumber}"  th:attr="data-pages='/api/analyst/customernoorder?page=' + ${pageNumber} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}"></button>
+	            					<button id="customerNoOrder" class="page-link" th:text="${pageNumber}"  th:attr="data-pages='/api/analyst/customernoorder?page=' + ${pageNumber} + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}"></button>
 	            				</li>
 	            			</th:block>
 	            			<li class="page-item"  th:if="${showEndEllipsisCustomerNoOrder}">
 	            				<span  class="page-link">...</span>
 	            			</li>
 	            			<li class="page-item" th:if="${page + 1 != totalPageByCustomerNoOrder }">
-	            				<button id="customerNoOrder" class="page-link" th:attr="data-pages='/api/analyst/customernoorder?page=' + (${page} + 2) + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Next</button>
+	            				<button id="customerNoOrder" class="page-link" th:attr="data-pages='/api/analyst/customernoorder?page=' + (${page} + 2) + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}">Next</button>
 	            			</li>
 	            		</ul>
             	  </nav> 
@@ -115,10 +123,10 @@
     	  		<table id="productBestSellerTable" class="table table-hover table-bordered">
     	  			<thead>
     	  				<tr style="background-color: grey;color: white">
-    	  					<td>STT</td>
-    	  					<td>Mã sản phẩm</td>
-    	  					<td>Tên sản phẩm</td>
-    	  					<td>Số lượng</td>
+    	  					<th style="width: 10%">STT</th>
+    	  					<th>Mã sản phẩm</th>
+    	  					<th>Tên sản phẩm</th>
+    	  					<th>Số lượng</th>
     	  				</tr>
     	  			</thead>
     	  			<tbody >
@@ -127,8 +135,8 @@
             			</tr>
             			<tr th:each="item,status : ${productsBestSeller}">
             				<td th:text="${status.count + page * limit}"></td> 
-            				<td th:text="${item['codeProduct']}"></td>
-            				<td th:text="${item['nameProduct']}"></td>
+            				<td th:text="${item['code']}"></td>
+            				<td th:text="${item['name']}"></td>
             				<td th:text="${item['quantity']}"></td>
             			</tr> 
     	  			</tbody>
@@ -137,7 +145,7 @@
             		<nav aria-label="Page navigation example" > 
 	            		<ul class="pagination" style="display: flex;justify-content: center">
 	            			<li th:if="${page > 0}" class="page-item" >
-	            				<button id="productBestSeller" class="page-link" th:attr="data-pages='/api/analyst/productBestSeller?page=' + ${page} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Previous</button>
+	            				<button id="productBestSeller" class="page-link" th:attr="data-pages='/api/analyst/productBestSeller?page=' + ${page} + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}">Previous</button>
 	            			</li>
 	            			<li class="page-item"  th:if="${showStartEllipsisProductBestSeller}">
 	            				<span class="page-link">...</span >
@@ -147,14 +155,14 @@
 	            			 		<a class="page-link "  th:text="${pageNumber}"></a>	          
 	            				</li>
 	            				<li class="page-item" th:if="${pageNumber -1 != page}">
-	            					<button id="productBestSeller" class="page-link" th:text="${pageNumber}" th:attr="data-pages='/api/analyst/productBestSeller?page=' + ${pageNumber} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}"></button>
+	            					<button id="productBestSeller" class="page-link" th:text="${pageNumber}" th:attr="data-pages='/api/analyst/productBestSeller?page=' + ${pageNumber} + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}"></button>
 	            				</li>
 	            			</th:block>
 	            			<li class="page-item"  th:if="${showEndEllipsisProductBestSeller}">
 	            				<span  class="page-link">...</span>
 	            			</li>
 	            			<li class="page-item" th:if="${page + 1 != totalPageByProductBestSeller }">
-	            				<button id="productBestSeller" class="page-link" th:attr="data-pages='/api/analyst/productBestSeller?page=' + (${page} + 2) + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Next</button>
+	            				<button id="productBestSeller" class="page-link" th:attr="data-pages='/api/analyst/productBestSeller?page=' + (${page} + 2) + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}">Next</button>
 	            			</li>
 	            		</ul>
             	  </nav> 
@@ -166,7 +174,7 @@
     	  		<table id="productNoSellTable" class="table table-hover table-bordered">
     	  			<thead>
     	  				<tr style="background-color: grey;color: white">
-    	  					<th>STT</th>
+    	  					<th style="width: 10%">STT</th>
     	  					<th>Mã sản phẩm</th>
     	  					<th>Tên sản phẩm</th>
     	  				</tr>
@@ -177,8 +185,8 @@
     	  				</tr>
     	  				<tr th:each="item,status : ${productsNoSell}">
     	  					<td th:text="${status.count + page * limit}"></td> 
-            				<td th:text="${item['codeProduct']}"></td>
-            				<td th:text="${item['nameProduct']}"></td>
+            				<td th:text="${item['code']}"></td>
+            				<td th:text="${item['name']}"></td>
     	  				</tr>
     	  			</tbody>
     	  		</table>
@@ -186,7 +194,8 @@
             		<nav aria-label="Page navigation example" > 
 	            		<ul class="pagination" style="display: flex;justify-content: center">
 	            			<li th:if="${page > 0}" class="page-item" >
-								<button id="productNoSell" class="page-link" th:attr="data-pages='/api/analyst/productNoSell?page=' + ${page} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Previous</button>	            			</li>
+								<button id="productNoSell" class="page-link" th:attr="data-pages='/api/analyst/productNoSell?page=' + ${page} + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}">Previous</button>	            			
+							</li>
 	            			<li class="page-item"  th:if="${showStartEllipsisProductNoSeller}">
 	            				<span class="page-link">...</span >
 	            			</li>
@@ -195,14 +204,14 @@
 	            			 		<a class="page-link "  th:text="${pageNumber}"></a>
 	            				</li>
 	            				<li class="page-item" th:if="${pageNumber -1 != page}">
-	            					<button id="productNoSell" class="page-link" th:text="${pageNumber}"  th:attr="data-pages='/api/analyst/productNoSell?page=' + ${pageNumber} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}" ></button>
+	            					<button id="productNoSell" class="page-link" th:text="${pageNumber}"  th:attr="data-pages='/api/analyst/productNoSell?page=' + ${pageNumber} + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}" ></button>
 	            				</li>
 	            			</th:block>
 	            			<li class="page-item"  th:if="${showEndEllipsisProductNoSeller}">
 	            				<span  class="page-link">...</span>
 	            			</li>
 	            			<li class="page-item" th:if="${page + 1 != totalPageByProductNoSell }">
-	            				<button id="productNoSell" class="page-link" th:attr="data-pages='/api/analyst/productNoSell?page=' + ${page + 2} + '&amp;dateStart=' + ${dateStart} + '&amp;dateEnd=' + ${dateEnd}">Next</button>
+	            				<button id="productNoSell" class="page-link" th:attr="data-pages='/api/analyst/productNoSell?page=' + ${page + 2} + '&amp;orderDayBegin=' + ${orderDayBegin} + '&amp;orderDayEnd=' + ${orderDayEnd}">Next</button>
 	            			</li>
 	            		</ul>
             	  </nav> 
@@ -211,208 +220,7 @@
 
    </div>
 </body>
-<script>
-	$(document).ready(function () {
-		$(document).on("click","#customerNoOrder", function() {
-			console.log("Đã vào customer no order");
-			let url = $(this).data('pages');
-			console.log(url);
-			$.ajax({
-				url : url,
-				type: 'GET',
-				success : function(response){
-					console.log(response);
-					$('#customerTable tbody').empty();
-					if(response.customerList.length === 0){
-						$('#customerTable tbody').html('<tr><td colspan="4">Không có dữ liệu</td></tr>')
-					}else {
-						$.each(response.customerList, function(index,item) {
-							let rowHTML = '<tr>'+
-											'<td>' +(index + 1  + (response.page * response.limit))+'</td>' +
-											'<td>' +item['name'] + '</td>' +
-											'<td>' +item['phoneNumber']+ '</td>' +
-											'<td>' +item['address'] + '</td>' +
-										  '</tr>';
-							$('#customerTable tbody').append(rowHTML);
-						})
-					}
-					$('#customerPage').empty();
-					if (response.customerList.length > 0){
-						let pageNavigation = '<nav aria-label="Page navigation example" >' +
-		            							'<ul class="pagination" style="display: flex;justify-content: center">';
-		            	if(response.page > 0){
-							pageNavigation += '<li class="page-item">' +
-									' 	          <button id="customerNoOrder" class="page-link" data-pages="/api/analyst/customernoorder?page='+response.page+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'">Previous</button>' +
-									'          </li>';
-		            	}
-						if (response.showStartEllipsis){
-							pageNavigation += '<li class="page-item">' +
-									'				<span class="page-link">...</span >\n' +
-									'          </li>';
-						}for (let pageNumber = response.startPage; pageNumber <= response.endPage;pageNumber++){
-							if (pageNumber - 1 === response.page){
-								pageNavigation += '<li class="page-item active">' +
-										'             <span  class="page-link">'+pageNumber+' </span>' +
-										'          </li>'
-							}else {
-								pageNavigation += '<li class="page-item">' +
-										'				<button id="customerNoOrder" class="page-link"  data-pages="/api/analyst/customernoorder?page='+pageNumber+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'" >'+pageNumber+'</button>' +
-										'          </li>'
-							}
-						}
-						if (response.showEndEllipsis){
-							pageNavigation += '<li class="page-item">' +
-									'             <span  class="page-link">...</span>' +
-									'          </li>'
-						}
-						if (response.page + 1 !== response.totalPage){
-							pageNavigation +='<li class="page-item">' +
-									'            <button id="customerNoOrder" class="page-link" data-pages="/api/analyst/customernoorder?page='+(response.page + 2)+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'">Next</button>' +
-									'         </li>'
-						}
-						$('#customerPage').html(pageNavigation);
-					}
-				},
-				error : function(xhr, status, error){
-					console.error(error);
-				}
-			});
-		});
-
-		$(document).on("click","#productBestSeller",function () {
-			console.log("Đã vào product bestseller");
-			let url = $(this).data('pages');
-			console.log(url);
-			$.ajax({
-				url : url,
-				type: 'GET',
-				success : function (response) {
-					console.log(response);
-					$('#productBestSellerTable tbody').empty();
-					if (response.productList.length === 0){
-						$('#productBestSellerTable tbody').html('<tr><td colspan="3">Không có dữ liệu</td></tr>');
-					}else{
-						$.each(response.productList,function (index,item) {
-							let rowHTML = '<tr>'+
-											'<td>' +(index + 1  + (response.page * response.limit))+'</td>' +
-											'<td>' +item['codeProduct'] + '</td>' +
-											'<td>' +item['nameProduct']+ '</td>' +
-											'<td>' +item['quantity'] + '</td>' +
-									      '</tr>';
-							$('#productBestSellerTable tbody').append(rowHTML);
-						})
-					}
-					$('#productBestSellerPage').empty();
-					if (response.productList.length > 0){
-						let pageNavigation = '<nav aria-label="Page navigation example" >' +
-								'<ul class="pagination" style="display: flex;justify-content: center">';
-						if(response.page > 0){
-							pageNavigation += '<li class="page-item">' +
-									' 	          <button id="productBestSeller" class="page-link" data-pages="/api/analyst/productBestSeller?page='+response.page+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'">Previous</button>' +
-									'          </li>';
-						}
-						if (response.showStartEllipsis){
-							pageNavigation += '<li class="page-item">' +
-									'				<span class="page-link">...</span >\n' +
-									'          </li>';
-						}for (let pageNumber = response.startPage; pageNumber <= response.endPage;pageNumber++){
-							if (pageNumber - 1 === response.page){
-								pageNavigation += '<li class="page-item active">' +
-										'             <span  class="page-link">'+pageNumber+' </span>' +
-										'          </li>'
-							}else {
-								pageNavigation += '<li class="page-item">' +
-										'				<button id="productBestSeller" class="page-link"  data-pages="/api/analyst/productBestSeller?page='+pageNumber+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'" >'+pageNumber+'</button>' +
-										'          </li>'
-							}
-						}
-						if (response.showEndEllipsis){
-							pageNavigation += '<li class="page-item">' +
-									'             <span  class="page-link">...</span>' +
-									'          </li>'
-						}
-						if (response.page + 1 !== response.totalPage){
-							pageNavigation +='<li class="page-item">' +
-									'            <button id="productBestSeller" class="page-link" data-pages="/api/analyst/productBestSeller?page='+(response.page + 2)+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'">Next</button>' +
-									'         </li>'
-						}
-						$('#productBestSellerPage').html(pageNavigation);
-					}
-				},
-				error : function(xhr, status, error){
-					console.error(error);
-				}
-			})
-		});
-		$(document).on("click","#productNoSell",function () {
-			console.log("Đã vào product no seller");
-			let url = $(this).data('pages');
-			console.log(url);
-			$.ajax({
-				url : url,
-				type: 'GET',
-				success : function (response) {
-					console.log(response);
-					$('#productNoSellTable tbody').empty();
-					if (response.productList.length === 0){
-						$('#productNoSellTable tbody').html('<tr><td colspan="3">Không có dữ liệu</td></tr>');
-					}else{
-						console.log("okok")
-						$.each(response.productList,function (index,item) {
-							let rowHTML = '<tr>'+
-											'<td>' +(index + 1  + (response.page * response.limit))+'</td>' +
-											'<td>' +item['codeProduct'] + '</td>' +
-											'<td>' +item['nameProduct']+ '</td>' +
-									      '</tr>';
-							$('#productNoSellTable tbody').append(rowHTML);
-						})
-					}
-					$('#productNoSellPage').empty();
-					if (response.productList.length > 0){
-						let pageNavigation = '<nav aria-label="Page navigation example" >' +
-								'<ul class="pagination" style="display: flex;justify-content: center">';
-						if(response.page > 0){
-							pageNavigation += '<li class="page-item">' +
-									' 	          <button id="productNoSell" class="page-link" data-pages="/api/analyst/productNoSell?page='+response.page+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'">Previous</button>' +
-									'          </li>';
-						}
-						if (response.showStartEllipsis){
-							pageNavigation += '<li class="page-item">' +
-									'				<span class="page-link">...</span >\n' +
-									'          </li>';
-						}for (let pageNumber = response.startPage; pageNumber <= response.endPage;pageNumber++){
-							if (pageNumber - 1 === response.page){
-								pageNavigation += '<li class="page-item active">' +
-										'             <span  class="page-link">'+pageNumber+' </span>' +
-										'          </li>'
-							}else {
-								pageNavigation += '<li class="page-item">' +
-										'				<button id="productNoSell" class="page-link"  data-pages="/api/analyst/productNoSell?page='+pageNumber+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'" >'+pageNumber+'</button>' +
-										'          </li>'
-							}
-						}
-						if (response.showEndEllipsis){
-							pageNavigation += '<li class="page-item">' +
-									'             <span  class="page-link">...</span>' +
-									'          </li>'
-						}
-						if (response.page + 1 !== response.totalPage){
-							pageNavigation +='<li class="page-item">' +
-									'            <button id="productNoSell" class="page-link" data-pages="/api/analyst/productNoSell?page='+(response.page + 2)+'&dateStart='+response.dateStart+'&dateEnd='+response.dateEnd +'">Next</button>' +
-									'         </li>'
-						}
-						$('#productNoSellPage').html(pageNavigation);
-					}
-				},
-				error : function(xhr, status, error){
-					console.error(error);
-				}
-			})
-		});
-		
-		
-	});
-</script>
+<script src="/analyst.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
 </script>

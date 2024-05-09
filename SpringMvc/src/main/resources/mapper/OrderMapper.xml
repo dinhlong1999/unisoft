@@ -30,7 +30,7 @@
 			JOIN
 				employees e ON e.employee_id = o.employee_id
 			JOIN
-				accounts a on a.account_id = e.account_id
+				accounts a  ON a.account_id = e.account_id
 			WHERE 
 			    1 = 1
 			    

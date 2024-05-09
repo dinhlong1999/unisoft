@@ -64,83 +64,74 @@ public class AllocationController {
 	@PostMapping("/allocation")
 	public String allocation(@ModelAttribute AllocationDTO allocationDTO, Model model,RedirectAttributes redirectAttributes ) {
 		Account account = getAccountLogin();
-		List<String> error = new ArrayList<>();
-		List<Allocation> allocations = allocationDTO.getAllocationList();
-		Map<String,Integer> allocationsMap = new TreeMap<>();
-		for (Allocation allocationTemp: allocations) {
-			if (allocationTemp.getCodeProduct().isEmpty() || allocationTemp.getNameProduct().isEmpty()) {
-				if (!error.contains("Mã sản phẩm và tên sản phẩm không được để trống")) {
-					error.add("Mã sản phẩm và tên sản phẩm không được để trống");
-				}
-			}
-			if (allocationTemp.getQuantity() != null) {
-				if (allocationTemp.getQuantity() <= 0) {
-					if (!error.contains("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0")) {
-						error.add("Số lượng nhập hàng không được nhỏ hơn hoặc bằng 0");
-					}
-					continue;
-				}
-				if (!allocationsMap.containsKey(allocationTemp.getCodeProduct())) {
-					allocationsMap.put(allocationTemp.getCodeProduct(), allocationTemp.getQuantity());
-				}else {
-					allocationsMap.put(allocationTemp.getCodeProduct(), allocationsMap.get(allocationTemp.getCodeProduct()) + allocationTemp.getQuantity());
-				}
+		try {
+			List<Allocation> allocations = allocationDTO.getAllocationList(); 
+			List<String> error = AllocationDTO.validateAllocation(allocations);
+			if (!error.isEmpty()) {
+				model.addAttribute("error", error.toString());
+				model.addAttribute("nameLogin", account.getUsername());
+				model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
+				model.addAttribute("allocationDTO", allocationDTO);
+				return "allocation/allocationProduct";
 			}else {
-				if (!error.contains("Số lượng nhập hàng không hợp lệ, vui lòng nhập lại")) {
-					error.add("Số lượng nhập hàng không hợp lệ, vui lòng nhập lại");
+				Map<String,Integer> allocationsMap = new TreeMap<>();
+				for (Allocation allocation : allocations){
+					if (!allocationsMap.containsKey(allocation.getProductCode())) {
+						allocationsMap.put(allocation.getProductCode(), allocation.getQuantity());
+					}else {
+						allocationsMap.put(allocation.getProductCode(), allocationsMap.get(allocation.getProductCode()) + allocation.getQuantity());
+					}
 				}
-				
-			}
-		}
-		
-		
-		if (error.size() != 0) {
-			model.addAttribute("message", error);
-			model.addAttribute("nameLogin", account.getUsername());
-			model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-			model.addAttribute("allocationDTO", allocationDTO);
-			return "allocation/allocationProduct";
-		}else {
-			Map<String,String> statusMap = new TreeMap<>();
-			for(String key : allocationsMap.keySet()) {
-				Product product = productService.getProductByCodeProduct(key);
-				String result = orderService.goodsAllocation(product.getId(), allocationsMap.get(key));
-				if (result.equals("ERROR")) {
-					statusMap.put(key, "ERROR");
-				}else if (result.equals("TRUE")) {
-					statusMap.put(key, "SUCCESS");
-				}else {
-					statusMap.put(key, "UPDATE");
+				Map<String,String> statusMap = new TreeMap<>();
+				for(String key : allocationsMap.keySet()) {
+					Product product = productService.getProductByCodeProduct(key);
+					String result = orderService.goodsAllocation(product.getId(), allocationsMap.get(key));
+					if (result.equals("ERROR")) {
+						statusMap.put(key, "ERROR");
+					}else if (result.equals("TRUE")) {
+						statusMap.put(key, "SUCCESS");
+					}else {
+						statusMap.put(key, "UPDATE");
+					}
 				}
-			}
-			for(String map: statusMap.keySet()) {
-				if (statusMap.get(map).equals("SUCCESS") || statusMap.get(map).equals("UPDATE")) {
-					for(int i = 0; i < allocations.size(); i++ ) {
-						if (allocations.get(i).getCodeProduct().equals(map)) {
-							allocations.remove(i);
-							i--;
+				for(String map: statusMap.keySet()) {
+					if (statusMap.get(map).equals("SUCCESS") || statusMap.get(map).equals("UPDATE")) {
+						for(int i = 0; i < allocations.size(); i++ ) {
+							if (allocations.get(i).getProductCode().equals(map)) {
+								allocations.remove(i);
+								i--;
+							}
 						}
 					}
 				}
-			}
-			model.addAttribute("nameLogin", account.getUsername());
-		 	if (allocations.size() == 0) {
-				List<String> statusList = new ArrayList<>();
-				for(String map: statusMap.keySet()) {
-					if(statusMap.get(map).equals("UPDATE")) {
-						statusList.add("Sản phẩm có mã "+map + " đã phân bổ và cập nhật tồn kho thành công.  " );
-					}else {
-						statusList.add("Sản phẩm có mã "+map + " đã phân bổ hàng thành công ");
+				model.addAttribute("nameLogin", account.getUsername());
+			 	if (allocations.isEmpty()) {
+					StringBuilder success = new StringBuilder();
+					for(String map: statusMap.keySet()) {
+						if(statusMap.get(map).equals("UPDATE")) {
+							success.append("\nMã sản phẩm: ").append(map).append(" đã phân bổ và cập nhật tồn kho thành công.");
+						}else {
+							success.append("\nMã sản phẩm: ").append(map).append(" đã phân bổ hàng thành công.");
+						}
 					}
-					
+
+					redirectAttributes.addFlashAttribute("success",success);
+					return "redirect:/orders/list";
+				}else {
+					allocationDTO.setAllocationList(allocations);
+					StringBuilder errorStatus = new StringBuilder();
+					for(Allocation allocation: allocations) {
+						errorStatus.append("\nKhông thể phân bổ cho mã sản phẩm: ").append(allocation.getProductCode().toUpperCase());
+					}
+					model.addAttribute("allocationDT0",allocationDTO );
+					model.addAttribute("error",errorStatus);
+					return "allocation/allocationProduct";
 				}
-				redirectAttributes.addFlashAttribute("statusList",statusList);
-				return "redirect:/orders/list";
-			}else {
-				allocationDTO.setAllocationList(allocations);
-				model.addAttribute("allocationDT0",allocationDTO );
-				return "allocation/allocationProduct";
 			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			model.addAttribute("error", "Lỗi !!! Vui lòng thử lại.");
+			return "redirect:/allocation";
 		}
 	}
 }
