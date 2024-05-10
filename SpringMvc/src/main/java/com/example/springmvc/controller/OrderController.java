@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 import com.example.springmvc.model.Employee;
+import com.example.springmvc.service.AuthenticationService;
 import com.example.springmvc.service.IEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.springmvc.common.Paging;
-import com.example.springmvc.model.Account;
-import com.example.springmvc.service.IAccountService;
 import com.example.springmvc.service.IOrderService;
 
 @Controller
@@ -30,21 +27,11 @@ public class OrderController {
 	private IOrderService orderService;
 	
 	@Autowired
-	private IAccountService accountService;
+	private IEmployeeService employeeService;
 
 	@Autowired
-	private IEmployeeService employeeService;
-	    
-	private Account getAccountLogin () {
-	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    	if (!(authentication instanceof AnonymousAuthenticationToken)) {
-				String usernameLogin = authentication.getName();
-				Account account  = accountService.getAccountByUsername(usernameLogin);
-				return account;
-			}
-	    	return null;
-	    }
-
+	private AuthenticationService authenticationService;
+	
     @GetMapping("/list")
     public String show(@RequestParam(required = false,defaultValue = "0") int page,
     							@RequestParam(required = false,defaultValue = "") String accountName,
@@ -57,8 +44,10 @@ public class OrderController {
     							@RequestParam(required = false,defaultValue = "") String orderDayEnd,
     							@RequestParam(required = false,defaultValue = "0") Integer statusAllocation,
     							@RequestParam(required = false,defaultValue = "0") Integer statusBooking,Model model){
-    	Account accountLogin = getAccountLogin();
-    	String roleName = accountLogin.getRole().getName();
+  
+    	String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+		int accountId = authenticationService.getAccountLogin().getId();
     	try {
     		 if (page != 0) {
     			 page = page - 1;
@@ -90,14 +79,14 @@ public class OrderController {
     			 orderDayEnd = "1000-10-10";
     		 }
         
-    		
-    		 Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
+    		 
+    		 Employee employee = employeeService.getEmployeeByAccountId(accountId);
     		 int employeeId = employee.getId();
     		 List<Map<String, Object>> ordersMap = orderService.getListOrder(accountName, employeeName, productCode, productName, customerName, customerPhone,
-    											 (roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(orderDayBegin), 
+    											 isAdmin,employeeId, LocalDate.parse(orderDayBegin), 
     											 LocalDate.parse(orderDayEnd), statusAllocation,statusBooking, limit, limit * page);
     		 int totalRecordByListAccount = orderService.getTotalRecordByOrder(accountName, employeeName, productCode, productName, customerName, customerPhone,
-        																 (roleName.equals("ROLE_ADMIN")),employeeId, LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd), 
+        																 isAdmin,employeeId, LocalDate.parse(orderDayBegin), LocalDate.parse(orderDayEnd), 
         																  statusAllocation,statusBooking);
 		
         	 double temp = (double) totalRecordByListAccount / limit;
@@ -117,75 +106,24 @@ public class OrderController {
         	 model.addAttribute("totalPage",totalPage);
         	 model.addAttribute("showStartEllipsis",showStartEllipsis);
         	 model.addAttribute("showEndEllipsis",showEndEllipsis);
-        
         	 model.addAttribute("ordersMap", ordersMap);
-        	 model.addAttribute("nameLogin", accountLogin.getUsername());
-        	 model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
-        	 model.addAttribute("roleName",roleName);
-        
-        	 model.addAttribute("accountName", accountName);
-        	 model.addAttribute("employeeName", employeeName);
-        	 model.addAttribute("productCode", productCode);
-        	 model.addAttribute("productName", productName);
-        	 model.addAttribute("customerName", customerName);
-        	 model.addAttribute("customerPhone", customerPhone);
-        
-      
-        	 model.addAttribute("statusAllocation", statusAllocation);
-        	 model.addAttribute("statusBooking", statusBooking);
-        	 return "order/show";
     	} catch (Throwable e) {
     		System.out.println(e.getMessage());
-    		model.addAttribute("nameLogin", accountLogin.getUsername());
-       	 	model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
-       	 	model.addAttribute("roleName",roleName);
        	 	model.addAttribute("ordersMap", new ArrayList<>());
        	 	model.addAttribute("error", "Lỗi !!! Vui lòng thử lại");
-       	    return "order/show";
-			
-			
 		}	
+    	 model.addAttribute("accountName", accountName);
+    	 model.addAttribute("employeeName", employeeName);
+    	 model.addAttribute("productCode", productCode);
+    	 model.addAttribute("productName", productName);
+    	 model.addAttribute("customerName", customerName);
+    	 model.addAttribute("customerPhone", customerPhone);
+    	 model.addAttribute("nameLogin", accountNameLogin);
+    	 model.addAttribute("isAdmin", isAdmin);
+    	 model.addAttribute("roleName",authenticationService.getAccountLogin().getRole().getName());
+    	 model.addAttribute("statusAllocation", statusAllocation);
+    	 model.addAttribute("statusBooking", statusBooking);
+    	 return "order/show";
     }
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 }

@@ -35,7 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.failureUrl("/login?error=true")
 			.usernameParameter("username")
 			.passwordParameter("password")
-			.and().logout().logoutUrl("/logout").logoutSuccessUrl("/logoutSuccessful");
+			.and().logout().logoutUrl("/logout").logoutSuccessUrl("/logoutSuccessful")
+			.invalidateHttpSession(true).deleteCookies("JSESSIONID");
 	}
 	
 	@Override
@@ -49,6 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 	    return bCryptPasswordEncoder;
 	}
+	 
 
 
 }

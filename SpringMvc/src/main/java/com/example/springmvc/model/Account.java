@@ -17,6 +17,17 @@ public class Account {
     public Account() {
     }
 
+    
+	public Account(int id, String username, String password, boolean flag, int version, Role role) {
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.flag = flag;
+		this.version = version;
+		this.role = role;
+	}
+
+
 	public int getId() {
 		return id;
 	}

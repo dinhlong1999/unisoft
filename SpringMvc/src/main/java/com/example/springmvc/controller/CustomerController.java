@@ -4,27 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.example.springmvc.common.Paging;
-import com.example.springmvc.dto.CustomerDTO;
-import com.example.springmvc.model.Customer;
-import com.example.springmvc.model.Employee;
-import com.example.springmvc.service.IEmployeeService;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.springmvc.model.Account;
-import com.example.springmvc.service.IAccountService;
+import com.example.springmvc.common.Paging;
+import com.example.springmvc.dto.CustomerDTO;
+import com.example.springmvc.model.Customer;
+import com.example.springmvc.model.Employee;
+import com.example.springmvc.service.AuthenticationService;
 import com.example.springmvc.service.ICustomerService;
+import com.example.springmvc.service.IEmployeeService;
 
 @Controller
 @RequestMapping("/customer")
@@ -34,28 +34,20 @@ public class CustomerController {
 	private ICustomerService customerService;
 	
 	@Autowired
-	private IAccountService accountService;
-	
-	@Autowired
 	private IEmployeeService employeeService;
    
+	@Autowired
+	private AuthenticationService authenticationService;
 	
-	private Account getAccountLogin () {
-	   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	   if (!(authentication instanceof AnonymousAuthenticationToken)) {
-			String usernameLogin = authentication.getName();
-			Account account  = accountService.getAccountByUsername(usernameLogin);
-			return account;
-		}
-	    	return null;
-	    }
 	
 	@GetMapping("/list")
 	public String show(@RequestParam(required = false,defaultValue = "0") int page,
 					   @RequestParam(required = false,defaultValue = "") String customerName,
 		               @RequestParam(required = false,defaultValue = "") String customerPhone,
 					   Model model,RedirectAttributes redirectAttributes) {
-		Account account = getAccountLogin();
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+		int accountId = authenticationService.getAccountLogin().getId();
 		try {
 			if (page != 0) {
 				page = page - 1;
@@ -64,12 +56,6 @@ public class CustomerController {
 				return "redirect:/customer/list";
 			}
 			int limit = 4;
-			
-			if(account.getRole().getName().equals("ROLE_ADMIN")) {
-				model.addAttribute("isAdmin", true);
-			}else {
-				model.addAttribute("accountId", account.getId());
-			}
 			List<Map<String, Object>> customerList = customerService.getListCustomer(customerName, customerPhone, limit, limit * page);
 			int totalRecordOfCustomer = customerService.countRecordOfCustomer(customerName, customerPhone);
 			double temp = (double) totalRecordOfCustomer / limit;
@@ -93,18 +79,16 @@ public class CustomerController {
 	        model.addAttribute("customerList", customerList);
 	        model.addAttribute("customerName",customerName);
 	        model.addAttribute("customerPhone", customerPhone);
-	        model.addAttribute("nameLogin", account.getUsername());
-	        model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-	        return "customer/show";
+	        model.addAttribute("nameLogin",accountNameLogin);
+	        model.addAttribute("isAdmin", isAdmin);
+	        model.addAttribute("accountId", accountId);
 		} catch (Exception e) {
 			 System.out.println(e.getMessage());
-			 model.addAttribute("totalPage",0);
 			 model.addAttribute("customerList", new ArrayList<>());
-			 model.addAttribute("nameLogin", account.getUsername());
 			 model.addAttribute("error","Lỗi !! Vui lòng thử lại.");
-		     model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
-		     return "customer/show";
+		  
 		}
+		 return "customer/show";
 		
 	}
 	
@@ -120,11 +104,10 @@ public class CustomerController {
 			int rowEffectByDeleteCustomer = customerService.deleteCustomer(customerId, version);
 			if (rowEffectByDeleteCustomer == 1) {
 				redirectAttributes.addFlashAttribute("success", "Xóa khách hàng thành công");
-				return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
 			}else {
 				redirectAttributes.addFlashAttribute("error", "Xóa khách hàng thất bại ");
-				return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
 			}
+			return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			redirectAttributes.addFlashAttribute("error", "Lỗi !!! Vui lòng thử lại");
@@ -135,24 +118,26 @@ public class CustomerController {
 
 	@GetMapping("/edit/{id}")
 	public String edit(@PathVariable("id") int id,Model model,RedirectAttributes redirectAttributes){
-		Account accountLogin = getAccountLogin();
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		int accountId = authenticationService.getAccountLogin().getId();
 		try {
 			Customer customer = customerService.getCustomerById(id);
 			if (customer == null) {
 				redirectAttributes.addFlashAttribute("error","Không tồn tại đối tượng này");
 				return "redirect:/customer/list";
 			}
-			Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
+			Employee employee = employeeService.getEmployeeByAccountId(accountId);
 			if (employee != null) {
-				if ((customer.getEmployee().getId() != employee.getId()) && !accountLogin.getRole().getName().equals("ROLE_ADMIN")){
+				boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+				if ((customer.getEmployee().getId() != employee.getId()) && !isAdmin){
 					redirectAttributes.addFlashAttribute("error","Bạn không có quyền cập nhật đối tượng này");
 					return "redirect:/customer/list";
 				}else {
 					CustomerDTO customerDTO = new CustomerDTO();
 					BeanUtils.copyProperties(customer,customerDTO);
 					model.addAttribute("customerDTO",customerDTO);
-					model.addAttribute("nameLogin",accountLogin.getUsername());
-					model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
+					model.addAttribute("nameLogin",accountNameLogin);
+			        model.addAttribute("isAdmin", isAdmin);
 				}
 			}
 			return "customer/edit";
@@ -171,7 +156,8 @@ public class CustomerController {
 						 @RequestParam String customerPhone,
 						 BindingResult bindingResult,Errors errors, 
 						 Model model, RedirectAttributes redirectAttributes) {
-		Account accountLogin = getAccountLogin();
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 		try {
 			new CustomerDTO().validate(customerDTO, bindingResult);
 			int checkPhoneNumberExists = customerService.checkPhoneNumberExists(customerDTO.getPhone(), customerDTO.getId());
@@ -181,40 +167,33 @@ public class CustomerController {
 			
 			if (bindingResult.hasErrors()) {
 				model.addAttribute("customerDTO",customerDTO);
-				model.addAttribute("nameLogin",accountLogin.getUsername());
-				model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
+				model.addAttribute("nameLogin",accountNameLogin);
+				model.addAttribute("isAdmin", isAdmin);
 				return "customer/edit";
 			}
 			Customer customer = new Customer();
 			BeanUtils.copyProperties(customerDTO, customer);
 			int rowEffectByEditCustomer = customerService.editCustomer(customer.getName(), customer.getAddress(), customer.getVersion(), customer.getPhone(), customer.getId());
 			if (rowEffectByEditCustomer == 1) {
-				model.addAttribute("customerName", customerName);
-				model.addAttribute("customerPhone", customerPhone);
 				redirectAttributes.addFlashAttribute("success", "Chỉnh sửa thành công.");
-				return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
 			}else {
-				model.addAttribute("customerName", customerName);
-				model.addAttribute("customerPhone", customerPhone);
 				redirectAttributes.addFlashAttribute("error", "Chỉnh sửa thất bại.");
-				return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
-			
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			redirectAttributes.addFlashAttribute("error", "Lỗi !!! Vui lòng thử lại");
-			return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
-		
 		}
+		return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
 		
 	}
 
 	@GetMapping("/create")
 	public String create(Model model){
-		Account accountLogin = getAccountLogin();
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 		model.addAttribute("customerDTO",new CustomerDTO());
-		model.addAttribute("nameLogin",accountLogin.getUsername());
-		model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
+		model.addAttribute("nameLogin",accountNameLogin);
+		model.addAttribute("isAdmin", isAdmin);
 		return "customer/create";
 	}
 
@@ -225,7 +204,9 @@ public class CustomerController {
 						@RequestParam String customerPhone,
 						BindingResult bindingResult,Errors errors,
 						Model model,RedirectAttributes redirectAttributes){
-		Account accountLogin = getAccountLogin();
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+		int accountId = authenticationService.getAccountLogin().getId();
 		try {
 			int checkPhoneNumberExists = customerService.checkPhoneNumberExists(customerDTO.getPhone(),0);
 			if (checkPhoneNumberExists != 0){
@@ -234,33 +215,24 @@ public class CustomerController {
 			new CustomerDTO().validate(customerDTO,bindingResult);
 			if (bindingResult.hasErrors()){
 				model.addAttribute("customerDTO",customerDTO);
-				model.addAttribute("nameLogin",accountLogin.getUsername());
-				model.addAttribute("isAdmin", accountLogin.getRole().getName().equals("ROLE_ADMIN"));
+				model.addAttribute("nameLogin",accountNameLogin);
+				model.addAttribute("isAdmin", isAdmin);
 				return "customer/create";
 			}
 			Customer customer = new Customer();
 			BeanUtils.copyProperties(customerDTO,customer);
-			Employee employee = employeeService.getEmployeeByAccountId(accountLogin.getId());
+			Employee employee = employeeService.getEmployeeByAccountId(accountId);
 			int rowEffectByInsertCustomer = customerService.saveCustomer(customer.getName(),customer.getAddress(),customer.getPhone(),employee.getId());
 			if (rowEffectByInsertCustomer == 1){
-				model.addAttribute("customerName", customerName);
-				model.addAttribute("customerPhone", customerPhone);
 				redirectAttributes.addFlashAttribute("success", "Thêm mới thành công.");
-				return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
 			}else {
-				model.addAttribute("customerName", customerName);
-				model.addAttribute("customerPhone", customerPhone);
 				redirectAttributes.addFlashAttribute("error", "Thêm mới thất bại.");
-				return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
-
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			redirectAttributes.addFlashAttribute("error", "Lỗi !!! .Vui lòng thử lại");
-			return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
-		
 		}
-		
+		return "redirect:/customer/list?page=" + page + "&customerName=" + customerName + "&customerPhone=" + customerPhone;
 	}
 	
 	

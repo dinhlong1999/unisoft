@@ -5,19 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.example.springmvc.common.Paging;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.springmvc.model.Account;
-import com.example.springmvc.service.IAccountService;
+import com.example.springmvc.common.Paging;
+import com.example.springmvc.service.AuthenticationService;
 import com.example.springmvc.service.IAnalystService;
 
 @Controller
@@ -26,24 +22,17 @@ public class AnalystController {
 	
 	@Autowired
 	private IAnalystService analystService;
-	
 	@Autowired
-	private IAccountService accountService;
-
-	private Account getAccountLogin() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
-			String usernameLogin = authentication.getName();
-			Account account = accountService.getAccountByUsername(usernameLogin);
-			return account;
-		}
-		return null;
-	}
+	private AuthenticationService authenticationService;
+	
 	
 	@GetMapping("/list")
 	public String anaLystProduct(@RequestParam(required = false,defaultValue = "0") int page,
 								 @RequestParam(required = false,defaultValue = "") String orderDayBegin,
-								 @RequestParam(required = false,defaultValue = "") String orderDayEnd,Model model) {
+								 @RequestParam(required = false,defaultValue = "") String orderDayEnd,Model model
+								 ) {
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 		int limit = 4;
     	if (page != 0) {
     		page = page - 1;
@@ -72,7 +61,6 @@ public class AnalystController {
 	    }else if (orderDayEnd.length() < 10) {
 	    	orderDayEnd = "1000-10-10";
 		}
-		Account account = getAccountLogin();
 		
 		//Danh sách khách hàng không mua sản phẩm nào
 		List<Map<String, Object>> customerNoOrder;
@@ -103,8 +91,8 @@ public class AnalystController {
 		model.addAttribute("showEndEllipsisCustomerNoOrder", showEndEllipsis);
 		
 		model.addAttribute("customerNoOrder", customerNoOrder);
-		model.addAttribute("nameLogin", account.getUsername());
-		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
+		model.addAttribute("nameLogin", accountNameLogin);
+		model.addAttribute("isAdmin", isAdmin);
 		
 		//Danh sách sản phẩm bán chạy
 		List<Map<String,Object>> productsBestSeller;

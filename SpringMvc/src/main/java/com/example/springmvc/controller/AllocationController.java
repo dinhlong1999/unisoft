@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.springmvc.dto.AllocationDTO;
-import com.example.springmvc.model.Account;
 import com.example.springmvc.model.Allocation;
 import com.example.springmvc.model.Product;
-import com.example.springmvc.service.IAccountService;
+import com.example.springmvc.service.AuthenticationService;
 import com.example.springmvc.service.IOrderService;
 import com.example.springmvc.service.IProductService;
 
@@ -29,48 +26,43 @@ import com.example.springmvc.service.IProductService;
 public class AllocationController {
 	
 	@Autowired
-	private IAccountService accountService;
-	
-	@Autowired
 	private IOrderService orderService;
 	
 	@Autowired
 	private IProductService productService;
 	
-	private Account getAccountLogin () {
-		   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		   if (!(authentication instanceof AnonymousAuthenticationToken)) {
-				String usernameLogin = authentication.getName();
-				Account account  = accountService.getAccountByUsername(usernameLogin);
-				return account;
-			}
-		    	return null;
-		}
+	@Autowired
+	private AuthenticationService authenticationService;
+	
 
+	
 	@GetMapping("/allocation")
 	public String allocationPurchase(Model model) {
-		Account account = getAccountLogin();
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 		Allocation allocation = new Allocation();
 		List<Allocation> allocationList = new ArrayList<>();
 		allocationList.add(allocation);
 		AllocationDTO allocationDTO = new AllocationDTO();
 		allocationDTO.setAllocationList(allocationList);
-		model.addAttribute("nameLogin",account.getUsername());
-		model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
+		model.addAttribute("nameLogin",accountNameLogin);
+		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("allocationDTO", allocationDTO);
 		return "allocation/allocationProduct";
 	}
 	
 	@PostMapping("/allocation")
 	public String allocation(@ModelAttribute AllocationDTO allocationDTO, Model model,RedirectAttributes redirectAttributes ) {
-		Account account = getAccountLogin();
+		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
+		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+			
 		try {
 			List<Allocation> allocations = allocationDTO.getAllocationList(); 
 			List<String> error = AllocationDTO.validateAllocation(allocations);
 			if (!error.isEmpty()) {
 				model.addAttribute("error", error.toString());
-				model.addAttribute("nameLogin", account.getUsername());
-				model.addAttribute("isAdmin", account.getRole().getName().equals("ROLE_ADMIN"));
+				model.addAttribute("nameLogin",accountNameLogin);
+				model.addAttribute("isAdmin", isAdmin);
 				model.addAttribute("allocationDTO", allocationDTO);
 				return "allocation/allocationProduct";
 			}else {
@@ -104,7 +96,8 @@ public class AllocationController {
 						}
 					}
 				}
-				model.addAttribute("nameLogin", account.getUsername());
+				model.addAttribute("nameLogin",accountNameLogin);
+				model.addAttribute("isAdmin", isAdmin);
 			 	if (allocations.isEmpty()) {
 					StringBuilder success = new StringBuilder();
 					for(String map: statusMap.keySet()) {
