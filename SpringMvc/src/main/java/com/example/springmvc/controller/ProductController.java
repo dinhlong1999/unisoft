@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.springmvc.common.CheckLogin;
 import com.example.springmvc.common.Paging;
 import com.example.springmvc.dto.ProductDTO;
 import com.example.springmvc.model.Product;
@@ -36,15 +37,22 @@ public class ProductController {
     
     @Autowired
     private AuthenticationService authenticationService;
- 
+    
+    
     @GetMapping("/list")
     public String show(@RequestParam(required = false,defaultValue = "0") int page,
                        @RequestParam(required = false,defaultValue = "") String productCode,
                        @RequestParam(required = false,defaultValue = "") String productName,
                        Model model,RedirectAttributes redirectAttributes) {
-    	String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+        
+    	 String accountNameLogin ="";
+		 boolean isAdmin=false; 
     	 try {
+    		 if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+    				return "redirect:/logout";
+    		 }
+    		 accountNameLogin = authenticationService.getAccountLogin().getUsername();
+    		 isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
     		 if (page != 0){
     			 page = page -1;
     		 }
@@ -95,6 +103,9 @@ public class ProductController {
     					 @RequestParam String productCode, 
     					 RedirectAttributes redirectAttributes) {
     	try {
+    		 if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+    			return "redirect:/logout";
+    		 }
     		 int rowEffect = 0;
     		 rowEffect = productService.deleteProductById(id,version);
     		 if (rowEffect == 1) {
@@ -113,6 +124,9 @@ public class ProductController {
     
     @GetMapping("/create")
     public String create(Model model) {
+    	if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+			return "redirect:/logout";
+		 }
     	String accountNameLogin = authenticationService.getAccountLogin().getUsername();
 		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
     	model.addAttribute("productDTO",new ProductDTO());
@@ -129,8 +143,12 @@ public class ProductController {
     					BindingResult bindingResult,Errors errors, 
     					RedirectAttributes redirectAttributes, Model model) {
     	try {
+    		if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+    			return "redirect:/logout";
+    		}
     		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-    		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+       		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+       		
     		new ProductDTO().validate(productDTO,bindingResult);
     		if (!productService.isCodeProductExists(productDTO.getCode())){
     			errors.rejectValue("code", null, "Mã sản phẩm không được trùng");
@@ -163,6 +181,9 @@ public class ProductController {
     public String edit(@PathVariable("id") int id,Model model,RedirectAttributes redirectAttributes) {
     	
     	try {
+    		if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+    			return "redirect:/logout";
+    		}
     		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
     		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
     		Product product = productService.getProductById(id);
@@ -193,6 +214,9 @@ public class ProductController {
     					 RedirectAttributes redirectAttributes, Model model) {
     	
     	try {
+    		if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+    			return "redirect:/logout";
+    		}
     		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
     		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
     		if (!productService.isCodeProductExistsToUpdate(productDTO.getCode(),productDTO.getId())) {

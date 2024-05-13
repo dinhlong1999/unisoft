@@ -110,7 +110,7 @@
   						</button>
    	     			</td>
    	     			<td th:if="${map['roleId'] == 2}">
-   	     				 <button type="button"  class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr="onclick=|sendData(${map['id']},${map['version']},'${map['name']}')|">
+   	     				 <button type="button"  class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr="onclick=|sendData(${map['id']},${map['version']},${map['accountId']},${map['accountVersion']},'${map['name']}')|">
   							Xóa
 						</button>
    	     			</td>
@@ -160,12 +160,16 @@
       			<form th:action ="@{/employee/destroy}" method= "post">
        				<div class="modal-body">
 	      				Bạn có muốn xóa nhân viên : <span id="name" style="color:red"></span>?
-	   					<input type="hidden" id="id" name="idDelete">
-	   					<input type="hidden" id="version" name="version">
+	   					<input type="hidden" id="employeeId" name="employeeId">
+	   					<input type="hidden" id="employeeVersion" name="employeeVersion">
+	   					<input type="hidden" id="accountId" name="accountId">
+	   					<input type="hidden" id="accountVersion" name="accountVersion">
 	   					<input type="hidden" name="page" th:value="${page +1}">
 	   					<input type="hidden" name="accountName" th:value="${accountName}">
 	   					<input type="hidden" name="employeeName" th:value="${employeeName}">
 	   					<input type="hidden" name="phone" th:value="${phone}">
+	   					
+	   					
       				</div>
       				<div class="modal-footer">
         				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -212,9 +216,11 @@
         // };
         
         
-        function sendData(id,version,name){
-			$('#id').val(id);
-			$('#version').val(version);
+        function sendData(employeeId,employeeVersion,accountId,accountVersion,name){
+			$('#employeeId').val(employeeId);
+			$('#employeeVersion').val(employeeVersion);
+			$('#accountId').val(accountId);
+			$('#accountVersion').val(accountVersion);
 			$('#name').text(name);
         }
         

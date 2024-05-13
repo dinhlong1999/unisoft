@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.springmvc.common.CheckLogin;
 import com.example.springmvc.common.Paging;
 import com.example.springmvc.service.IOrderService;
 
@@ -45,10 +46,16 @@ public class OrderController {
     							@RequestParam(required = false,defaultValue = "0") Integer statusAllocation,
     							@RequestParam(required = false,defaultValue = "0") Integer statusBooking,Model model){
   
-    	String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
-		int accountId = authenticationService.getAccountLogin().getId();
+    	String accountNameLogin = "";
+		boolean isAdmin = false;
+		int accountId = 0;
     	try {
+    		if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+    		accountNameLogin = authenticationService.getAccountLogin().getUsername();
+    		isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+    		accountId = authenticationService.getAccountLogin().getId();
     		 if (page != 0) {
     			 page = page - 1;
     		 }

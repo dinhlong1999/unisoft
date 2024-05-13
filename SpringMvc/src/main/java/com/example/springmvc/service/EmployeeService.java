@@ -45,8 +45,20 @@ public class EmployeeService implements IEmployeeService {
 	}
 
 	@Override
-	public int deleteEmployeeById(int employeeId, int version) {
-		return employeeMapper.deleteEmployeeById(employeeId, version);
+	@Transactional
+	public int deleteEmployeeById(int employeeId, int versionEmpl, int accountId, int versionAccount) {
+		int rowEffectByDeleteAccount = accountMapper.deleteAccount(accountId, versionAccount);
+		if (rowEffectByDeleteAccount == 1) {
+			int rowEffectByDeleteEmployee = employeeMapper.deleteEmployeeById(employeeId, versionEmpl);
+			if (rowEffectByDeleteEmployee == 1) {
+				return 1;
+			}else {
+				throw new RuntimeException("Không thể xóa  nhân viên");
+			}
+		}else {
+			throw new RuntimeException("Không thể xóa được tài khoản");
+		}
+		
 	}
 
 	@Override
@@ -64,9 +76,9 @@ public class EmployeeService implements IEmployeeService {
 				throw new RuntimeException("Không thể thêm được nhân viên");
 			}
 		}else {
-			
+			throw new RuntimeException("Không thể thêm được tài khoản");
 		}
-		throw new RuntimeException("Không thể thêm được tài khoản");
+		
 	}
 
 	@Override

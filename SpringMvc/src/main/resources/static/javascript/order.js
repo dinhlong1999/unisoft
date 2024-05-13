@@ -59,6 +59,10 @@ $(document).ready(function () {
     $('#clear').on('click',function () {
         $('.input').val(null);
     });
+    
+    $('#submit').on('click',function () {
+        localStorage.clear();
+    })
 
     $('#reset').on('click',function () {
         localStorage.clear();
@@ -117,20 +121,36 @@ $(document).ready(function () {
                         localStorage.setItem('cellErrors',JSON.stringify(response))
                         for (let key in response){
                             if (response.hasOwnProperty(key)){
-                                let valueList = response[key];
-                                console.log(key);
-                                console.log(valueList);
-                                valueList.forEach(function (value) {
-                                    let table = $('#myTable');
-                                    table.find('tr[id="' + key + '"]').find('td.'+value).css('background-color','red');
-                                })
+                                if (key === "isLogin"){
+                                    Swal.fire({
+                                        title: 'Không thể thao tác.',
+                                        icon: 'error',
+                                        confirmButtonColor: 'red'
+                                    }).then((result) => {
+                                        if (result.value) {
+                                            localStorage.clear();
+                                            location.reload();
+                                        }
+                                    });
+                                    break;
+                                }else{
+                                    let valueList = response[key];
+                                    console.log(key);
+                                    console.log(valueList);
+                                    valueList.forEach(function (value) {
+                                        let table = $('#myTable');
+                                        table.find('tr[id="' + key + '"]').find('td.'+value).css('background-color','red');
+                                    })
+                                     Swal.fire({
+                                        title: 'Dữ liệu không hợp lệ, vui lòng kiểm tra dữ liệu ở những ô màu đỏ.',
+                                        icon: 'error',
+                                        confirmButtonColor: 'red'
+                                    });
+                                }   
+                             
                             }
                         }
-                        Swal.fire({
-                            title: 'Dữ liệu không hợp lệ, vui lòng kiểm tra dữ liệu ở những ô màu đỏ.',
-                            icon: 'error',
-                            confirmButtonColor: 'red'
-                        });
+                       
                     }
                 },
                 error:function(xhr, status, error) {
@@ -169,22 +189,28 @@ $(document).ready(function () {
                         icon: 'error',
                         confirmButtonColor: 'red'
                     });
+                }else if (data === "errorLogin"){
+                    location.reload();
+                    localStorage.clear();
                 }
                 else {
                     productNameCell.text(data)
                 }
-                let id = row.attr('id');
-                let rowData = {
-                    id: id,
-                    productCode: row.find('.productCode').text(),
-                    productName: row.find('.productName').text(),
-                    quantity: row.find('.quantity').text(),
-                    customerName: row.find('.customerName').text(),
-                    customerPhone: row.find('.customerPhone').text(),
-                    version : row.find('.hidden').text()
-                };
-                console.log(rowData);
-                checkChangeValue(id,rowData);
+                if(data !== "errorLogin"){
+                    let id = row.attr('id');
+                    let rowData = {
+                         id: id,
+                        productCode: row.find('.productCode').text(),
+                        productName: row.find('.productName').text(),
+                        quantity: row.find('.quantity').text(),
+                        customerName: row.find('.customerName').text(),
+                        customerPhone: row.find('.customerPhone').text(),
+                        version : row.find('.hidden').text()
+                    };
+                    console.log(rowData);
+                    checkChangeValue(id,rowData);
+                }
+               
             },
             error:function(xhr, textStatus, errorThrow){
                 console.log("Error",errorThrow)
@@ -211,20 +237,26 @@ $(document).ready(function () {
                         confirmButtonColor: 'red'
                     });
                 }
+                else if (data === "errorLogin"){
+                    location.reload();
+                    localStorage.clear();
+                }
                 else {
                     productCodeCell.text(data)
                 }
-                let id = row.attr('id');
-                let rowData = {
-                    id: id,
-                    productCode: row.find('.productCode').text(),
-                    productName: row.find('.productName').text(),
-                    quantity: row.find('.quantity').text(),
-                    customerName: row.find('.customerName').text(),
-                    customerPhone: row.find('.customerPhone').text(),
-                    version : row.find('.hidden').text()
-                };
-                checkChangeValue(id,rowData);
+                if(data !== "errorLogin"){
+                    let id = row.attr('id');
+                    let rowData = {
+                        id: id,
+                        productCode: row.find('.productCode').text(),
+                        productName: row.find('.productName').text(),
+                        quantity: row.find('.quantity').text(),
+                        customerName: row.find('.customerName').text(),
+                        customerPhone: row.find('.customerPhone').text(),
+                        version : row.find('.hidden').text()
+                    };
+                    checkChangeValue(id,rowData);
+                }
             },
             error:function(xhr, textStatus, errorThrow){
                 console.log("Error",errorThrow)
@@ -242,7 +274,6 @@ $(document).ready(function () {
             method : "GET",
             url: `http://localhost:8081/api/customer/getCustomerPhone?customerName=`+encodeURIComponent(customerName),
             success:function (data) {
-
                 if (data === ""){
                     valueCurrentCustomerName.text('')
                     customerPhoneCell.text('');
@@ -251,21 +282,29 @@ $(document).ready(function () {
                         icon: 'error',
                         confirmButtonColor: 'red'
                     });
+                }
+                else if (data === "errorLogin"){
+                    location.reload();
+                    localStorage.clear();
                 }else {
                     customerPhoneCell.text(data);
                 }
-                let id = row.attr('id');
-                let rowData = {
-                    id: id,
-                    productCode: row.find('.productCode').text(),
-                    productName: row.find('.productName').text(),
-                    quantity: row.find('.quantity').text(),
-                    customerName: row.find('.customerName').text(),
-                    customerPhone: row.find('.customerPhone').text(),
-                    version : row.find('.hidden').text()
-                };
-                console.log(rowData);
-                checkChangeValue(id,rowData)
+                if(data !== "errorLogin"){
+                    let id = row.attr('id');
+                    let rowData = {
+                        id: id,
+                        productCode: row.find('.productCode').text(),
+                        productName: row.find('.productName').text(),
+                        quantity: row.find('.quantity').text(),
+                        customerName: row.find('.customerName').text(),
+                        customerPhone: row.find('.customerPhone').text(),
+                        version : row.find('.hidden').text()
+                    };
+                    console.log(rowData);
+                    checkChangeValue(id,rowData)
+                }
+                
+               
             },
             error:function (xhr,textStatus,errorThrow) {
                 console.log("Error",errorThrow)
@@ -293,20 +332,26 @@ $(document).ready(function () {
                         icon: 'error',
                         confirmButtonColor: 'red'
                     });
+                }else if (data === "errorLogin"){
+                    location.reload();
+                    localStorage.clear();
                 }else {
                     customerName.text(data);
                 }
-                let id = row.attr('id');
-                let rowData = {
-                    id: id,
-                    productCode: row.find('.productCode').text(),
-                    productName: row.find('.productName').text(),
-                    quantity: row.find('.quantity').text(),
-                    customerName: row.find('.customerName').text(),
-                    customerPhone: row.find('.customerPhone').text(),
-                    version : row.find('.hidden').text()
-                };
-                checkChangeValue(id,rowData);
+                if(data !== "errorLogin" ){
+                    let id = row.attr('id');
+                    let rowData = {
+                        id: id,
+                        productCode: row.find('.productCode').text(),
+                        productName: row.find('.productName').text(),
+                        quantity: row.find('.quantity').text(),
+                        customerName: row.find('.customerName').text(),
+                        customerPhone: row.find('.customerPhone').text(),
+                        version : row.find('.hidden').text()
+                    };
+                    checkChangeValue(id,rowData);
+                }
+               
             },
             error:function (xhr,textStatus,errorThrow) {
                 console.log("Error",errorThrow)

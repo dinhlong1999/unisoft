@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.springmvc.common.CheckLogin;
 import com.example.springmvc.common.Paging;
 import com.example.springmvc.dto.EmployeeDTO;
 import com.example.springmvc.model.Employee;
@@ -46,9 +47,15 @@ public class EmployeeController {
 			@RequestParam(required = false, defaultValue = "") String phone, 
 			Model model, RedirectAttributes redirectAttributes
 			) {
-		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+		String accountNameLogin = "";
+		boolean isAdmin = false;
 		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			accountNameLogin = authenticationService.getAccountLogin().getUsername();
+			isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+			
 			if (page != 0) {
 				page = page - 1;
 			}
@@ -91,15 +98,20 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/destroy")
-	public String delete(@RequestParam int idDelete,
-						 @RequestParam int version,
+	public String delete(@RequestParam int employeeId,
+						 @RequestParam int employeeVersion,
+						 @RequestParam int accountId,
+						 @RequestParam int accountVersion,
 						 @RequestParam int page,
 						 @RequestParam String accountName,
 						 @RequestParam String employeeName,
 						 @RequestParam String phone,
 						 RedirectAttributes redirectAttributes) {
 		try {
-			int rowEffect = employeeService.deleteEmployeeById(idDelete,version);
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			int rowEffect = employeeService.deleteEmployeeById(employeeId,employeeVersion,accountId, accountVersion);
 			if (rowEffect == 1) {
 				redirectAttributes.addFlashAttribute("success", "Xóa thành công");
 			} else {
@@ -116,6 +128,9 @@ public class EmployeeController {
 
 	@GetMapping("/create")
 	public String create(Model model) {
+		if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+			return "redirect:/logout";
+	    }
 		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
 		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 		model.addAttribute("nameLogin", accountNameLogin);
@@ -136,7 +151,9 @@ public class EmployeeController {
 		try {	
 			String accountNameLogin = authenticationService.getAccountLogin().getUsername();
 			boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
-		
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
 			int checkUsernameExists = accountService.checkUsernameOfAccount(employeeDTO.getAccount().getUsername());
 			if (checkUsernameExists == 1) {
 				errors.rejectValue("account.username", null, "Tên đăng nhập đã bị trùng");
@@ -168,8 +185,10 @@ public class EmployeeController {
 
 	 @GetMapping("/edit/{id}")
 	 public String edit(@PathVariable("id") int id, Model model,RedirectAttributes redirectAttributes) {
-		
 		 try {
+			 if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+					return "redirect:/logout";
+			 }
 			 String accountNameLogin = authenticationService.getAccountLogin().getUsername();
 			 boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 			 Employee employee = employeeService.getEmployeeById(id);
@@ -203,6 +222,9 @@ public class EmployeeController {
 			 			  ) {
 		 
 		 try {
+			 if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+					return "redirect:/logout";
+			 }
 			 String accountNameLogin = authenticationService.getAccountLogin().getUsername();
 			 boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 			 int checkExistsUsername = accountService.checkUsernameExists(employeeDTO.getAccount().getUsername(), employeeDTO.getAccount().getId());
@@ -231,8 +253,7 @@ public class EmployeeController {
 			System.out.println(e.getMessage());
 			redirectAttributes.addFlashAttribute("error", "Cập nhật thất bại. Vui lòng thử lại");	
 		}
-		
-		 return "redirect:/employee/list?page=" + page + "&accountName=" + accountName + "&employeeName=" + employeeName
+		return "redirect:/employee/list?page=" + page + "&accountName=" + accountName + "&employeeName=" + employeeName
 					+ "&phone=" + phoneSearch;
 	 }
 

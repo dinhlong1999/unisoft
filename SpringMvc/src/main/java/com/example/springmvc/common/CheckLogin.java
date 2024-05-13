@@ -1,10 +1,17 @@
 package com.example.springmvc.common;
 
+import com.example.springmvc.model.Account;
+
+
+
 public class CheckLogin {
-	public static String checkLogin(String name) {
-		if(name == null) {
-			return "redirect:/login/success";
+	
+	public boolean isLogin(Account account) {
+		if (account == null) {
+			return false;
 		}
-		return null;
+		return true;
 	}
+	
+
 }

@@ -15,7 +15,7 @@ public interface IEmployeeService {
 	
 	int updateStatusEmployee(int status,int version,int employeeId);
 
-	int deleteEmployeeById (int employeeId, int version);
+	int deleteEmployeeById (int employeeId, int versionEmpl, int accountId, int versionAccount);
 	
 	int insertEmployee(Account account, Employee employee);
 	

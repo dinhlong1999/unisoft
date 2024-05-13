@@ -16,4 +16,6 @@ public interface AccountMapper {
 	int editAccount(String username, String password,int version,int id);
 	
 	int checkUsernameExists(String username, int id);
+	
+	int deleteAccount(int accountId, int version);
 }

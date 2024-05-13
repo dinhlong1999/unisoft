@@ -17,6 +17,8 @@
 				roles r on r.role_id = a.role_id
 			WHERE
 				a.username = #{username}
+		    AND
+		        a.flag = 0
 		]]>
 	</select>
 	
@@ -62,5 +64,17 @@
 			version = #{arg2}
 		AND
 			account_id = #{arg3}
+	</update>
+	
+	<update id="deleteAccount">
+	    UPDATE
+	       accounts
+	    SET
+	       flag = 1,
+	       version = version + 1
+	    WHERE
+	       account_id = #{arg0}
+	    AND 
+	       version = #{arg1}
 	</update>
 </mapper>

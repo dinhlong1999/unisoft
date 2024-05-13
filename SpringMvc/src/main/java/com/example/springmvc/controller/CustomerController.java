@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.springmvc.common.CheckLogin;
 import com.example.springmvc.common.Paging;
 import com.example.springmvc.dto.CustomerDTO;
 import com.example.springmvc.model.Customer;
@@ -45,10 +46,16 @@ public class CustomerController {
 					   @RequestParam(required = false,defaultValue = "") String customerName,
 		               @RequestParam(required = false,defaultValue = "") String customerPhone,
 					   Model model,RedirectAttributes redirectAttributes) {
-		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
-		int accountId = authenticationService.getAccountLogin().getId();
+		String accountNameLogin="";
+		boolean isAdmin = false;
+		int accountId = 0;
 		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			accountNameLogin = authenticationService.getAccountLogin().getUsername();
+			isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+			accountId = authenticationService.getAccountLogin().getId();
 			if (page != 0) {
 				page = page - 1;
 			}
@@ -101,6 +108,9 @@ public class CustomerController {
 						 RedirectAttributes redirectAttributes) {
 		
 		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
 			int rowEffectByDeleteCustomer = customerService.deleteCustomer(customerId, version);
 			if (rowEffectByDeleteCustomer == 1) {
 				redirectAttributes.addFlashAttribute("success", "Xóa khách hàng thành công");
@@ -118,9 +128,14 @@ public class CustomerController {
 
 	@GetMapping("/edit/{id}")
 	public String edit(@PathVariable("id") int id,Model model,RedirectAttributes redirectAttributes){
-		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		int accountId = authenticationService.getAccountLogin().getId();
+		String accountNameLogin ="";
+		int accountId= 0;
 		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			accountNameLogin = authenticationService.getAccountLogin().getUsername();
+			accountId = authenticationService.getAccountLogin().getId();
 			Customer customer = customerService.getCustomerById(id);
 			if (customer == null) {
 				redirectAttributes.addFlashAttribute("error","Không tồn tại đối tượng này");
@@ -156,9 +171,14 @@ public class CustomerController {
 						 @RequestParam String customerPhone,
 						 BindingResult bindingResult,Errors errors, 
 						 Model model, RedirectAttributes redirectAttributes) {
-		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+		String accountNameLogin;
+		boolean isAdmin =false;
 		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			accountNameLogin = authenticationService.getAccountLogin().getUsername();
+			isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 			new CustomerDTO().validate(customerDTO, bindingResult);
 			int checkPhoneNumberExists = customerService.checkPhoneNumberExists(customerDTO.getPhone(), customerDTO.getId());
 			if (checkPhoneNumberExists != 0) {
@@ -189,6 +209,9 @@ public class CustomerController {
 
 	@GetMapping("/create")
 	public String create(Model model){
+		if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+			return "redirect:/logout";
+	    }
 		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
 		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 		model.addAttribute("customerDTO",new CustomerDTO());
@@ -204,11 +227,17 @@ public class CustomerController {
 						@RequestParam String customerPhone,
 						BindingResult bindingResult,Errors errors,
 						Model model,RedirectAttributes redirectAttributes){
-		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
-		int accountId = authenticationService.getAccountLogin().getId();
+		String accountNameLogin = "";
+		boolean isAdmin = false;
+		int accountId = 0;
 		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			accountNameLogin = authenticationService.getAccountLogin().getUsername();
 			int checkPhoneNumberExists = customerService.checkPhoneNumberExists(customerDTO.getPhone(),0);
+			isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+			accountId = authenticationService.getAccountLogin().getId();
 			if (checkPhoneNumberExists != 0){
 				errors.rejectValue("phone",null,"Số điện thoại đã tồn tại");
 			}

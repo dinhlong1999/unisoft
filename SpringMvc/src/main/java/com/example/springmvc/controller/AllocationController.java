@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.springmvc.common.CheckLogin;
 import com.example.springmvc.dto.AllocationDTO;
 import com.example.springmvc.model.Allocation;
 import com.example.springmvc.model.Product;
@@ -38,8 +39,17 @@ public class AllocationController {
 	
 	@GetMapping("/allocation")
 	public String allocationPurchase(Model model) {
-		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+		String accountNameLogin="";
+		boolean isAdmin=false;
+		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			accountNameLogin = authenticationService.getAccountLogin().getUsername();
+			isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 		Allocation allocation = new Allocation();
 		List<Allocation> allocationList = new ArrayList<>();
 		allocationList.add(allocation);
@@ -53,10 +63,14 @@ public class AllocationController {
 	
 	@PostMapping("/allocation")
 	public String allocation(@ModelAttribute AllocationDTO allocationDTO, Model model,RedirectAttributes redirectAttributes ) {
-		String accountNameLogin = authenticationService.getAccountLogin().getUsername();
-		boolean isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
-			
+		String accountNameLogin = "";
+		boolean isAdmin = false;
 		try {
+			if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
+				return "redirect:/logout";
+		    }
+			accountNameLogin = authenticationService.getAccountLogin().getUsername();
+			isAdmin = authenticationService.getAccountLogin().getRole().getName().equals("ROLE_ADMIN");
 			List<Allocation> allocations = allocationDTO.getAllocationList(); 
 			List<String> error = AllocationDTO.validateAllocation(allocations);
 			if (!error.isEmpty()) {

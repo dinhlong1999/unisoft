@@ -11,6 +11,8 @@
 				e.phone,
 				e.version,
 				a.username,
+				a.account_id AS accountId,
+				a.version AS accountVersion,
 				a.role_id AS roleId
 			FROM
 				employees e

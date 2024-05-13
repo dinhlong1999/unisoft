@@ -41,8 +41,10 @@ $(document).ready(function () {
                         icon: 'error',
                         confirmButtonColor: 'red'
                     });
-                }
-                else {
+                }else if (data === "errorLogin"){
+                    location.reload();
+                    localStorage.clear();
+                }else {
                     productName.val(data)
                 }
             },
@@ -71,8 +73,10 @@ $(document).ready(function () {
                         icon: 'error',
                         confirmButtonColor: 'red'
                     });
-                }
-                else {
+                }else if (data === "errorLogin"){
+                    location.reload();
+                    localStorage.clear();
+                }else {
                     productCodeCell.val(data)
                 }
             },
