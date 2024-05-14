@@ -159,6 +159,7 @@
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['accountName']}"></td>
                 <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
                 <td class="hidden" th:text="${order['version']}" ></td>
+                <td class="page" style="display: none;" th:text="${page}"></td>
    	     	</tr>
    	     	<tr th:each="order,status:${ordersMap}" th:id="${order['id']}" class="hidden">
                 <td th:text="${status.count + page * limit}"></td>

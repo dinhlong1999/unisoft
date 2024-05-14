@@ -15,7 +15,7 @@ public interface IOrderService {
 			 String customerPhone, boolean isAdmin, int employeeId, LocalDate orderDayBegin, LocalDate orderDayEnd, int statusAllocation, int statusBooking);
 
 	
-	int insertAndUpdateOrders(int accountId, List<OrdersDTO> ordersDTOs);
+	boolean insertAndUpdateOrders(int accountId, List<OrdersDTO> ordersDTOs);
 	
 	String goodsAllocation(int productId, int quantity);
 }

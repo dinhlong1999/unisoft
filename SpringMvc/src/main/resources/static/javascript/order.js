@@ -7,6 +7,20 @@ $(document).ready(function () {
     }
 
 });
+function validateOrder (quantity, productCode, customerPhone){
+    let errorList = [];
+    if (quantity <= 0){
+        errorList.push("quantity");
+    }
+    if(productCode === ""){
+        errorList.push("productCode");
+    }
+    if(customerPhone === ""){
+        errorList.push("customerPhone");
+    }
+    return errorList;
+   
+} 
 
 function taoIDMoi() {
     return Math.random().toString(36).substr(2, 9); // Trả về một chuỗi ngẫu nhiên
@@ -60,9 +74,6 @@ $(document).ready(function () {
         $('.input').val(null);
     });
     
-    $('#submit').on('click',function () {
-        localStorage.clear();
-    })
 
     $('#reset').on('click',function () {
         localStorage.clear();
@@ -91,6 +102,7 @@ $(document).ready(function () {
     });
 
     $('#add').on('click',function (){
+        
         $('#myTable td').css('background-color','white')
         let temp = localStorage.getItem('myArray') || [];
         if(temp.length === 0){
@@ -100,7 +112,104 @@ $(document).ready(function () {
                 confirmButtonColor: 'blue'
             });
         }else {
-            $.ajax({
+          let validateMap = new Map();
+            let dataArray = JSON.parse(temp);
+            dataArray.forEach(function(value) {
+                let errorList = validateOrder(value.quantity, value.productCode, value.customerPhone);
+                if(errorList.length !== 0){
+                    validateMap.set(value.id,errorList)
+                }
+            })
+            console.log(validateMap);
+            if(validateMap.size === 0){
+                $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/api/orders/save",
+                data: temp,
+                success : function(response){
+                 if (response === true){
+                        Swal.fire({
+                            title: 'Cập nhật dữ liệu thành công',
+                            icon: 'success',
+                            confirmButtonColor: 'blue',
+                        }).then((result) => {
+                            if (result.value) {
+                                localStorage.clear();
+                                location.reload();
+                            }
+                        });
+                  }
+                  else if(response ===false){
+                    Swal.fire({
+                            title: 'Không thể thao tác.',
+                            icon: 'error',
+                            confirmButtonColor: 'red'
+                    }).then((result) => {
+                            if (result.value) {
+                                localStorage.clear();
+                                location.reload();
+                            }
+                    })            
+                  }
+                }
+                ,
+                error:function(xhr, status, error) {
+                    console.error("lỗi khi gửi dữ liệu :" + error);
+                    Swal.fire({
+                        title: 'Dữ liệu chưa được cập nhật. Vui lòng thử lại.',
+                        icon: 'error',
+                        confirmButtonColor: 'red'
+                    }).then((result) => {
+                        if (result.value) {
+                            localStorage.clear();
+                            location.reload();
+                        }
+                    });
+                }
+             })
+            }
+            else{
+              let cellError = Object.fromEntries(validateMap);
+              console.log(JSON.stringify(cellError));
+              localStorage.setItem('cellErrors',JSON.stringify(cellError));
+                 for (let key in cellError){
+                            if (cellError.hasOwnProperty(key)){
+                                if (key === "isLogin"){
+                                    Swal.fire({
+                                        title: 'Không thể thao tác.',
+                                        icon: 'error',
+                                        confirmButtonColor: 'red'
+                                    }).then((result) => {
+                                        if (result.value) {
+                                            localStorage.clear();
+                                            location.reload();
+                                        }
+                                    });
+                                    break;
+                                }else{
+                                    let valueList = cellError[key];
+                                    console.log(key);
+                                    console.log(valueList);
+                                    valueList.forEach(function (value) {
+                                        let table = $('#myTable');
+                                        table.find('tr[id="' + key + '"]').find('td.'+value).css('background-color','red');
+                                    })
+                                     Swal.fire({
+                                        title: 'Dữ liệu không hợp lệ, vui lòng kiểm tra dữ liệu ở những ô màu đỏ.',
+                                        icon: 'error',
+                                        confirmButtonColor: 'red'
+                                    });
+                                }   
+                             
+                            }
+                        }
+            }
+            
+            
+            
+            
+           /*$.ajax({
                 type: "POST",
                 contentType: "application/json",
                 url: "/api/orders/save",
@@ -150,7 +259,7 @@ $(document).ready(function () {
                              
                             }
                         }
-                       
+                    
                     }
                 },
                 error:function(xhr, status, error) {
@@ -166,7 +275,7 @@ $(document).ready(function () {
                         }
                     });
                 }
-            })
+            })*/
         }
 
     });
@@ -205,7 +314,8 @@ $(document).ready(function () {
                         quantity: row.find('.quantity').text(),
                         customerName: row.find('.customerName').text(),
                         customerPhone: row.find('.customerPhone').text(),
-                        version : row.find('.hidden').text()
+                        version : row.find('.hidden').text(),
+                        page : row.find('.page').text()
                     };
                     console.log(rowData);
                     checkChangeValue(id,rowData);
@@ -253,7 +363,8 @@ $(document).ready(function () {
                         quantity: row.find('.quantity').text(),
                         customerName: row.find('.customerName').text(),
                         customerPhone: row.find('.customerPhone').text(),
-                        version : row.find('.hidden').text()
+                        version : row.find('.hidden').text(),
+                        page : row.find('.page').text()
                     };
                     checkChangeValue(id,rowData);
                 }
@@ -298,7 +409,8 @@ $(document).ready(function () {
                         quantity: row.find('.quantity').text(),
                         customerName: row.find('.customerName').text(),
                         customerPhone: row.find('.customerPhone').text(),
-                        version : row.find('.hidden').text()
+                        version : row.find('.hidden').text(),
+                        page : row.find('.page').text()
                     };
                     console.log(rowData);
                     checkChangeValue(id,rowData)
@@ -347,7 +459,8 @@ $(document).ready(function () {
                         quantity: row.find('.quantity').text(),
                         customerName: row.find('.customerName').text(),
                         customerPhone: row.find('.customerPhone').text(),
-                        version : row.find('.hidden').text()
+                        version : row.find('.hidden').text(),
+                        page : row.find('.page').text()
                     };
                     checkChangeValue(id,rowData);
                 }
@@ -371,17 +484,12 @@ $(document).ready(function () {
             quantity: row.find('.quantity').text(),
             customerName: row.find('.customerName').text(),
             customerPhone: row.find('.customerPhone').text(),
-            version : row.find('.hidden').text()
+            version : row.find('.hidden').text(),
+            page : row.find('.page').text()
         };
         checkChangeValue(id,rowData);
     })
-    window.addEventListener('storage',function (event) {
-        if(event.key === "myArray"){
-            localStorage.removeItem('myArray');
-            location.reload();
-            console.log("Đã chỉnh sửa local storage ")
-        }
-    })
+   
 });
 
 function render(data) {

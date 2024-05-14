@@ -49,8 +49,7 @@ public class OrderService implements IOrderService {
 	}
 
 	@Override
-	public int insertAndUpdateOrders(int accountId, List<OrdersDTO> ordersDTOs) {
-		int count= 0;
+	public boolean insertAndUpdateOrders(int accountId, List<OrdersDTO> ordersDTOs) {
 		  for(OrdersDTO ordersDTO : ordersDTOs){
               if (ordersDTO.getId().matches("^\\d+$")){
                   int orderId = Integer.parseInt(ordersDTO.getId());
@@ -60,8 +59,6 @@ public class OrderService implements IOrderService {
                   int updateOrders = orderMapper.updateOrder(customerId,product.getId(),quantityBook,ordersDTO.getVersion(),product.getPriceSell(),orderId);
                   if (updateOrders != 1){
                       throw new RuntimeException("Không cap nhat được đơn hàng");
-                  }else {
-                  	count += 1;
                   }
               }else {
               	 int customerId = customerService.getIdCustomerByPhoneNumber(ordersDTO.getCustomerPhone());
@@ -72,12 +69,10 @@ public class OrderService implements IOrderService {
               	 int insertOrders = orderMapper.insertOrders(customerId, employee.getId(),product.getId(),statusId, dateStart, product.getPriceSell(), ordersDTO.getQuantity());
               	 if (insertOrders != 1) {
               		 throw new RuntimeException("Không thêm được đơn hàng");
-					}else {
-						count +=1;
-					}
+				 }
               }
           }
-		return count ;
+		return true ;
 	}
 
 	@Override

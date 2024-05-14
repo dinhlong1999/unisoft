@@ -1,8 +1,6 @@
 package com.example.springmvc.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,17 +25,14 @@ public class OrdersRestController {
 	private AuthenticationService authenticationService;
     
     @PostMapping("/save")
-    public Map<String,List<String>> saveOrder(@RequestBody List<OrdersDTO> data){
-        Map<String,List<String>> errorsList  = new OrdersDTO().validate(data);
+    public boolean saveOrder(@RequestBody List<OrdersDTO> data){
+    	boolean result ;
         if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
-			errorsList.put("isLogin", new ArrayList<>());
+			result = false;
 	    }
-        if (errorsList.isEmpty()) {
-        	Account account = authenticationService.getAccountLogin();
-        	int rowEffect = orderService.insertAndUpdateOrders(account.getId(), data);
-		}
-       
-        return errorsList;
+        Account account = authenticationService.getAccountLogin();
+        result = orderService.insertAndUpdateOrders(account.getId(), data);
+        return result;
     }
 
 }
