@@ -62,11 +62,13 @@ public class OrderController {
     		 int limit = 4;
     		 if (orderDayBegin.isEmpty()) {
     			 orderDayBegin = "2000-10-10";
+    			 model.addAttribute("orderDayBegin", "");
     		 }else {
     			 model.addAttribute("orderDayBegin", orderDayBegin);
     		 };
     		 if (orderDayEnd.isEmpty()) {
     			 orderDayEnd = "9999-10-10";
+    			 model.addAttribute("orderDayEnd", "");
     		 }else {
     			 model.addAttribute("orderDayEnd", orderDayEnd);
     		 }

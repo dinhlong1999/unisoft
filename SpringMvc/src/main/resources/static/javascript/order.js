@@ -37,11 +37,11 @@ function checkChangeValue(id, rowData){
     let recordHidden = $('#myTable').find('tr.hidden[id="' + id + '"]');
     let oldValue = {
         id : id,
-        productCode: recordHidden.find('.productCode').text(),
-        productName: recordHidden.find('.productName').text(),
-        quantity: recordHidden.find('.quantity').text(),
-        customerName: recordHidden.find('.customerName').text(),
-        customerPhone: recordHidden.find('.customerPhone').text()
+        productCode: recordHidden.find('.productCodeOldValue').text(),
+        productName: recordHidden.find('.productNameOldValue').text(),
+        quantity: recordHidden.find('.quantityOldValue').text(),
+        customerName: recordHidden.find('.customerNameOldValue').text(),
+        customerPhone: recordHidden.find('.customerPhoneOldValue').text()
     };
     if (!compareObjectValue(oldValue,rowData)){
         let existingIndex = currentArray.findIndex(item => item.id === id);
@@ -94,7 +94,7 @@ $(document).ready(function () {
             '                     <td class="customerPhone" contenteditable="true"></td>\n' +
             '                     <td ></td>\n' +
             '                     <td></td>\n' +
-            '                     <td></td>\n' +
+            '                     <td></td>\n' +    
             /*   '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>\n' +
               '                     <td th:if = "${roleName == \'ROLE_ADMIN\'}"></td>' + */
             '                </tr>')
@@ -102,7 +102,7 @@ $(document).ready(function () {
     });
 
     $('#add').on('click',function (){
-        
+        let url = $(this).data('pages');
         $('#myTable td').css('background-color','white')
         let temp = localStorage.getItem('myArray') || [];
         if(temp.length === 0){
@@ -112,12 +112,14 @@ $(document).ready(function () {
                 confirmButtonColor: 'blue'
             });
         }else {
-          let validateMap = new Map();
+            let validateMap = new Map();
+            let errorPages = [];
             let dataArray = JSON.parse(temp);
             dataArray.forEach(function(value) {
                 let errorList = validateOrder(value.quantity, value.productCode, value.customerPhone);
                 if(errorList.length !== 0){
                     validateMap.set(value.id,errorList)
+                    errorPages.push(parseInt(value.page));
                 }
             })
             console.log(validateMap);
@@ -128,7 +130,7 @@ $(document).ready(function () {
                 url: "/api/orders/save",
                 data: temp,
                 success : function(response){
-                 if (response === true){
+                 if (response){
                         Swal.fire({
                             title: 'Cập nhật dữ liệu thành công',
                             icon: 'success',
@@ -140,7 +142,7 @@ $(document).ready(function () {
                             }
                         });
                   }
-                  else if(response ===false){
+                  else{
                     Swal.fire({
                             title: 'Không thể thao tác.',
                             icon: 'error',
@@ -170,6 +172,7 @@ $(document).ready(function () {
              })
             }
             else{
+              console.log(errorPages);
               let cellError = Object.fromEntries(validateMap);
               console.log(JSON.stringify(cellError));
               localStorage.setItem('cellErrors',JSON.stringify(cellError));
@@ -189,8 +192,6 @@ $(document).ready(function () {
                                     break;
                                 }else{
                                     let valueList = cellError[key];
-                                    console.log(key);
-                                    console.log(valueList);
                                     valueList.forEach(function (value) {
                                         let table = $('#myTable');
                                         table.find('tr[id="' + key + '"]').find('td.'+value).css('background-color','red');
@@ -199,6 +200,12 @@ $(document).ready(function () {
                                         title: 'Dữ liệu không hợp lệ, vui lòng kiểm tra dữ liệu ở những ô màu đỏ.',
                                         icon: 'error',
                                         confirmButtonColor: 'red'
+                                    }).then((result) => {
+                                        if (result.value) {
+                                           let pageError = Math.min(...errorPages);
+                                           let urlError = url.replace('pageError', +pageError + 1);
+                                           window.location.href =urlError;
+                                        }
                                     });
                                 }   
                              

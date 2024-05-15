@@ -91,11 +91,11 @@
    	  <div>
    	     	<table  id ="employeeTable" class ="table table-hover table-bordered">
    	     		<tr style="background-color: grey;color: white">
-   	     			<th>STT</th>
-   	     			<th>TÊN ĐĂNG NHẬP</th>
-   	     			<th>TÊN NHÂN VIÊN</th>
-   	     			<th>SỐ ĐIỆN THOẠI</th>
-   	     			<th>TRẠNG THÁI</th>
+   	     			<th width="5%">STT</th>
+   	     			<th width="20%">TÊN ĐĂNG NHẬP</th>
+   	     			<th width="20%">TÊN NHÂN VIÊN</th>
+   	     			<th width="20%">SỐ ĐIỆN THOẠI</th>
+   	     			<th width="15%">TRẠNG THÁI</th>
    	     			<th colspan ="2">HÀNH ĐỘNG</th>
    	     		</tr>
    	     		<tr th:if="${listEmployee.size() > 0}" th:each="map,status:${listEmployee}" th:data-id="${map['id']}">

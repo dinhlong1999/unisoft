@@ -26,13 +26,12 @@ public class OrdersRestController {
     
     @PostMapping("/save")
     public boolean saveOrder(@RequestBody List<OrdersDTO> data){
-    	boolean result ;
         if (!new CheckLogin().isLogin(authenticationService.getAccountLogin())) {
-			result = false;
+			return false;
 	    }
         Account account = authenticationService.getAccountLogin();
-        result = orderService.insertAndUpdateOrders(account.getId(), data);
-        return result;
+        return orderService.insertAndUpdateOrders(account.getId(), data);
+         
     }
 
 }

@@ -44,7 +44,6 @@ public class ProductController {
                        @RequestParam(required = false,defaultValue = "") String productCode,
                        @RequestParam(required = false,defaultValue = "") String productName,
                        Model model,RedirectAttributes redirectAttributes) {
-        
     	 String accountNameLogin ="";
 		 boolean isAdmin=false; 
     	 try {

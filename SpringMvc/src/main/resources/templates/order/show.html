@@ -164,12 +164,12 @@
    	     	<tr th:each="order,status:${ordersMap}" th:id="${order['id']}" class="hidden">
                 <td th:text="${status.count + page * limit}"></td>
                 <td th:text="${#temporals.format(order['order_day'], 'yyyy/MM/dd HH:mm:ss')}"></td>
-                <td class="productCode"  th:text="${order['productCode']}" ></td>
-                <td class="productName"  th:text="${order['productName']}"></td>
+                <td class="productCodeOldValue"  th:text="${order['productCode']}" ></td>
+                <td class="productNameOldValue"  th:text="${order['productName']}"></td>
                 <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                <td class="quantity" th:text="${order['quantity']}" ></td>
-                <td class="customerName" th:text="${order['customerName']}"></td>
-                <td class="customerPhone"  th:text="${order['customerPhone']}" ></td>
+                <td class="quantityOldValue" th:text="${order['quantity']}" ></td>
+                <td class="customerNameOldValue" th:text="${order['customerName']}"></td>
+                <td class="customerPhoneOldValue"  th:text="${order['customerPhone']}" ></td>
                 <td th:text="${order['address']}"></td>
                 <td th:text="${order['statusName']}"></td>
                 <td th:text="${order['order_allocation'] != null ? #temporals.format(order['order_allocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
@@ -209,7 +209,7 @@
         </div>
         
         <div style="float:right">
-        	<button style="border-radius: 5px" id="add"  >
+        	<button style="border-radius: 5px" id="add" th:attr="data-pages='/orders/list?page=' + pageError + '&amp;accountName=' + ${accountName} + '&amp;employeeName='+${employeeName}+ '&amp;productCode=' +${productCode}+ '&amp;productName='+${productName}+ '&amp;customerName='+${customerName}+ '&amp;customerPhone='+${customerPhone}+ '&amp;orderDayBegin='+${orderDayBegin}+ '&amp;orderDayEnd='+${orderDayEnd}+ '&amp;statusAllocation='+${statusAllocation}+ '&amp;statusBooking='+${statusBooking}">
         		Lưu
         	</button>
         	<button style="border-radius: 5px" id= "reset" >Reset</button>

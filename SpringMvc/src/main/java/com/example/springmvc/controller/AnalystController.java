@@ -145,15 +145,6 @@ public class AnalystController {
 		model.addAttribute("productsNoSell", productsNoSell);
 		return "analyst";
 
-		
-		
-		
-		
-	
-		
-		
-		
-
 	}
 	
 
