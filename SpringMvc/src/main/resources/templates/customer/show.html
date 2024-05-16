@@ -7,6 +7,10 @@
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link
+            href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+            rel="stylesheet"
+    />
 	<style>
 		h1,td,th {
             text-align: center;
@@ -103,13 +107,13 @@
 					<td th:text="${customer['employeeName']}"></td>
 					<td th:if="${isAdmin == true || customer['accountId'] == accountId}" style="width:10%">
 						<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage('edit',${page},${customer['id']},'${customerName}','${customerPhone}')|" >
-  							Chỉnh sửa
+  							<i class="fa fa-pencil" aria-hidden="true"></i> 
   						</button>
 					</td>
 		
 					<td th:if="${isAdmin == true || customer['accountId'] == accountId}">
 						<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr="onclick=|sendData(${customer['id']},${customer['version']},'${customer['name']}')|">
-  							Xóa
+  							<i class="fa fa-trash" aria-hidden="true"></i>
 						</button>
 					</td>
 				</tr>

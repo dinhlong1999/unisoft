@@ -9,7 +9,7 @@ $(document).ready(function () {
 });
 function validateOrder (quantity, productCode, customerPhone){
     let errorList = [];
-    if (quantity <= 0){
+    if (quantity <= 0 ){
         errorList.push("quantity");
     }
     if(productCode === ""){
@@ -39,7 +39,7 @@ function checkChangeValue(id, rowData){
         id : id,
         productCode: recordHidden.find('.productCodeOldValue').text(),
         productName: recordHidden.find('.productNameOldValue').text(),
-        quantity: recordHidden.find('.quantityOldValue').text(),
+        quantity: recordHidden.find('.quantityOldValue').text().trim(),
         customerName: recordHidden.find('.customerNameOldValue').text(),
         customerPhone: recordHidden.find('.customerPhoneOldValue').text()
     };
@@ -488,7 +488,7 @@ $(document).ready(function () {
             id: id,
             productCode: row.find('.productCode').text(),
             productName: row.find('.productName').text(),
-            quantity: row.find('.quantity').text(),
+            quantity: row.find('.quantity').text().trim(),
             customerName: row.find('.customerName').text(),
             customerPhone: row.find('.customerPhone').text(),
             version : row.find('.hidden').text(),
