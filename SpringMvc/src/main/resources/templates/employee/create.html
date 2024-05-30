@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Thêm mới nhân viên</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<style>
+		body {
+            background-color: #EAE9E5;
+    	}
+    	h1{
+    		text-align:center;
+    	}
+    	#sub{
+    		display:flex;
+    		justify-content:center;		
+    	}
+    	.list button {
+    		background-color:white;
+        	border-radius:5px;
+    	}
+		.form-text{
+			color: red;
+		}
+		.list {
+			margin: 2% 0;
+		}
+	 	#btn{
+       		margin-left: auto;
+       		margin-right:20px;
+       	}
+</style>
+</head>
+<body>
+	<div th:insert = "header :: nav"></div>
+	
+	<div class="container">
+		<h1>Thêm mới nhân viên</h1>
+		<div class="list">
+  			<button type="button" class="btn btn-light" id="btn-back">
+				Quay về danh sách
+  			</button>
+  		</div>
+  		
+  		<form th:object="${employeeDTO}" th:action ="@{/employee/store}" method="post">
+ 			 <div class="mb-3">
+   				 <label for="usernameAccount" class="form-label">Tên đăng nhập :<span style="color:red">*</span></label>
+   			     <input type="text"   class="form-control" id="usernameAccount" th:field = "*{account.username}" aria-describedby="emailHelp">
+    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{account.username}"></div>
+  			 </div>
+  			 <div class="mb-3">
+  	 			  <label for="password" class="form-label">Mật khẩu :<span style="color:red">*</span></label>
+   			     <input type="password" class="form-control"  id="password" th:field ="*{account.password}" aria-describedby="emailHelp">
+    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{account.password}"></div>
+  			 </div>
+  			 <div class="mb-3">
+  	 			  <label for="confirmPassword" class="form-label">Xác nhận mật khẩu :<span style="color:red">*</span></label>
+   			     <input type="password" th:field="*{confirmPassword}"  class="form-control" id="confirmPassword" aria-describedby="emailHelp">
+    			 <div  class="form-text" th:if="${#fields.hasErrors()}"  th:errors="*{confirmPassword}"></div>
+  			 </div>
+  			 <div class="mb-3">
+  	 			  <label for="name" class="form-label">Tên nhân viên :<span style="color:red">*</span></label>
+   			     <input type="text" th:field="*{name}"  class="form-control" id="name"  aria-describedby="emailHelp">
+    			 <div  class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{name}" ></div>
+  			 </div>
+  			 <div class="mb-3">
+  	 			 <label for="phoneNumberEmployee" class="form-label">Số điện thoại :<span style="color:red">*</span></label>
+   			     <input type="text" th:field="*{phone}" class="form-control" id="phoneNumberEmployee" aria-describedby="emailHelp">
+    			 <div class="form-text" th:if="${#fields.hasErrors()}" th:errors="*{phone}"></div>
+  			 </div>
+
+			<input type="hidden" id="page" name="page">
+			<input type="hidden" id="accountName" name="accountName">
+			<input type="hidden" id="employeeName" name="employeeName">
+			<input type="hidden" id="phoneSearch" name="phoneSearch" >
+
+  			 <div class="mb-3" id="sub">
+  			  	<button type="submit" id="btn-submit" class="btn btn-light" >Thêm mới nhân viên</button>
+  			 </div>
+  				
+		</form>  
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+<script>
+	let page = localStorage.getItem("page");
+	let accountName = localStorage.getItem("accountName");
+	let employeeName = localStorage.getItem("employeeName");
+	let phone = localStorage.getItem("phone");
+
+	$(document).ready(function () {
+		$('#btn-back').on('click',function () {
+			window.location.href = '/employee/list?page='+(page)+'&accountName='+accountName+'&employeeName='+employeeName+'&phone='+phone;
+		});
+		$('#btn-submit').on('click',function () {
+			$('#page').val(page);
+			$('#accountName').val(accountName);
+			$('#employeeName').val(employeeName);
+			$('#phoneSearch').val(phone);
+		})
+	})
+	
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+</script>
+</html>

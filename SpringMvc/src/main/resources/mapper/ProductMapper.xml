@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.springmvc.repository.ProductMapper">
+    <select id="getListProduct" resultType="java.util.Map">
+       
+        SELECT
+            id,
+            code, 
+            flag, 
+            inventory, 
+            name,
+            version, 
+            price_buy, 
+            price_sell 
+        FROM
+            products
+        WHERE
+       		flag = 0
+       	<if test="arg0 != null || arg0 != '' ">
+       	    AND code LIKE CONCAT('%', #{arg0},'%')
+       	</if>
+        <if test="arg1 != null || arg1 != '' ">
+            AND name LIKE CONCAT('%', #{arg1},'%')
+        </if>
+        ORDER BY
+            name
+        LIMIT
+            #{arg2} OFFSET #{arg3}
+    </select>
+
+    <select id="totalCountGetListProduct" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            products
+        WHERE
+        	flag = 0
+        <if test="arg0 != null || arg0 != '' ">
+            AND code LIKE CONCAT('%', #{arg0},'%')
+        </if>
+        <if test="arg1 != null || arg1 != '' ">
+            AND name LIKE CONCAT('%', #{arg1},'%')
+        </if>
+    </select>
+    
+    <insert id="insertProduct" parameterType="com.example.springmvc.model.Product" >
+    	<![CDATA[
+    		INSERT INTO products(code,name,inventory,price_buy,price_sell)
+    		VALUES(
+    			#{code},
+    			#{name},
+    			#{inventory},
+    			#{priceBuy},
+    			#{priceSell}
+    			);
+    	]]>
+    	
+    </insert>
+    
+    
+  	 <select id="getNameProductExists" resultType="int" >
+   		SELECT 
+   			count(*) 
+   		FROM 
+   			products
+   		WHERE 
+   			name = #{productName}
+     </select>
+     
+     <select id="getCodeProductExists" resultType ="int">
+     	SELECT 
+     		count(*) 
+     	FROM 
+     		products 
+     	WHERE 
+     		code = #{productCode}
+     </select>
+     
+     <select id="getNameProductExistsToUpdate" resultType="int">
+     	<![CDATA[
+     		SELECT 
+   				count(*) 
+   			FROM 
+   				products 
+   			WHERE 
+   				name = #{arg0}
+			AND
+			    id <> #{arg1};
+     	]]>
+     </select>
+     <select id="getCodeProductExistsToUpdate" resultType="int">
+     	<![CDATA[
+     		SELECT 
+   				count(*) 
+   			FROM 
+   				products 
+   			WHERE 
+   				code = #{arg0}
+			AND
+			id <> #{arg1};
+     	]]>
+     </select>
+    
+    <update id="deleteProduct">
+    	<![CDATA[
+    		UPDATE 
+    			products 
+    		SET 
+    			flag = 1,
+    		    version = version + 1
+    		WHERE 
+    			id = #{arg0}
+    		AND
+    		    version = #{arg1}
+    	]]>
+    </update>
+    
+    
+    <select id="getProductById" resultType="com.example.springmvc.model.Product">
+    	<![CDATA[
+    		SELECT 
+    			id,
+    			name,
+    			code,
+    			price_sell AS priceSell,
+    			price_buy  AS priceBuy,
+    			inventory,
+    			version
+    		FROM 
+    			products 
+    		WHERE 
+    			id = #{id}
+    		AND
+    			flag = 0
+    	]]>
+    </select>
+    
+    <update id="updateProduct" >
+    	<![CDATA[
+    		UPDATE
+    			products
+    		SET
+    			name         = #{name},
+    			code         = #{code},
+    			price_sell   = #{priceSell},
+    			price_buy    = #{priceBuy},
+    			version      = version + 1
+    		WHERE
+    			id           = #{id}
+    		AND
+    			version      = #{version}
+    	]]>
+    </update>
+    
+    <select id="getCodeProductByNameProduct" resultType="String">
+    	<![CDATA[
+    		SELECT
+    			code
+    		FROM
+    			products
+    		WHERE
+    			name  = #{productName}
+    		AND
+    			flag = 0
+    	]]>
+    </select>
+    
+    <select id="getNameProductByCodeProduct" resultType="String">
+    	<![CDATA[
+    		SELECT 
+    			name
+    		FROM
+    			products
+    		WHERE
+    			code = #{productCode}
+    		AND
+    			flag = 0
+    	]]>
+    </select>
+
+	<select id="getProductByCodeProduct" resultType="com.example.springmvc.model.Product">
+		<![CDATA[
+			SELECT
+			    id,
+			    price_sell AS priceSell
+			FROM
+			    products
+			WHERE
+			    code = #{productCode}
+			AND
+			    flag = 0
+		]]>
+	</select>
+
+</mapper>

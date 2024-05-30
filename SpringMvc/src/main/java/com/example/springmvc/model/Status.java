@@ -1,15 +1,12 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
 
-@Entity
 public class Status {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
-    @Column(nullable = false)
+
     private String name;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+
     private boolean flag;
 
 

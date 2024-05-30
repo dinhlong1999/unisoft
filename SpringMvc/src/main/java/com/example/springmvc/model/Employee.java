@@ -1,81 +1,80 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
-@Entity
 public class Employee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
-    @Column(nullable = false)
+
     private String name;
-    @Column(name = "phone_number",nullable = false)
-    private String phoneNumber;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id",referencedColumnName = "id")
+
+    private String phone;
+
     private Account account;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+
     private boolean flag;
-    @Column(columnDefinition = "int default 1",nullable = false)
+
     private int version;
+    
+    private boolean isOnline;
 
     public Employee() {
     }
 
+	public int getId() {
+		return id;
+	}
 
-    public Employee(int id, String name, String phoneNumber, Account account, boolean flag, int version) {
-        this.id = id;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.account = account;
-        this.flag = flag;
-        this.version = version;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setName(String name) {
+		this.name = name.trim();
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+	public Account getAccount() {
+		return account;
+	}
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+	public void setAccount(Account account) {
+		this.account = account;
+	}
 
-    public Account getAccount() {
-        return account;
-    }
+	public boolean isFlag() {
+		return flag;
+	}
 
-    public void setAccount(Account account) {
-        this.account = account;
-    }
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
 
-    public boolean getFlag() {
-        return flag;
-    }
+	public int getVersion() {
+		return version;
+	}
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
+	public void setVersion(int version) {
+		this.version = version;
+	}
 
-    public int getVersion() {
-        return version;
-    }
+	public boolean isOnline() {
+		return isOnline;
+	}
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
+	public void setOnline(boolean isOnline) {
+		this.isOnline = isOnline;
+	}
+
+
+    
 }

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvc.repository.AccountMapper">
+
+	<select id="getAccountByUsername" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				a.account_id AS id,
+				a.username,
+				a.password,
+				r.name AS roleName,
+				r.role_id AS roleId
+			FROM
+				accounts a
+			JOIN
+				roles r on r.role_id = a.role_id
+			WHERE
+				a.username = #{username}
+		    AND
+		        a.flag = 0
+		]]>
+	</select>
+	
+	<insert id="insertAccount" >
+		INSERT INTO accounts(
+			username,password,role_id		
+			)
+		VALUES(
+			#{arg0},#{arg1},#{arg2}
+			)
+	</insert>
+	
+	<select id ="checkUsernameOfAccount" resultType="int">
+		SELECT
+			 count(*) 
+		FROM
+			 accounts
+		WHERE 
+			 username = #{username};
+	</select>
+	
+	<select id="checkUsernameExists" resultType="int">
+	<![CDATA[
+		SELECT
+			 count(*) 
+		FROM
+			 accounts 
+		WHERE 
+			 username = #{arg0}
+		AND
+			account_id <> #{arg1}
+	]]>
+	</select>
+	
+	<update id="editAccount">
+		UPDATE
+			accounts
+		SET
+			username = #{arg0},
+			password = #{arg1},
+			version = #{arg2} + 1
+		WHERE
+			version = #{arg2}
+		AND
+			account_id = #{arg3}
+	</update>
+	
+	<update id="deleteAccount">
+	    UPDATE
+	       accounts
+	    SET
+	       flag = 1,
+	       version = version + 1
+	    WHERE
+	       account_id = #{arg0}
+	    AND 
+	       version = #{arg1}
+	</update>
+</mapper>

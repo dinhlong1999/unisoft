@@ -1,158 +1,119 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-@Entity
 public class Orders {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
     private Employee employee;
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+
     private Customer customer;
-    @ManyToOne
-    @JoinColumn(name = "status_id", referencedColumnName = "id")
+
     private Status status;
 
-    @Column(name = "quantity_book",nullable = false)
-    private int quantityBook;
-    @Column(name = "date_start" ,nullable = false)
-    private LocalDateTime dateStart;
-    @Column(name = "date_allocation")
-    private LocalDateTime dateAllocation;
+    private int quantity;
+    
+    private LocalDateTime orderDay;
+    
+    private LocalDateTime orderAllocation;
+    
     private double price;
-
-    @Column(columnDefinition = "int default 1",nullable = false)
+    
     private int version;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+    
     private boolean flag;
 
 
     public Orders() {
     }
+    
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public Orders(int id,
-                  Employee employee,
-                  Product product,
-                  Customer customer,
-                  Status status,
-                  int quantityBook,
-                  LocalDateTime dateStart,
-                  boolean flag,
-                  LocalDateTime dateAllocation,
-                  double price,
-                  int version) {
-        this.id = id;
-        this.employee = employee;
-        this.product = product;
-        this.customer = customer;
-        this.status = status;
-        this.quantityBook = quantityBook;
-        this.dateStart = dateStart;
-        this.flag = flag;
-        this.dateAllocation=dateAllocation;
-        this.price = price;
-        this.version = version;
-    }
+	public Employee getEmployee() {
+		return employee;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public Product getProduct() {
+		return product;
+	}
+	
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
-    public Employee getEmployee() {
-        return employee;
-    }
+	public Customer getCustomer() {
+		return customer;
+	}
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
-    public Product getProduct() {
-        return product;
-    }
+	public Status getStatus() {
+		return status;
+	}
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 
-    public Customer getCustomer() {
-        return customer;
-    }
+	public int getQuantity() {
+		return quantity;
+	}
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 
-    public Status getStatus() {
-        return status;
-    }
+	public LocalDateTime getOrderDay() {
+		return orderDay;
+	}
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+	public void setOrderDay(LocalDateTime orderDay) {
+		this.orderDay = orderDay;
+	}
 
-    public int getQuantityBook() {
-        return quantityBook;
-    }
+	public LocalDateTime getOrderAllocation() {
+		return orderAllocation;
+	}
 
-    public void setQuantityBook(int quantityBook) {
-        this.quantityBook = quantityBook;
-    }
+	public void setOrderAllocation(LocalDateTime orderAllocation) {
+		this.orderAllocation = orderAllocation;
+	}
 
-    public LocalDateTime getDateStart() {
-        return dateStart;
-    }
+	public double getPrice() {
+		return price;
+	}
 
-    public void setDateStart(LocalDateTime dateStart) {
-        this.dateStart = dateStart;
-    }
+	public void setPrice(double price) {
+		this.price = price;
+	}
 
+	public int getVersion() {
+		return version;
+	}
 
-    public boolean getFlag() {
-        return flag;
-    }
+	public void setVersion(int version) {
+		this.version = version;
+	}
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
+	public boolean isFlag() {
+		return flag;
+	}
 
-    public LocalDateTime getDateAllocation() {
-        return dateAllocation;
-    }
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
 
-    public void setDateAllocation(LocalDateTime dateAllocation) {
-        this.dateAllocation = dateAllocation;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public boolean isFlag() {
-        return flag;
-    }
+    
 }

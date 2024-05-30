@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đơn hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        h1,td,th {
+            text-align: center;
+        }
+        input{
+            border-radius: 5px;
+        }
+        table{
+            background-color: white;
+        }
+        body {
+            background-color: #EAE9E5;
+        }
+        .createform {
+            margin-bottom:5px;
+        }
+        .createform button {
+            background-color:white;
+            border-radius:5px;
+        }
+        #btn{
+            margin-left: auto;
+        }
+        .hidden {
+        	display:none;
+        }
+        td[contenteditable="true"]{
+             max-width: 110px; /* Đặt độ rộng tối đa của ô */
+             overflow: hidden; /* Ẩn nội dung dư thừa nếu vượt quá độ rộng */
+             white-space: nowrap; /* Ngăn chặn nội dung xuống dòng */
+             text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div th:insert = "header :: nav"></div>
+    <div class="container-fluid">
+        <h1>Danh sách đơn hàng</h1>
+		<script th:inline="javascript">
+			let successMessage = /*[[${success}]]*/ null;
+			if (successMessage !== null && successMessage !== '') {
+				Swal.fire({
+					title: successMessage,
+					icon: 'success',
+					confirmButtonColor: 'blue'
+				});
+			}
+
+			   
+			let errorMessage = /*[[${error}]]*/ null;
+			if (errorMessage !== null && errorMessage !== '') {
+				Swal.fire({
+					title: errorMessage,
+					icon: 'error',
+					confirmButtonColor: 'red'
+				});
+			}
+		</script>
+
+
+   
+   <div class="form-search">
+        <form th:action="@{/orders/list}" method="get" >
+            <div th:if = "${roleName == 'ROLE_ADMIN'}">
+            	<span>
+                	Tên đăng nhập : <input class="input" type="text"  name="accountName" style="width:15%;margin-left: 11px" th:value="${accountName}" placeholder="Vui lòng nhập tên đăng nhập">
+            	</span>
+            </div>
+            <div style="margin-top: 5px" th:if = "${roleName == 'ROLE_ADMIN'}">
+            	<span>
+                	Tên nhân viên : <input type="text" class="input"  name="employeeName" style="width:15%;margin-left: 18px" th:value="${employeeName}" placeholder="Vui lòng nhập tên nhân viên">
+            	</span>
+            </div>
+             <div style="margin-top: 5px">
+            	<span>
+                	Mã sản phẩm  : <input type="text" class="input"  name="productCode" style="width:15%;margin-left: 19px" th:value="${productCode}" placeholder="Vui lòng nhập mã sản phẩm">
+            	</span>
+             </div>
+            <div style="margin-top: 5px">
+            	<span>
+                	Tên sản phẩm  : <input type="text" class="input"  name="productName" style="width:15%;margin-left: 18px" th:value="${productName}" placeholder="Vui lòng nhập tên sản phẩm">
+            	</span>
+            </div>
+            <div style="margin-top: 5px">
+            	<span>
+                	Tên khách hàng  : <input type="text" class="input"  name="customerName" style="width:15%;margin-left: 5px" th:value="${customerName}" placeholder="Vui lòng nhập tên khách hàng">
+            	</span>
+            </div>
+            <div style="margin-top: 5px">
+            	<span>
+                	Số điện thoại : <input type="text" class="input" name="customerPhone" style="width:15%;margin-left: 13px" th:value="${customerPhone}" placeholder="Vui lòng nhập số điện thoại">
+            	</span>
+            </div>
+             <div style="margin-top: 5px">
+            	<span>
+                	Ngày bắt đầu  : <input type="date" class="input"  name="orderDayBegin" style="width:8%;margin-left: 2px" th:value="${orderDayBegin}">
+            	</span>
+            </div>
+            <div style="margin-top: 5px">
+            	<span>
+                	Ngày kết thúc  : <input type="date" class="input" name="orderDayEnd" style="width:8%;margin-left: 7px" th:value="${orderDayEnd}">
+            	</span>
+            </div>
+           <div style="margin-top: 5px">
+           			Trạng thái
+            	<span style="margin-left: 3%">
+                	 <input type="checkbox" name ="statusAllocation" th:checked = "${statusAllocation == 2 ? 'checked' : null}" value="2"  > Đã Phân bổ
+            	</span>
+            	<span style="padding-left: 3%">
+                	 <input type="checkbox" name ="statusBooking" value="1" th:checked = "${statusBooking == 1 ? 'checked' : null}"> Đã đặt hàng
+            	</span>
+            </div>
+            <div style="margin-top: 5px;">
+                <input style="margin-bottom: 5px" type="submit" value="Search" id="submit">
+                <input style="margin-bottom: 5px" type="button" value="Clear" id="clear">
+            </div>
+        </form>
+      </div> 
+      
+      
+      <div>
+      	<table id="myTable" class="table table-hover table-bordered">
+      		<tr style="background-color: grey;color: white">
+   	     			<th>STT</th>
+   	     			<th>NGÀY ĐẶT HÀNG</th>
+   	     			<th>Mã sản phẩm</th>
+   	     			<th>TÊN SẢN PHẨM</th>
+   	     			<th>GIÁ BÁN</th>
+   	     			<th>SỐ LƯỢNG</th>
+   	     			<th>TÊN KHÁCH HÀNG</th>
+   	     			<th>SỐ ĐIỆN THOẠI</th>
+   	     			<th>ĐỊA CHỈ</th>
+   	     			<th>TRẠNG THÁI</th>
+   	     			<th>NGÀY PHÂN BỔ</th>
+   	     			<th th:if = "${roleName == 'ROLE_ADMIN'}">TÊN ĐĂNG NHẬP</th>
+   	     			<th th:if = "${roleName == 'ROLE_ADMIN'}">TÊN NHÂN VIÊN </th>
+   	     	</tr>
+   	     	<tr th:if="${ordersMap.size() > 0}" th:each="order,status:${ordersMap}" th:id="${order['id']}">
+                <td th:text="${status.count + page * limit}"></td>
+                <td th:text="${#temporals.format(order['order_day'], 'yyyy/MM/dd HH:mm:ss')}"></td>
+                <td class="productCode"  th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['productCode']}" ></td>
+                <td class="productName"  th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['productName']}"></td>
+                <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                <td class="quantity" th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['quantity']}" ></td>
+                <td class="customerName" th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['customerName']}"></td>
+                <td class="customerPhone"  th:contenteditable="${(order['order_allocation'] == null)} ? 'true' : null" th:text="${order['customerPhone']}" ></td>
+                <td th:text="${order['address']}"></td>
+                <td th:text="${order['statusName']}"></td>
+                <td th:text="${order['order_allocation'] != null ? #temporals.format(order['order_allocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
+                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['accountName']}"></td>
+                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
+                <td class="hidden" th:text="${order['version']}" ></td>
+                <td class="page" style="display: none;" th:text="${page}"></td>
+   	     	</tr>
+   	     	<tr th:each="order,status:${ordersMap}" th:id="${order['id']}" class="hidden">
+                <td th:text="${status.count + page * limit}"></td>
+                <td th:text="${#temporals.format(order['order_day'], 'yyyy/MM/dd HH:mm:ss')}"></td>
+                <td class="productCodeOldValue"  th:text="${order['productCode']}" ></td>
+                <td class="productNameOldValue"  th:text="${order['productName']}"></td>
+                <td th:text="${#numbers.formatDecimal(order['price'], 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                <td class="quantityOldValue" th:text="${order['quantity']}" ></td>
+                <td class="customerNameOldValue" th:text="${order['customerName']}"></td>
+                <td class="customerPhoneOldValue"  th:text="${order['customerPhone']}" ></td>
+                <td th:text="${order['address']}"></td>
+                <td th:text="${order['statusName']}"></td>
+                <td th:text="${order['order_allocation'] != null ? #temporals.format(order['order_allocation'], 'yyyy/MM/dd HH:mm:ss') : 'Chưa phân bổ' }"></td>
+                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['username']}"></td>
+                <td th:if = "${roleName == 'ROLE_ADMIN'}" th:text="${order['employeeName']}"></td>
+   	     	</tr>
+            <tr th:if="${ordersMap.size() == 0}">
+                <td colspan="13">Không tìm thấy đơn hàng</td>
+            </tr>
+      	</table>
+      	<button id= "addRow" style="border-radius: 5px">Thêm dòng mới</button>
+      	 <div th:if="${ordersMap.size() > 0}">
+            <nav aria-label="Page navigation example" > 
+	            <ul class="pagination" style="display: flex;justify-content: center">
+	            	<li th:if="${page > 0}" class="page-item" >
+	            		<a class="page-link" th:href="@{/orders/list(page=${page},accountName=${accountName},employeeName=${employeeName},productCode=${productCode},productName=${productName},customerName=${customerName},customerPhone=${customerPhone},orderDayBegin=${orderDayBegin},orderDayEnd=${orderDayEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}">Previous</a>
+	            	</li>
+	            	<li class="page-item"  th:if="${showStartEllipsis}">
+	            		<span class="page-link">...</span >
+	            	</li>
+	            	<th:block th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}">
+	            		<li class="page-item active" th:if="${pageNumber -1 == page}">
+	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
+	            		</li>
+	            		<li class="page-item" th:if="${pageNumber -1 != page}">
+	            			<a class="page-link" th:text="${pageNumber}"  th:href="@{/orders/list(page=${pageNumber},accountName=${accountName},employeeName=${employeeName},productCode=${productCode},productName=${productName},customerName=${customerName},customerPhone=${customerPhone},orderDayBegin=${orderDayBegin},orderDayEnd=${orderDayEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}" ></a>
+	            		</li>
+	            	</th:block>
+	            	<li class="page-item"  th:if="${showEndEllipsis}">
+	            		<span  class="page-link">...</span>
+	            	</li>
+	            	<li class="page-item" th:if="${page + 1 != totalPage }">
+	            		<a class="page-link" th:href="@{/orders/list(page=${page + 2},accountName=${accountName},employeeName=${employeeName},productCode=${productCode},productName=${productName},customerName=${customerName},customerPhone=${customerPhone},orderDayBegin=${orderDayBegin},orderDayEnd=${orderDayEnd},statusAllocation=${statusAllocation},statusBooking=${statusBooking})}">Next</a>
+	            	</li>
+	            </ul>
+            </nav> 
+        </div>
+        
+        <div style="float:right">
+        	<button style="border-radius: 5px" id="add" th:attr="data-pages='/orders/list?page=' + pageError + '&amp;accountName=' + ${accountName} + '&amp;employeeName='+${employeeName}+ '&amp;productCode=' +${productCode}+ '&amp;productName='+${productName}+ '&amp;customerName='+${customerName}+ '&amp;customerPhone='+${customerPhone}+ '&amp;orderDayBegin='+${orderDayBegin}+ '&amp;orderDayEnd='+${orderDayEnd}+ '&amp;statusAllocation='+${statusAllocation}+ '&amp;statusBooking='+${statusBooking}">
+        		Lưu
+        	</button>
+        	<button style="border-radius: 5px" id= "reset" >Reset</button>
+        </div>
+      </div>
+	</div>
+</body>
+<script src="/javascript/order.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+</script>
+
+</html>

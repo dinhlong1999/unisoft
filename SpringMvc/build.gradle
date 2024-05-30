@@ -1,16 +1,15 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.1.10'
-    id 'io.spring.dependency-management' version '1.1.4'
+   id 'org.springframework.boot' version '2.7.16'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+	sourceCompatibility = '1.8'
 }
-
 repositories {
     mavenCentral()
 }
@@ -23,6 +22,20 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter-test
+//	testImplementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter-test', version: '3.0.3'
+    // https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter
+    implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.2.2'
+    // https://mvnrepository.com/artifact/log4j/log4j
+//    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'org.webjars:webjars-locator-core'
+    implementation 'org.webjars.npm:jquery:3.6.0'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+
+
 }
 
 tasks.named('bootBuildImage') {

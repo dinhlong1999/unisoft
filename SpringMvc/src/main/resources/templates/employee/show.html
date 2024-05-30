@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Danh sách nhân viên</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<link
+            href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+            rel="stylesheet"
+    />
+	<style>
+		h1,td,th {
+            text-align: center;
+        }
+        input{
+            border-radius: 5px;
+        }
+        table{
+            background-color: white;
+        }
+        body {
+            background-color: #EAE9E5;
+        }
+        .createform {
+        	margin-bottom:5px;
+        }
+        .createform button {
+        	background-color:white;
+        	border-radius:5px;
+        }
+       #btn{
+       		margin-left: auto;
+       }
+	</style>  
+</head>
+<body>
+	<div th:insert = "header :: nav"></div>
+   <div class="container-fluid">
+      <h1>Danh sách nhân viên</h1>
+        <script th:inline="javascript">
+   
+            let successMessage = /*[[${success}]]*/ null;
+            if (successMessage !== null && successMessage !== '') {
+               Swal.fire({
+                 title: successMessage,
+                 icon: 'success',
+                 confirmButtonColor: 'blue' 
+               });
+            }
+
+    
+             let errorMessage = /*[[${error}]]*/ null;
+             if (errorMessage !== null && errorMessage !== '') {
+            	Swal.fire({
+                title: errorMessage,
+                icon: 'error',
+                confirmButtonColor: 'red' 
+                });
+             }
+        </script>
+    
+      <div class="createform">
+  		<button th:attr ="onclick=|saveDataInLocalStorage('create',${page},'','${accountName}','${employeeName}','${phone}')|">
+  			Thêm mới nhân viên
+  		</button>
+  	  </div>
+  	  
+  	  <div class="form-search">
+        <form th:action="@{/employee/list}" method="get" >
+            <div>
+            	<span>
+                	Tên đăng nhập : <input type="text" class="input"  name="accountName" style="width:12%;" th:value="${accountName}" placeholder="Vui lòng nhập tên đăng nhập">
+            	</span>
+            </div>
+            <div style="margin-top: 5px">
+            	<span>
+                	Tên nhân viên : <input type="text" class="input"  name="employeeName" style="width:12%;margin-left: 7px" th:value="${employeeName}" placeholder="Vui lòng nhập tên nhân viên">
+            	</span>
+            </div>
+            <div style="margin-top: 5px">
+            	<span>
+                	Số điện thoại : <input type="text" class="input"  name="phone" style="width:12%;margin-left: 3px" th:value="${phone}" placeholder="Vui lòng nhập số điện thoại">
+            	</span>
+            </div>
+            <div style="margin-top: 5px;">
+                <input style="margin-bottom: 5px" type="submit" value="Search">
+                <input style="margin-bottom: 5px" type="button" id="clear" value="Clear" >
+            </div>
+        </form>
+      </div>
+   	
+   	  <div>
+   	     	<table  id ="employeeTable" class ="table table-hover table-bordered">
+   	     		<tr style="background-color: grey;color: white">
+   	     			<th width="5%">STT</th>
+   	     			<th width="20%">TÊN ĐĂNG NHẬP</th>
+   	     			<th width="20%">TÊN NHÂN VIÊN</th>
+   	     			<th width="20%">SỐ ĐIỆN THOẠI</th>
+   	     			<th width="15%">TRẠNG THÁI</th>
+   	     			<th colspan ="2">HÀNH ĐỘNG</th>
+   	     		</tr>
+   	     		<tr th:if="${listEmployee.size() > 0}" th:each="map,status:${listEmployee}" th:data-id="${map['id']}">
+   	     			<td th:text="${status.count + page * limit}"></td>
+   	     			<td th:text="${map['username']}"></td>
+   	     			<td th:text="${map['name']}"></td>
+   	     			<td th:text="${map['phone']}"></td>
+   	     			<td class="isOnline" th:text="${map['isOnline'] ? 'Online' : 'Offline' }"></td>
+   	     			<td style="width:10%" th:colspan="${(map['roleId'] == 2) ? 1 : 2}">
+   	     				<button type="button" class="btn btn-outline-warning" th:attr ="onclick=|saveDataInLocalStorage('edit',${page},${map['id']},'${accountName}','${employeeName}','${phone}')|" >
+  							<i class="fa fa-pencil" aria-hidden="true"></i> 
+  						</button>
+   	     			</td>
+   	     			<td th:if="${map['roleId'] == 2}">
+   	     				 <button type="button"  class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" th:attr="onclick=|sendData(${map['id']},${map['version']},${map['accountId']},${map['accountVersion']},'${map['name']}')|">
+  							<i class="fa fa-trash" aria-hidden="true"></i>
+						</button>
+   	     			</td>
+   	     		</tr>
+   	     		<tr th:if = "${listEmployee.size() == 0}"> 
+            		<td colspan ="7">Không tìm thấy nhân viên</td>
+           		</tr>	
+   	     	</table>
+   	     <div th:if="${listEmployee.size() > 0}">
+            <nav aria-label="Page navigation example" > 
+	            <ul class="pagination" style="display: flex;justify-content: center">
+	            	<li th:if="${page > 0}" class="page-item" >
+	            		<a class="page-link" th:href="@{/employee/list(page=${page},accountName=${accountName},employeeName=${employeeName},phone=${phone})}">Previous</a>
+	            	</li>
+	            	<li class="page-item"  th:if="${showStartEllipsis}">
+	            		<span class="page-link">...</span >
+	            	</li>
+	            	<th:block th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}">
+	            		<li class="page-item active" th:if="${pageNumber -1 == page}">
+	            			 <a class="page-link "  th:text="${pageNumber}"></a>	          
+	            		</li>
+	            		<li class="page-item" th:if="${pageNumber -1 != page}">
+	            			<a class="page-link " th:href="@{/employee/list(page=${pageNumber},accountName=${accountName},employeeName=${employeeName},phone=${phone})}" th:text="${pageNumber}" ></a>
+	            		</li>
+	            	</th:block>
+	            	<li class="page-item"  th:if="${showEndEllipsis}">
+	            		<span  class="page-link">...</span>
+	            	</li>
+	            	<li class="page-item" th:if="${page + 1 != totalPage }">
+	            		<a class="page-link" th:href="@{/employee/list(page=${page +2 },accountName=${accountName},employeeName=${employeeName},phone=${phone})}">Next</a>
+	            	</li>
+	            </ul>
+   
+            </nav> 
+          
+           
+        </div>	
+   	  </div>
+   </div>	
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa</h5>
+        				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      			</div>
+      			<form th:action ="@{/employee/destroy}" method= "post">
+       				<div class="modal-body">
+	      				Bạn có muốn xóa nhân viên : <span id="name" style="color:red"></span>?
+	   					<input type="hidden" id="employeeId" name="employeeId">
+	   					<input type="hidden" id="employeeVersion" name="employeeVersion">
+	   					<input type="hidden" id="accountId" name="accountId">
+	   					<input type="hidden" id="accountVersion" name="accountVersion">
+	   					<input type="hidden" name="page" th:value="${page +1}">
+	   					<input type="hidden" name="accountName" th:value="${accountName}">
+	   					<input type="hidden" name="employeeName" th:value="${employeeName}">
+	   					<input type="hidden" name="phone" th:value="${phone}">
+	   					
+	   					
+      				</div>
+      				<div class="modal-footer">
+        				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+        				<button type="submit" class="btn btn-outline-danger">Xóa</button>
+      				</div>
+       			</form>
+    		</div>
+  		</div>
+	</div>
+
+
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+</script>
+<script src="/webjars/jquery/dist/jquery.min.js"></script>
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+<script>
+        // var stompClient = null;
+        // $(document).ready(function() {
+        //     connect();
+        // });
+		//
+        // function connect() {
+        //     var socket = new SockJS("/hello");
+        //     stompClient = Stomp.over(socket);
+        //     stompClient.connect({}, function(frame) {
+        //         console.log("Connected");
+        //         stompClient.subscribe('/topic/employeeStatus', function(message) {
+        //         	var employee = JSON.parse(message.body);
+        //         	console.log("nhan vien" + employee.name);
+        //         	console.log(message)
+        //         	console.log("online " + employee.online)
+        //         	console.log("Online " + employee.Online)
+        //         	var employeeId = employee.id;
+        //             $('#employeeTable').find('tr[data-id="' + employeeId + '"]').find('.isOnline').text(employee.online ? 'Online' : 'Offline');
+		//
+        //
+        //         });
+        //     });
+        // };
+        
+        
+        function sendData(employeeId,employeeVersion,accountId,accountVersion,name){
+			$('#employeeId').val(employeeId);
+			$('#employeeVersion').val(employeeVersion);
+			$('#accountId').val(accountId);
+			$('#accountVersion').val(accountVersion);
+			$('#name').text(name);
+        }
+        
+        function saveDataInLocalStorage(action,page,id,accountName,employeeName,phone) {
+            localStorage.setItem("page",page+1);
+            localStorage.setItem("accountName",accountName);
+            localStorage.setItem("employeeName",employeeName);
+            localStorage.setItem("phone",phone);
+			if(action === 'create' ){
+				console.log("Thêm mới");
+				window.location.href = '/employee/create'
+			}
+			if(action ==='edit') {
+				console.log("Chỉnh sửa");
+				window.location.href = '/employee/edit/' + encodeURIComponent(id);
+			}
+        }
+
+        window.onload=function (){
+            localStorage.clear();
+        }
+        
+        $(document).ready(function(){
+        	$('#clear').on('click',function () {
+    			$('.input').val(null);
+    		});
+        });
+  </script>
+  
+</html>

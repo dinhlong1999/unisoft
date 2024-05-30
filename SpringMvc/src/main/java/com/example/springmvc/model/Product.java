@@ -1,41 +1,35 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
 
-@Entity
+
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
-    @Column(name = "code_product",nullable = false)
-    private String codeProduct;
-    @Column(name = "name_product",nullable = false)
-    private String nameProduct;
-    @Column(name = "price_sell",nullable = false)
+
+    private String code;
+
+    private String name;
+
     private Double priceSell;
-    @Column(name = "price_buy",nullable = false)
+
     private Double priceBuy;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+    
     private boolean flag;
-    @Column(columnDefinition = "int default 0",nullable = false)
+
     private int inventory;
 
-    @Column(nullable = false)
-    private String images;
-
-    @Column(columnDefinition = "int default 1",nullable = false)
     private int version;
+    
     public Product(int id, String codeProduct, String nameProduct, Double priceSell, Double priceBuy, boolean flag,
-                   int version,int inventory, String images) {
+                   int version,int inventory) {
         this.id = id;
-        this.codeProduct = codeProduct;
-        this.nameProduct = nameProduct;
+        this.code = codeProduct;
+        this.name = nameProduct;
         this.priceSell = priceSell;
         this.priceBuy = priceBuy;
         this.flag = flag;
         this.version = version;
         this.inventory = inventory;
-        this.images = images;
     }
 
     public Product() {
@@ -49,20 +43,20 @@ public class Product {
         this.id = id;
     }
 
-    public String getCodeProduct() {
-        return codeProduct;
+    public String getCode() {
+        return code;
     }
 
-    public void setCodeProduct(String codeProduct) {
-        this.codeProduct = codeProduct;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getNameProduct() {
-        return nameProduct;
+    public String getName() {
+        return name;
     }
 
-    public void setNameProduct(String nameProduct) {
-        this.nameProduct = nameProduct;
+    public void setName(String name) {
+        this.name = name.trim();
     }
 
     public Double getPriceSell() {
@@ -109,11 +103,4 @@ public class Product {
         this.inventory = inventory;
     }
 
-    public String getImages() {
-        return images;
-    }
-
-    public void setImages(String images) {
-        this.images = images;
-    }
 }

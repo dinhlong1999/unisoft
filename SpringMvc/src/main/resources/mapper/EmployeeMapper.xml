@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvc.repository.EmployeeMapper">
+	<select id="getAllEmployee" resultType="java.util.Map">
+		
+			SELECT
+				e.employee_id AS id,
+				e.isOnline,
+				e.name,
+				e.phone,
+				e.version,
+				a.username,
+				a.account_id AS accountId,
+				a.version AS accountVersion,
+				a.role_id AS roleId
+			FROM
+				employees e
+			JOIN
+				accounts a ON a.account_id = e.account_Id
+			WHERE
+				e.flag = 0
+			<if test="arg0 != null || arg0 != ''">
+			    AND a.username LIKE CONCAT('%', #{arg0},'%')
+			</if>	
+		    <if test="arg1 != null || arg1 != ''">
+                AND e.name LIKE CONCAT('%', #{arg1},'%')
+            </if>
+            <if test="arg2 != null || arg2 != ''">
+                AND e.phone LIKE CONCAT('%',#{arg2},'%')
+            </if>
+            ORDER BY
+            	e.name
+            LIMIT
+            	#{arg3}  OFFSET #{arg4}
+		
+		</select>
+	<select id="getEmployeeByAccountId" resultType="com.example.springmvc.model.Employee">
+		<![CDATA[
+			SELECT
+				employee_id AS id,
+				name,
+				flag,
+				phone,
+				account_id AS accountId,
+				isOnline,
+				version
+			FROM
+				employees
+			WHERE
+				account_id = #{accountId}
+			AND
+				flag = 0;
+			]]>
+	</select>
+	
+	<update id="updateStatusEmployee">
+		UPDATE
+			employees
+		SET
+			isOnline = #{arg0},
+			version = #{arg1} + 1
+		WHERE
+			employee_id = #{arg2}
+		AND
+			version = #{arg1}
+	</update>
+	
+	<select id ="countTotalRow" resultType="int">
+		
+			SELECT 
+				COUNT(*)
+			FROM 
+				employees e
+			JOIN
+				accounts a on a.account_id = e.account_id
+			WHERE
+				e.flag = 0
+			<if test="arg0 != null || arg0 != ''">
+                AND a.username LIKE CONCAT('%', #{arg0},'%')
+            </if>   
+            <if test="arg1 != null || arg1 != ''">
+                AND e.name LIKE CONCAT('%', #{arg1},'%')
+            </if>
+            <if test="arg2 != null || arg2 != ''">
+                AND e.phone LIKE CONCAT('%',#{arg2},'%')
+            </if>
+		
+	</select>
+	
+	<update id="deleteEmployeeById">
+		
+			UPDATE
+				employees
+			SET
+				flag =1,
+				version = version + 1
+			WHERE
+				employee_id = #{arg0}
+			AND
+			    version = #{arg1} 
+	
+	</update>
+	
+	
+	<insert id="insertEmployee">
+		<![CDATA[
+			INSERT INTO employees(
+				name,phone,account_id
+			)
+			VALUES(
+				#{arg0},#{arg1},#{arg2}
+			)
+		]]>
+	</insert>
+	
+	<select id="getEmployeeById" resultType="java.util.Map">
+		<![CDATA[
+			SELECT
+				e.employee_id AS id,
+				e.name,
+				e.phone,
+				e.version,
+				a.username,
+				a.account_id AS accountId,
+				a.version AS accountVersion
+			FROM
+				employees e
+			JOIN
+				accounts a on e.account_id = a.account_id
+			WHERE
+				e.employee_id = #{id}
+		]]>
+	</select>
+	
+	<update id="updateEmployee">
+		<![CDATA[
+			UPDATE
+				employees
+			SET
+				phone = #{arg0},
+				version = version + 1,
+				name = #{arg2}
+			WHERE
+				version = #{arg1}
+			AND
+				employee_id = #{arg3}
+		]]>
+	</update>
+</mapper>

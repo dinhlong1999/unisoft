@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvc.repository.OrderMapper">
+	<select id="getListOrder" resultType="java.util.Map">
+		
+			SELECT
+				o.id,
+				o.order_day,
+    			p.name AS productName,
+    			p.code AS productCode,
+    			o.price,
+    			o.quantity,
+    			c.name  AS customerName,
+    			c.phone AS customerPhone,
+    			c.address,
+    			o.order_allocation,
+    			s.`name`   AS statusName,
+   				a.username AS accountName,
+    			e.`name`   AS employeeName,
+    			o.version
+			FROM
+				orders o 
+			JOIN 
+				products p  ON p.id = o.product_id
+			JOIN 
+				customers c ON c.customer_id = o.customer_id
+			JOIN 
+				status s    ON s.id = o.status_id
+			JOIN
+				employees e ON e.employee_id = o.employee_id
+			JOIN
+				accounts a  ON a.account_id = e.account_id
+			WHERE 
+			    1 = 1
+			    
+				<if test="arg0 != null || arg0  != ''">
+				    AND a.username LIKE CONCAT("%",#{arg0},"%")
+				</if>
+			    <if test="arg1 != null || arg1  != ''">
+                    AND e.name LIKE CONCAT("%",#{arg1},"%")
+                </if>
+                <if test="arg2 != null || arg2  != ''">
+                    AND p.code LIKE CONCAT("%",#{arg2},"%")
+                </if>
+			    <if test="arg3 != null || arg3  != ''">
+                    AND p.name LIKE CONCAT("%",#{arg3},"%")
+                </if>
+                <if test="arg4 != null || arg4  != ''">
+                    AND c.name LIKE CONCAT("%",#{arg4},"%")
+                </if>
+                <if test="arg5 != null || arg5  != ''">
+                    AND c.phone LIKE CONCAT("%",#{arg5},"%")
+                </if>	            
+	 		AND
+	 			(#{arg6} = true or o.employee_id = #{arg7})
+	 		AND
+	 			o.order_day BETWEEN #{arg8} AND #{arg9}
+	 		AND
+	 			o.status_id IN (#{arg10},#{arg11})
+	 		ORDER BY
+	 			o.order_day DESC
+	 		LIMIT
+	 			#{arg12} OFFSET #{arg13}
+	</select>
+	
+	<select id="getTotalRecordByOrder" resultType="int">
+		
+			SELECT 
+				COUNT(*)
+			FROM
+                orders o 
+            JOIN 
+                products p  ON p.id = o.product_id
+            JOIN 
+                customers c ON c.customer_id = o.customer_id
+            JOIN 
+                status s    ON s.id = o.status_id
+            JOIN
+                employees e ON e.employee_id = o.employee_id
+            JOIN
+                accounts a  ON a.account_id = e.account_id
+			WHERE 
+				1 = 1
+			    <if test="arg0 != null || arg0  != ''">
+                    AND a.username LIKE CONCAT("%",#{arg0},"%")
+                </if>
+                <if test="arg1 != null || arg1  != ''">
+                    AND e.name LIKE CONCAT("%",#{arg1},"%")
+                </if>
+                <if test="arg2 != null || arg2  != ''">
+                    AND p.code LIKE CONCAT("%",#{arg2},"%")
+                </if>
+                <if test="arg3 != null || arg3  != ''">
+                    AND p.name LIKE CONCAT("%",#{arg3},"%")
+                </if>
+                <if test="arg4 != null || arg4  != ''">
+                    AND c.name LIKE CONCAT("%",#{arg4},"%")
+                </if>
+                <if test="arg5 != null || arg5  != ''">
+                    AND c.phone LIKE CONCAT("%",#{arg5},"%")
+                </if>               
+	 		AND
+	 			(#{arg6} = true or o.employee_id = #{arg7})
+	 		AND
+	 			o.order_day BETWEEN #{arg8} AND #{arg9}
+	 		AND
+				o.status_id IN (#{arg10},#{arg11})
+	
+	</select>
+
+	<select id="getOrderVersionById" resultType="int">
+		<![CDATA[
+			SELECT
+			    version
+			FROM
+			    orders
+			WHERE
+			    id = #{id}
+		]]>
+	</select>
+	
+	<insert id="insertOrders">
+		<![CDATA[
+			INSERT INTO orders (customer_id,employee_id,product_id,status_id,order_day,price,quantity)
+			VALUES (#{arg0},#{arg1},#{arg2},#{arg3},#{arg4},#{arg5},#{arg6})
+		]]>
+	</insert>
+	
+	<update id="updateOrder">
+		<![CDATA[
+			UPDATE
+				orders
+			SET
+				customer_id = #{arg0},
+				product_id = #{arg1},
+				quantity = #{arg2},
+				version = version + 1,
+				price = #{arg4}
+			WHERE
+				id = #{arg5}
+			AND
+				version = #{arg3}
+				
+		]]>
+	</update>
+	
+	<select id="goodsAllocation" resultType="String">
+		<![CDATA[
+			{call spring_mvc_unisoft.import_product(#{arg0},#{arg1})}
+		]]>
+	</select>
+
+</mapper>

@@ -1,15 +1,11 @@
 package com.example.springmvc.model;
 
-import jakarta.persistence.*;
-
-
-@Entity
 public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	
     private int id;
+    
     private String name;
-    @Column(columnDefinition = "bit(1) default 0",nullable = false)
+    
     private boolean flag;
 
     public Role() {
@@ -38,4 +34,10 @@ public class Role {
     public void setFlag(boolean flag) {
         this.flag = flag;
     }
+
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", name=" + name + ", flag=" + flag + "]";
+	}
+    
 }
